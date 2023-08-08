@@ -7,8 +7,10 @@ environment:
   sdk: '>=3.0.6 <4.0.0'
 
 dependencies:
+  auth_buttons: ^1.0.1+4
   flutter:
     sdk: flutter
+  google_fonts: ^5.1.0
 
 dev_dependencies:
   flutter_test:
