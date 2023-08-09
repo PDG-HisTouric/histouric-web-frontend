@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/config/navigation/router.dart';
+import 'package:histouric_web/login/presentation/blocs/login_bloc/login_bloc.dart';
 import 'package:histouric_web/login/presentation/widgets/widgets.dart';
 
 class LoginView extends StatelessWidget {
@@ -8,8 +10,20 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    
 
+    return BlocProvider(
+      create: (context) => LoginBloc(),
+      child: _Login(),);
+  }
+}
+
+class _Login extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    
     return Column(
       children: [
         Text(
@@ -21,18 +35,26 @@ class LoginView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 30),
-        const CustomTextFormField(
+        CustomTextFormField(
           hint: "Email",
           label: "Email",
+          onChanged: (value) {
+            context.read<LoginBloc>().emailChanged(value);
+          },
         ),
         const SizedBox(height: 20),
-        const CustomTextFormField(
+        CustomTextFormField(
+          onChanged: (value) {
+            context.read<LoginBloc>().passwordChanged(value);
+          },
           hint: "Contraseña",
           label: "Contraseña",
           obscureText: true,
         ),
         const SizedBox(height: 20),
-        CustomElevatedButton(label: "Iniciar Sesión", onPressed: () {}),
+        CustomElevatedButton(label: "Iniciar Sesión", onPressed: () {
+          context.read<LoginBloc>().submitLogin();
+        },),
         const SizedBox(height: 20),
         const DividerWithMessage(message: "o"),
         const SizedBox(height: 20),

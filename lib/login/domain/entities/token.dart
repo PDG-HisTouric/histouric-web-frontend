@@ -10,4 +10,9 @@ class Token {
     required this.userId,
     required this.roles,
   });
+
+  @override
+  String toString() {
+    return 'Token(token: $token, userId: $userId, roles: $roles)';
+  }
 }
