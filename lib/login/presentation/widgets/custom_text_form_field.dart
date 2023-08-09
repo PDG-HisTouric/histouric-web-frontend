@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatelessWidget {
-
   final String? label;
   final String? hint;
   final String? errorMessage;
@@ -10,18 +9,17 @@ class CustomTextFormField extends StatelessWidget {
   final bool obscureText;
 
   const CustomTextFormField({
-    super.key, 
-    this.label, 
-    this.hint, 
-    this.errorMessage, 
-    this.onChanged, 
+    super.key,
+    this.label,
+    this.hint,
+    this.errorMessage,
+    this.onChanged,
     this.validator,
     this.obscureText = false,
   });
 
   @override
   Widget build(BuildContext context) {
-
     final colors = Theme.of(context).colorScheme;
 
     final border = OutlineInputBorder(
@@ -33,16 +31,23 @@ class CustomTextFormField extends StatelessWidget {
       validator: validator,
       obscureText: obscureText,
       style: TextStyle(
-          fontSize: 16,
-          color: colors.onPrimary,
-        ),
+        fontSize: 16,
+        color: colors.onPrimary,
+      ),
       decoration: InputDecoration(
         enabledBorder: border,
-        focusedBorder: border.copyWith(borderSide: BorderSide(color: colors.primary)),
-        errorBorder: border.copyWith(borderSide: BorderSide(color: colors.error)),
-        focusedErrorBorder: border.copyWith(borderSide: BorderSide(color: colors.error)),
-        
-
+        focusedBorder: border.copyWith(
+            borderSide: BorderSide(
+          color: colors.primary,
+        )),
+        errorBorder: border.copyWith(
+            borderSide: BorderSide(
+          color: colors.error,
+        )),
+        focusedErrorBorder: border.copyWith(
+            borderSide: BorderSide(
+          color: colors.error,
+        )),
         isDense: true,
         label: label != null ? Text(label!) : null,
         hintText: hint,
@@ -54,10 +59,9 @@ class CustomTextFormField extends StatelessWidget {
         errorMaxLines: 2,
         focusColor: colors.primary,
         contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 15,
-              ),
-              
+          horizontal: 20,
+          vertical: 15,
+        ),
       ),
     );
   }
