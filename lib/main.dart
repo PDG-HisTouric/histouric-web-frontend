@@ -58,6 +58,7 @@ class _MaterialAppWithFluro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppTheme appTheme = AppTheme(colorScheme: const Color(0xff0266C8));
+
     context.read<LoggedUserBloc>().updateLoggedUser();
 
     return MaterialApp(
@@ -73,7 +74,3 @@ class _MaterialAppWithFluro extends StatelessWidget {
     );
   }
 }
-
-// home: AuthScreen(
-//   child: Text(''),
-// ),

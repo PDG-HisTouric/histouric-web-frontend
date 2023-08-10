@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/presentations.dart';
 
 import '../../config/helpers/dialogs.dart';
@@ -41,6 +43,17 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
+    final loggedUserBloc = context.watch<LoggedUserBloc>();
+
+    if (loggedUserBloc.state.authStatus == AuthStatus.checking) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (loggedUserBloc.state.authStatus == AuthStatus.authenticated) {
+      return const DashboardScreen();
+    }
 
     return Scaffold(
       body: Stack(

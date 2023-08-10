@@ -36,7 +36,6 @@ class LoggedUserBloc extends Bloc<LoggedUserEvent, LoggedUserState> {
     } catch (e) {
       emit(state.copyWith(authStatus: AuthStatus.notAuthenticated));
     }
-    print(state.authStatus.toString());
   }
 
   void updateLoggedUser() {
