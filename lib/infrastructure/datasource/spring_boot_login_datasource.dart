@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:histouric_web/login/domain/datasources/auth_datasource.dart';
-import 'package:histouric_web/login/domain/entities/histouric_user.dart';
-import 'package:histouric_web/login/domain/entities/token.dart';
-import 'package:histouric_web/login/infrastructure/mapper/token_mapper.dart';
-import 'package:histouric_web/login/infrastructure/models/token_response.dart';
+
+import '../../domain/datasources/auth_datasource.dart';
+import '../../domain/entities/histouric_user.dart';
+import '../../domain/entities/token.dart';
+import '../mapper/token_mapper.dart';
+import '../models/token_response.dart';
 
 class SpringBootLoginDatasource implements AuthDatasource {
   final Dio dio = Dio(

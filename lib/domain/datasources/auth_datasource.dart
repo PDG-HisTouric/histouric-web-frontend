@@ -1,5 +1,5 @@
-import 'package:histouric_web/login/domain/entities/histouric_user.dart';
-import 'package:histouric_web/login/domain/entities/token.dart';
+import '../entities/histouric_user.dart';
+import '../entities/token.dart';
 
 abstract class AuthDatasource {
   Future<Token> login(String email, String password);

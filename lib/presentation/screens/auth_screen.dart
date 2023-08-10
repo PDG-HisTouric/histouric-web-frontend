@@ -1,22 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:histouric_web/login/presentation/widgets/custom_elevated_button.dart';
-import 'package:histouric_web/login/presentation/widgets/divider_with_message.dart';
-import 'package:histouric_web/login/presentation/widgets/widgets.dart';
+import 'package:histouric_web/presentation/presentations.dart';
 
-import '../widgets/bottom_message_with_button.dart';
+import '../../config/helpers/dialogs.dart';
+import '../../config/navigation/navigation_service.dart';
 
 class AuthScreen extends StatelessWidget {
   final Widget child;
+  // final BuildContext contextWithNavigator;
 
   const AuthScreen({
     super.key,
     required this.child,
+    // required this.contextWithNavigator,
   });
+
+  void openDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, //obliga a que se seleccione alguno de los botones, ya no se puede cerrar el diálogo oprimiendo algo afuera
+      builder: (context) => AlertDialog(
+        title: const Text('¿Estas seguro?'),
+        content: const Text(
+            'Amet eu amet laborum occaecat deserunt. Sunt eiusmod exercitation in cillum id quis qui consequat fugiat esse culpa. Consectetur amet proident sint ad consequat id.'),
+        actions: [
+          TextButton(
+            onPressed: () => NavigationService.pop(),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => NavigationService.pop(),
+            child: const Text('Aceptar'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         children: [

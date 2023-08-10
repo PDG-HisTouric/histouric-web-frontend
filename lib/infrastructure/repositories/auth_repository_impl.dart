@@ -1,7 +1,7 @@
-import 'package:histouric_web/login/domain/datasources/auth_datasource.dart';
-import 'package:histouric_web/login/domain/entities/histouric_user.dart';
-import 'package:histouric_web/login/domain/entities/token.dart';
-import 'package:histouric_web/login/domain/repositories/auth_repository.dart';
+import '../../domain/datasources/auth_datasource.dart';
+import '../../domain/entities/histouric_user.dart';
+import '../../domain/entities/token.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthDatasource authDatasource;

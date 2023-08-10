@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:histouric_web/login/presentation/widgets/custom_elevated_button.dart';
-import 'package:histouric_web/login/presentation/widgets/divider_with_message.dart';
-import 'package:histouric_web/login/presentation/widgets/widgets.dart';
 
 import '../../../config/navigation/navigation_service.dart';
 import '../../../config/navigation/router.dart';
 import '../widgets/bottom_message_with_button.dart';
+import '../widgets/custom_elevated_button.dart';
+import '../widgets/custom_text_form_field.dart';
+import '../widgets/divider_with_message.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
@@ -26,8 +26,8 @@ class RegisterView extends StatelessWidget {
         ),
         const SizedBox(height: 30),
         const CustomTextFormField(
-          hint: "Email",
-          label: "Email",
+          hint: "Correo Electrónico",
+          label: "Correo Electrónico",
         ),
         const SizedBox(height: 20),
         const CustomTextFormField(

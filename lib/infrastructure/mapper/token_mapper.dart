@@ -1,6 +1,5 @@
-import 'package:histouric_web/login/infrastructure/models/token_response.dart';
-
 import '../../domain/entities/token.dart';
+import '../models/token_response.dart';
 
 class TokenMapper {
   static Token fromTokenResponse(TokenResponse tokenResponse) {
