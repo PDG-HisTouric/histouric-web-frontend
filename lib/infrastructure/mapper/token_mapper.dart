@@ -5,8 +5,7 @@ class TokenMapper {
   static Token fromTokenResponse(TokenResponse tokenResponse) {
     return Token(
       token: tokenResponse.token,
-      roles: tokenResponse.roles,
-      userId: tokenResponse.userId,
+      nickname: tokenResponse.nickname,
     );
   }
 }

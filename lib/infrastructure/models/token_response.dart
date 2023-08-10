@@ -1,23 +1,19 @@
 class TokenResponse {
   final String token;
-  final List<String> roles;
-  final String userId;
+  final String nickname;
 
   TokenResponse({
     required this.token,
-    required this.roles,
-    required this.userId,
+    required this.nickname,
   });
 
   factory TokenResponse.fromJson(Map<String, dynamic> json) => TokenResponse(
         token: json["token"],
-        roles: List<String>.from(json["roles"].map((x) => x)),
-        userId: json["userId"],
+        nickname: json["nickname"],
       );
 
   Map<String, dynamic> toJson() => {
         "token": token,
-        "roles": List<dynamic>.from(roles.map((x) => x)),
-        "userId": userId,
+        "nickname": nickname,
       };
 }

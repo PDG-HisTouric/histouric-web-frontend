@@ -9,7 +9,7 @@ import '../models/token_response.dart';
 class SpringBootLoginDatasource implements AuthDatasource {
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'http://localhost:8080/api/v1',
+      baseUrl: 'http://localhost:8080/api/v1/auth',
       contentType: 'application/json',
     ),
   );
@@ -20,7 +20,7 @@ class SpringBootLoginDatasource implements AuthDatasource {
       'email': email,
       'password': password,
     };
-    final response = await dio.post('/auth/login', data: user);
+    final response = await dio.post('/login', data: user);
     TokenResponse tokenResponse = TokenResponse.fromJson(response.data);
     return TokenMapper.fromTokenResponse(tokenResponse);
   }

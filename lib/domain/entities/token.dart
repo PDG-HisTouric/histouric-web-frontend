@@ -2,17 +2,10 @@ import 'role.dart';
 
 class Token {
   final String token;
-  final String userId;
-  final List<String> roles;
+  final String nickname;
 
   Token({
     required this.token,
-    required this.userId,
-    required this.roles,
+    required this.nickname,
   });
-
-  @override
-  String toString() {
-    return 'Token(token: $token, userId: $userId, roles: $roles)';
-  }
 }

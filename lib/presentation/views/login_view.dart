@@ -19,6 +19,7 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => LoginBloc(
+          context: context,
           authRepository:
               AuthRepositoryImpl(authDatasource: SpringBootLoginDatasource()),
           keyValueStorageService: KeyValueStorageServiceImpl()),
@@ -65,7 +66,7 @@ class _Login extends StatelessWidget {
         CustomElevatedButton(
           label: "Iniciar Sesión",
           onPressed: () {
-            context.read<LoginBloc>().submitLogin(context);
+            context.read<LoginBloc>().submitLogin();
           },
         ),
         const SizedBox(height: 20),

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/config/navigation/navigation_service.dart';
+import 'package:histouric_web/infrastructure/datasource/spring_boot_user_datasource.dart';
+import 'package:histouric_web/infrastructure/repositories/user_repository_impl.dart';
+import 'package:histouric_web/infrastructure/services/services.dart';
+import 'package:histouric_web/presentation/blocs/logged_user_bloc/logged_user_bloc.dart';
 import 'package:histouric_web/presentation/screens/auth_screen.dart';
 import 'package:histouric_web/presentation/views/login_view.dart';
 
@@ -39,7 +44,21 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => LoggedUserBloc(
+          userRepository:
+              UserRepositoryImpl(userDatasource: SpringBootUserDatasource()),
+          keyValueStorageService: KeyValueStorageServiceImpl()),
+      child: _MaterialAppWithFluro(),
+    );
+  }
+}
+
+class _MaterialAppWithFluro extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     AppTheme appTheme = AppTheme(colorScheme: const Color(0xff0266C8));
+    context.read<LoggedUserBloc>().updateLoggedUser();
 
     return MaterialApp(
       title: 'Histouric Web',
