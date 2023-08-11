@@ -16,42 +16,19 @@ class AuthScreen extends StatelessWidget {
     // required this.contextWithNavigator,
   });
 
-  void openDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible:
-          false, //obliga a que se seleccione alguno de los botones, ya no se puede cerrar el diálogo oprimiendo algo afuera
-      builder: (context) => AlertDialog(
-        title: const Text('¿Estas seguro?'),
-        content: const Text(
-            'Amet eu amet laborum occaecat deserunt. Sunt eiusmod exercitation in cillum id quis qui consequat fugiat esse culpa. Consectetur amet proident sint ad consequat id.'),
-        actions: [
-          TextButton(
-            onPressed: () => NavigationService.pop(),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () => NavigationService.pop(),
-            child: const Text('Aceptar'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
-    final loggedUserBloc = context.watch<LoggedUserBloc>();
-
-    if (loggedUserBloc.state.authStatus == AuthStatus.checking) {
+    final authStatus = context.watch<LoggedUserBloc>().state.authStatus;
+    print(authStatus);
+    if (authStatus == AuthStatus.checking) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
-    if (loggedUserBloc.state.authStatus == AuthStatus.authenticated) {
+    if (authStatus == AuthStatus.authenticated) {
       return const DashboardScreen();
     }
 

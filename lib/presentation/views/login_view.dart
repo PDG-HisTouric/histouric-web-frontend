@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/config/navigation/router.dart';
+import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 import '../../infrastructure/datasource/spring_boot_login_datasource.dart';
 import '../../infrastructure/repositories/auth_repository_impl.dart';
@@ -18,11 +19,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginBloc(
-          context: context,
-          authRepository:
-              AuthRepositoryImpl(authDatasource: SpringBootLoginDatasource()),
-          keyValueStorageService: KeyValueStorageServiceImpl()),
+      create: (context) => LoginBloc(context: context),
       child: _Login(),
     );
   }
@@ -32,6 +29,8 @@ class _Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final email = context.watch<LoginBloc>().state.email.value;
+    final password = context.watch<LoginBloc>().state.password.value;
 
     return Column(
       children: [
@@ -66,7 +65,10 @@ class _Login extends StatelessWidget {
         CustomElevatedButton(
           label: "Iniciar Sesión",
           onPressed: () {
-            context.read<LoginBloc>().submitLogin();
+            if (context.read<LoginBloc>().isStateValid()) {
+              context.read<LoggedUserBloc>().login(email, password);
+              NavigationService.replaceTo(FluroRouterWrapper.dashboardRoute);
+            }
           },
         ),
         const SizedBox(height: 20),

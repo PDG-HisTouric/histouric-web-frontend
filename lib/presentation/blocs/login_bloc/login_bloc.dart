@@ -4,33 +4,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
 import '../../../config/helpers/dialogs.dart';
-import '../../../config/navigation/navigation_service.dart';
-import '../../../config/navigation/router.dart';
-import '../../../domain/entities/token.dart';
-import '../../../domain/repositories/auth_repository.dart';
 
 import '../../../infrastructure/inputs/email.dart';
 import '../../../infrastructure/inputs/nickname.dart';
 import '../../../infrastructure/inputs/password.dart';
-import '../../../infrastructure/services/services.dart';
-import '../logged_user_bloc/logged_user_bloc.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginFormState> {
-  final AuthRepository authRepository;
-  final KeyValueStorageService keyValueStorageService;
   final BuildContext context;
 
   LoginBloc({
-    required this.authRepository,
-    required this.keyValueStorageService,
     required this.context,
   }) : super(LoginFormState()) {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
-    on<LoginSubmitted>(_onSubmitted);
   }
 
   void _onEmailChanged(LoginEmailChanged event, Emitter<LoginFormState> emit) {
@@ -50,26 +39,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginFormState> {
     ));
   }
 
-  void _onSubmitted(LoginSubmitted event, Emitter<LoginFormState> emit) {
-    authRepository.login(state.email.value, state.password.value).then((token) {
-      keyValueStorageService.setKeyValue("token", token.token).then((_) {
-        keyValueStorageService
-            .setKeyValue("nickname", token.nickname)
-            .then((__) {
-          context.read<LoggedUserBloc>().updateLoggedUser();
-          NavigationService.pushAndPop(FluroRouterWrapper.dashboardRoute);
-        });
-      });
-    });
-  }
-
-  void submitLogin() {
-    if (!state.isValid) return;
-    try {
-      add(LoginSubmitted());
-    } catch (e) {
-      Dialogs.showErrorDialog(context: context, content: e.toString());
+  bool isStateValid() {
+    if (!state.isValid) {
+      Dialogs.showErrorDialog(
+          context: context,
+          content: "Por favor, diligencie de manera correcta todos los campos");
+      return false;
     }
+    return true;
   }
 
   void emailChanged(String email) {

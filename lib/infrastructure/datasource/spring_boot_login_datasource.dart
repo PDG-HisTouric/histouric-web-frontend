@@ -20,9 +20,13 @@ class SpringBootLoginDatasource implements AuthDatasource {
       'email': email,
       'password': password,
     };
-    final response = await dio.post('/login', data: user);
-    TokenResponse tokenResponse = TokenResponse.fromJson(response.data);
-    return TokenMapper.fromTokenResponse(tokenResponse);
+    try {
+      final response = await dio.post('/login', data: user);
+      TokenResponse tokenResponse = TokenResponse.fromJson(response.data);
+      return TokenMapper.fromTokenResponse(tokenResponse);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
