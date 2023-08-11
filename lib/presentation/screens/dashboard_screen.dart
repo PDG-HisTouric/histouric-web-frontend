@@ -5,6 +5,8 @@ import 'package:histouric_web/config/navigation/router.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/presentations.dart';
 
+import '../widgets/sidebar.dart';
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
@@ -22,9 +24,11 @@ class DashboardScreen extends StatelessWidget {
       return const AuthScreen(child: LoginView());
     }
 
-    return Scaffold(
-      body: Center(
-        child: Text("Dashboard"),
+    return const Scaffold(
+      body: Stack(
+        children: [
+          Sidebar(),
+        ],
       ),
     );
   }
