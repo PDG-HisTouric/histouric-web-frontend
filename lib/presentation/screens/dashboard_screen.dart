@@ -12,15 +12,17 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loggedUserBloc = context.watch<AuthBloc>();
+    final authStatus = context.watch<AuthBloc>().state.authStatus;
 
-    if (loggedUserBloc.state.authStatus == AuthStatus.checking) {
+    print(authStatus);
+
+    if (authStatus == AuthStatus.checking) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
-    if (loggedUserBloc.state.authStatus == AuthStatus.notAuthenticated) {
+    if (authStatus == AuthStatus.notAuthenticated) {
       return const AuthScreen(child: LoginView());
     }
 

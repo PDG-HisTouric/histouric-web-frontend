@@ -65,7 +65,7 @@ class _MaterialAppWithFluro extends StatelessWidget {
   Widget build(BuildContext context) {
     AppTheme appTheme = AppTheme(colorScheme: const Color(0xff0266C8));
 
-    context.read<AuthBloc>().checkToken();
+    BlocProvider.of<AuthBloc>(context, listen: false).checkToken();
 
     return MaterialApp(
       title: 'Histouric Web',
