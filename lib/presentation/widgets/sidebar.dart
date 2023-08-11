@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/config/navigation/navigation_service.dart';
+import 'package:histouric_web/config/navigation/router.dart';
+import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 import 'sidemenu_title.dart';
 import 'menu_item.dart';
@@ -7,15 +11,8 @@ import 'text_separator.dart';
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
 
-  // void navigateTo(String routeName) {
-  //   NavigationService.navigateTo(routeName);
-  //   SideMenuProvider.closeMenu();
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // final sideMenuProvider = Provider.of<SideMenuProvider>(context);
-
     return Container(
       width: 220,
       height: double.infinity,
@@ -35,7 +32,10 @@ class Sidebar extends StatelessWidget {
           MenuItem(
               text: 'Cerrar sesión',
               icon: Icons.exit_to_app_outlined,
-              onPressed: () {}),
+              onPressed: () {
+                context.read<AuthBloc>().logout();
+                NavigationService.replaceTo(FluroRouterWrapper.loginRoute);
+              }),
         ],
       ),
     );
@@ -53,6 +53,6 @@ class Sidebar extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
-        boxShadow: [const BoxShadow(color: Colors.black26, blurRadius: 10)]);
+        boxShadow: [BoxShadow(color: colorScheme.primary, blurRadius: 10)]);
   }
 }
