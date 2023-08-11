@@ -5,6 +5,7 @@ import 'package:histouric_web/presentation/presentations.dart';
 
 import '../../config/helpers/dialogs.dart';
 import '../../config/navigation/navigation_service.dart';
+import '../widgets/container_with_gradient.dart';
 
 class AuthScreen extends StatelessWidget {
   final Widget child;
@@ -28,22 +29,13 @@ class AuthScreen extends StatelessWidget {
     }
 
     if (authStatus == AuthStatus.authenticated) {
-      return const DashboardScreen();
+      return DashboardScreen(child: const ProfileView());
     }
 
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [colors.primary, colors.primary.withOpacity(0.1)],
-              ),
-            ),
-            width: MediaQuery.sizeOf(context).width,
-          ),
+          const ContainerWithGradient(),
           Center(
             child: SingleChildScrollView(
               child: Padding(

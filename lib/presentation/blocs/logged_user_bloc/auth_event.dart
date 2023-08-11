@@ -15,3 +15,5 @@ class ChangeToken extends AuthEvent {
 }
 
 class CheckToken extends AuthEvent {}
+
+class UserLoggedOut extends AuthEvent {}

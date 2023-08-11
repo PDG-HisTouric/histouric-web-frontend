@@ -8,6 +8,8 @@ import '../../presentation/views/views.dart';
 
 class DashboardHandlers {
   static Handler dashboard = Handler(handlerFunc: (context, parameters) {
-    return const DashboardScreen();
+    return DashboardScreen(
+      child: const ProfileView(),
+    );
   });
 }

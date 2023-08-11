@@ -23,6 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.context,
   }) : super(AuthState()) {
     on<CheckToken>(_onCheckToken);
+    on<UserLoggedOut>(_onUserLoggedOut);
   }
 
   void _onCheckToken(CheckToken event, Emitter<AuthState> emit) async {
@@ -65,5 +66,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       return false;
     }
+  }
+
+  void _onUserLoggedOut(UserLoggedOut event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(
+      authStatus: AuthStatus.checking,
+      email: null,
+      nickname: null,
+      roles: null,
+      token: null,
+    ));
+    await keyValueStorageService.removeKey("token");
+    await keyValueStorageService.removeKey("nickname");
+    emit(state.copyWith(authStatus: AuthStatus.notAuthenticated));
+  }
+
+  void logout() {
+    add(UserLoggedOut());
   }
 }
