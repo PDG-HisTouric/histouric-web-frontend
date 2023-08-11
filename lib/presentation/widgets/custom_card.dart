@@ -21,47 +21,65 @@ class CustomCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: profileBloc.state.emailController,
-              decoration: const InputDecoration(
-                labelText: 'Correo electrónico',
-              ),
-              enabled: profileBloc.state.isEditing,
-            ),
+            profileBloc.state.isEditing
+                ? TextField(
+                    controller: profileBloc.state.emailController,
+                    decoration: InputDecoration(
+                      errorText: profileBloc.state.email.errorMessage,
+                      labelText: 'Correo electrónico',
+                    ),
+                    onChanged: context.read<ProfileBloc>().changeEmail,
+                  )
+                : _SubtitleAndText(
+                    subtitle: 'Correo electrónico',
+                    text: profileBloc.state.email.value),
             const SizedBox(height: 16.0),
-            TextField(
-              controller: profileBloc.state.passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Contraseña',
+            if (profileBloc.state.isEditing)
+              TextField(
+                controller: profileBloc.state.passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Contraseña',
+                ),
+                onChanged: context.read<ProfileBloc>().changePassword,
               ),
-              enabled: profileBloc.state.isEditing,
-            ),
             const SizedBox(height: 16.0),
-            TextField(
-              controller: profileBloc.state.usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Nombre de usuario',
-              ),
-              enabled: profileBloc.state.isEditing,
-            ),
+            profileBloc.state.isEditing
+                ? TextField(
+                    controller: profileBloc.state.usernameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre de usuario',
+                    ),
+                    onChanged: context.read<ProfileBloc>().changeNickname,
+                  )
+                : _SubtitleAndText(
+                    subtitle: 'Nombre de usuario',
+                    text: profileBloc.state.nickname.value,
+                  ),
             const SizedBox(height: 16.0),
-            _buildRolesSection(context),
+            if (!profileBloc.state.isEditing) _buildRolesSection(context),
             const SizedBox(height: 24.0),
             Wrap(
+              alignment: WrapAlignment.center,
               children: [
                 CustomElevatedButtonSquared(
                   backgroundColor: colors.primary,
                   onPressed: () {
                     context.read<ProfileBloc>().state.isEditing
-                        ? context.read<ProfileBloc>().saveChanges()
+                        ? context.read<ProfileBloc>().saveChanges(
+                              email: profileBloc.state.emailController.text,
+                              password:
+                                  profileBloc.state.passwordController.text,
+                              nickname:
+                                  profileBloc.state.usernameController.text,
+                            )
                         : context.read<ProfileBloc>().startEditing();
                   },
                   label: profileBloc.state.isEditing ? 'Guardar' : 'Editar',
                   textColor: colors.onPrimary,
                   fontWeightBold: true,
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 CustomElevatedButtonSquared(
                   backgroundColor: colors.error,
                   onPressed: () {},
@@ -69,6 +87,15 @@ class CustomCard extends StatelessWidget {
                   textColor: colors.onError,
                   fontWeightBold: true,
                 ),
+                if (profileBloc.state.isEditing) const SizedBox(width: 16.0),
+                if (profileBloc.state.isEditing)
+                  CustomElevatedButtonSquared(
+                    backgroundColor: colors.secondary,
+                    onPressed: context.read<ProfileBloc>().cancelEditing,
+                    label: 'Cancelar',
+                    textColor: colors.onSecondary,
+                    fontWeightBold: true,
+                  ),
               ],
             ),
           ],
@@ -78,7 +105,40 @@ class CustomCard extends StatelessWidget {
   }
 }
 
+class _SubtitleAndText extends StatelessWidget {
+  const _SubtitleAndText({
+    required this.subtitle,
+    required this.text,
+  });
+
+  final String subtitle;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        children: [
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(text, textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+}
+
 Widget _buildRolesSection(BuildContext context) {
+  final profileBloc = context.watch<ProfileBloc>();
+  final Set<String> selectedRoles = profileBloc.state.selectedRoles;
+  final bool isAdminUser = selectedRoles.contains('Administrador');
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -91,9 +151,12 @@ Widget _buildRolesSection(BuildContext context) {
       ),
       const SizedBox(height: 15.0),
       Wrap(
-        spacing: 8.0,
-        children: _roles.map((role) => _buildRoleCard(role, context)).toList(),
-      ),
+          spacing: 8.0,
+          children: (isAdminUser)
+              ? _roles.map((role) => _buildRoleCard(role, context)).toList()
+              : selectedRoles
+                  .map((role) => _buildRoleCard(role, context))
+                  .toList()),
     ],
   );
 }

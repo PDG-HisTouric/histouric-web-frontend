@@ -18,8 +18,17 @@ class ProfileState {
     this.isEditing = false,
   }) {
     emailController = TextEditingController(text: email.value);
+    emailController.selection = TextSelection.collapsed(
+      offset: email.value.length,
+    );
     passwordController = TextEditingController(text: password.value);
+    passwordController.selection = TextSelection.collapsed(
+      offset: password.value.length,
+    );
     usernameController = TextEditingController(text: nickname.value);
+    usernameController.selection = TextSelection.collapsed(
+      offset: nickname.value.length,
+    );
   }
 
   ProfileState copyWith({

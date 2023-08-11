@@ -25,6 +25,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<RoleRemoved>(_onRoleRemoved);
     on<UserSaved>(_onUserSaved);
     on<EditButtonPressed>(_onEditButtonPressed);
+    on<EmailChanged>(_onEmailChanged);
+    on<PasswordChanged>(_onPasswordChanged);
+    on<NicknameChanged>(_onNicknameChanged);
+    on<CancelButtonPressed>(_onCancelButtonPressed);
     mapRoles();
   }
 
@@ -39,9 +43,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void _onUserSaved(UserSaved event, Emitter<ProfileState> emit) {
     emit(state.copyWith(
-      email: Email.dirty(event.email ?? state.email.value),
-      password: Password.dirty(event.password ?? state.password.value),
-      nickname: Nickname.dirty(event.nickname ?? state.nickname.value),
+      email: Email.dirty(event.email?.trim() ?? state.email.value),
+      password: Password.dirty(event.password?.trim() ?? state.password.value),
+      nickname: Nickname.dirty(event.nickname?.trim() ?? state.nickname.value),
       selectedRoles: event.selectedRoles?.toSet() ?? state.selectedRoles,
       isEditing: false,
     ));
@@ -87,5 +91,38 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       rolesForIcons.add("Gestor de Turismo");
     }
     saveChanges(selectedRoles: rolesForIcons);
+  }
+
+  void _onEmailChanged(EmailChanged event, Emitter<ProfileState> emit) {
+    emit(state.copyWith(email: Email.dirty(event.email)));
+  }
+
+  void _onPasswordChanged(PasswordChanged event, Emitter<ProfileState> emit) {
+    emit(state.copyWith(password: Password.dirty(event.password)));
+  }
+
+  void _onNicknameChanged(NicknameChanged event, Emitter<ProfileState> emit) {
+    emit(state.copyWith(nickname: Nickname.dirty(event.nickname)));
+  }
+
+  void changeEmail(String email) {
+    add(EmailChanged(email));
+  }
+
+  void changePassword(String password) {
+    add(PasswordChanged(password));
+  }
+
+  void changeNickname(String nickname) {
+    add(NicknameChanged(nickname));
+  }
+
+  void _onCancelButtonPressed(
+      CancelButtonPressed event, Emitter<ProfileState> emit) {
+    emit(state.copyWith(isEditing: false));
+  }
+
+  void cancelEditing() {
+    add(CancelButtonPressed());
   }
 }
