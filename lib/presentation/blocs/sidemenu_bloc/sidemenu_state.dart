@@ -26,7 +26,7 @@ class SidemenuState {
   }
 
   Animation<double> movement() {
-    return Tween<double>(begin: -200, end: 0).animate(
+    return Tween<double>(begin: -220, end: 0).animate(
         CurvedAnimation(parent: menuController, curve: Curves.easeInOut));
   }
 

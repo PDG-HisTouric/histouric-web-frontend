@@ -18,7 +18,7 @@ class Navbar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: IconButton(
-              icon: Icon(Icons.menu_outlined),
+              icon: const Icon(Icons.menu_outlined),
               onPressed: () => sideMenuBloc.openMenu(),
             ),
           ),

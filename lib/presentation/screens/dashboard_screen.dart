@@ -9,7 +9,9 @@ import 'package:histouric_web/presentation/widgets/navbar.dart';
 import '../widgets/sidebar.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  Widget child;
+
+  DashboardScreen({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +31,19 @@ class DashboardScreen extends StatelessWidget {
 
     return BlocProvider(
       create: (context) => SidemenuBloc(),
-      child: const _Dashboard(),
+      child: _Dashboard(
+        child: child,
+      ),
     );
   }
 }
 
 class _Dashboard extends StatefulWidget {
-  const _Dashboard({
+  Widget child;
+
+  _Dashboard({
     super.key,
+    required this.child,
   });
 
   @override
@@ -70,29 +77,43 @@ class _DashboardState extends State<_Dashboard>
     return Scaffold(
       body: Stack(
         children: [
-          Navbar(),
+          Column(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Navbar(),
+                    Expanded(
+                      child: widget.child,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
           AnimatedBuilder(
-              animation: sideMenuBloc.state.menuController,
-              builder: (context, _) => Stack(
-                    children: [
-                      if (sideMenuBloc.state.isMenuOpen)
-                        Opacity(
-                          opacity: sideMenuBloc.state.opacity().value,
-                          child: GestureDetector(
-                            onTap: () => sideMenuBloc.closeMenu(),
-                            child: Container(
-                              width: size.width,
-                              height: size.height,
-                              color: Colors.black26,
-                            ),
-                          ),
-                        ),
-                      Transform.translate(
-                        offset: Offset(sideMenuBloc.state.movement().value, 0),
-                        child: Sidebar(),
-                      )
-                    ],
-                  ))
+            animation: sideMenuBloc.state.menuController,
+            builder: (context, _) => Stack(
+              children: [
+                if (sideMenuBloc.state.isMenuOpen)
+                  Opacity(
+                    opacity: sideMenuBloc.state.opacity().value,
+                    child: GestureDetector(
+                      onTap: () => sideMenuBloc.closeMenu(),
+                      child: Container(
+                        width: size.width,
+                        height: size.height,
+                        color: Colors.black26,
+                      ),
+                    ),
+                  ),
+                Transform.translate(
+                  offset: Offset(sideMenuBloc.state.movement().value, 0),
+                  child: Sidebar(),
+                )
+              ],
+            ),
+          )
         ],
       ),
     );

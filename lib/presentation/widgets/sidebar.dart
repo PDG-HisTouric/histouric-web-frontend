@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'logo.dart';
+import 'sidemenu_title.dart';
 import 'menu_item.dart';
 import 'text_separator.dart';
 
@@ -17,75 +17,23 @@ class Sidebar extends StatelessWidget {
     // final sideMenuProvider = Provider.of<SideMenuProvider>(context);
 
     return Container(
-      width: 200,
+      width: 220,
       height: double.infinity,
       decoration: buildBoxDecoration(context),
       child: ListView(
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         children: [
-          Logo(),
-          SizedBox(height: 50),
-          TextSeparator(text: 'main'),
+          SidemenuTitle(),
+          const TextSeparator(text: 'Usuario'),
           MenuItem(
-            text: 'Dashboard',
-            icon: Icons.compass_calibration_outlined,
+            text: 'Perfil',
+            icon: Icons.person_outline,
             onPressed: () {},
-            // onPressed: () => navigateTo(Flurorouter.dashboardRoute),
-            // isActive:
-            //     sideMenuProvider.currentPage == Flurorouter.dashboardRoute,
           ),
+          const SizedBox(height: 50),
+          const TextSeparator(text: 'Salir'),
           MenuItem(
-              text: 'Orders',
-              icon: Icons.shopping_cart_outlined,
-              onPressed: () {}),
-          MenuItem(
-              text: 'Analytic',
-              icon: Icons.show_chart_outlined,
-              onPressed: () {}),
-          MenuItem(
-              text: 'Categories',
-              icon: Icons.layers_outlined,
-              onPressed: () {}),
-          MenuItem(
-              text: 'Products',
-              icon: Icons.dashboard_outlined,
-              onPressed: () {}),
-          MenuItem(
-              text: 'Discount',
-              icon: Icons.attach_money_outlined,
-              onPressed: () {}),
-          MenuItem(
-              text: 'Customers',
-              icon: Icons.people_alt_outlined,
-              onPressed: () {}),
-          SizedBox(height: 30),
-          TextSeparator(text: 'UI Elements'),
-          MenuItem(
-            text: 'Icons',
-            icon: Icons.list_alt_outlined,
-            onPressed: () {},
-            // onPressed: () => navigateTo(Flurorouter.iconsRoute),
-            // isActive: sideMenuProvider.currentPage == Flurorouter.iconsRoute,
-          ),
-          MenuItem(
-              text: 'Marketing',
-              icon: Icons.mark_email_read_outlined,
-              onPressed: () {}),
-          MenuItem(
-              text: 'Campaign',
-              icon: Icons.note_add_outlined,
-              onPressed: () {}),
-          MenuItem(
-            text: 'Black',
-            icon: Icons.post_add_outlined,
-            onPressed: () {},
-            // onPressed: () => navigateTo(Flurorouter.blankRoute),
-            // isActive: sideMenuProvider.currentPage == Flurorouter.blankRoute,
-          ),
-          SizedBox(height: 50),
-          TextSeparator(text: 'Exit'),
-          MenuItem(
-              text: 'Logout',
+              text: 'Cerrar sesión',
               icon: Icons.exit_to_app_outlined,
               onPressed: () {}),
         ],
@@ -97,10 +45,14 @@ class Sidebar extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return BoxDecoration(
-        gradient: LinearGradient(colors: [
-          colorScheme.primary,
-          colorScheme.primary.withOpacity(0.8),
-        ]),
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)]);
+        gradient: LinearGradient(
+          colors: [
+            colorScheme.primary,
+            colorScheme.primary.withOpacity(0.8),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        boxShadow: [const BoxShadow(color: Colors.black26, blurRadius: 10)]);
   }
 }
