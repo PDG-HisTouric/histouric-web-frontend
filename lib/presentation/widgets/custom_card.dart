@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
+import 'package:histouric_web/presentation/presentations.dart';
+
+import 'custom_elevated_button_squared.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard({super.key});
@@ -8,7 +11,7 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileBloc = context.watch<ProfileBloc>();
-    final Set<String> _selectedRoles = profileBloc.state.selectedRoles;
+    final colors = Theme.of(context).colorScheme;
 
     return Card(
       elevation: 4.0,
@@ -19,49 +22,54 @@ class CustomCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
+              controller: profileBloc.state.emailController,
               decoration: const InputDecoration(
                 labelText: 'Correo electrónico',
               ),
+              enabled: profileBloc.state.isEditing,
             ),
             const SizedBox(height: 16.0),
             TextField(
+              controller: profileBloc.state.passwordController,
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Contraseña',
               ),
+              enabled: profileBloc.state.isEditing,
             ),
             const SizedBox(height: 16.0),
             TextField(
+              controller: profileBloc.state.usernameController,
               decoration: const InputDecoration(
                 labelText: 'Nombre de usuario',
               ),
+              enabled: profileBloc.state.isEditing,
             ),
             const SizedBox(height: 16.0),
             _buildRolesSection(context),
             const SizedBox(height: 24.0),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff0266C8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+            Wrap(
+              children: [
+                CustomElevatedButtonSquared(
+                  backgroundColor: colors.primary,
+                  onPressed: () {
+                    context.read<ProfileBloc>().state.isEditing
+                        ? context.read<ProfileBloc>().saveChanges()
+                        : context.read<ProfileBloc>().startEditing();
+                  },
+                  label: profileBloc.state.isEditing ? 'Guardar' : 'Editar',
+                  textColor: colors.onPrimary,
+                  fontWeightBold: true,
                 ),
-                elevation: 4.0,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 12.0,
+                SizedBox(width: 16.0),
+                CustomElevatedButtonSquared(
+                  backgroundColor: colors.error,
+                  onPressed: () {},
+                  label: 'Eliminar',
+                  textColor: colors.onError,
+                  fontWeightBold: true,
                 ),
-                child: Text(
-                  'Guardar cambios',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              ],
             ),
           ],
         ),
@@ -99,14 +107,16 @@ final List<String> _roles = [
 Widget _buildRoleCard(String role, BuildContext context) {
   final profileBloc = context.watch<ProfileBloc>();
   final Set<String> selectedRoles = profileBloc.state.selectedRoles;
+  final colors = Theme.of(context).colorScheme;
 
   final bool isSelected = selectedRoles.contains(role);
-  final Color cardColor = isSelected ? const Color(0xff0266C8) : Colors.white;
-  final Color iconColor = isSelected ? Colors.white : const Color(0xff0266C8);
+  final Color cardColor = isSelected ? colors.primary : colors.onPrimary;
+  final Color iconColor = isSelected ? colors.onPrimary : colors.primary;
   final IconData iconData = _roleIcons[role] ?? Icons.person;
 
   return GestureDetector(
     onTap: () {
+      if (!profileBloc.state.isEditing) return;
       if (isSelected) {
         profileBloc.removeRole(role);
       } else {

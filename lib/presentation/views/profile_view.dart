@@ -14,7 +14,7 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProfileBloc(),
+      create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>()),
       child: const _ProfileView(),
     );
   }
@@ -29,12 +29,7 @@ class _ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
 
-    BlocProvider.of<ProfileBloc>(context, listen: false).updateData(
-      email: authState.email!,
-      password: "",
-      nickname: authState.nickname!,
-      selectedRoles: [],
-    );
+    print(authState.roles);
 
     return const Stack(
       children: [

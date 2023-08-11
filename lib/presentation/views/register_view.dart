@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../config/navigation/navigation_service.dart';
 import '../../../config/navigation/router.dart';
 import '../widgets/bottom_message_with_button.dart';
-import '../widgets/custom_elevated_button.dart';
+import '../widgets/custom_elevated_button_rounded.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/divider_with_message.dart';
 
@@ -41,7 +41,7 @@ class RegisterView extends StatelessWidget {
           obscureText: true,
         ),
         const SizedBox(height: 20),
-        CustomElevatedButton(label: "Crear cuenta", onPressed: () {}),
+        CustomElevatedButtonRounded(label: "Crear cuenta", onPressed: () {}),
         const SizedBox(height: 20),
         const DividerWithMessage(message: "o"),
         const SizedBox(height: 20),

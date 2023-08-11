@@ -14,16 +14,18 @@ class RoleRemoved extends ProfileEvent {
   RoleRemoved(this.role);
 }
 
-class DataChanged extends ProfileEvent {
-  final String email;
-  final String password;
-  final String nickname;
-  final List<String> selectedRoles;
+class UserSaved extends ProfileEvent {
+  final String? email;
+  final String? password;
+  final String? nickname;
+  final List<String>? selectedRoles;
 
-  DataChanged({
-    required this.email,
-    required this.password,
-    required this.nickname,
-    required this.selectedRoles,
+  UserSaved({
+    this.email,
+    this.password,
+    this.nickname,
+    this.selectedRoles,
   });
 }
+
+class EditButtonPressed extends ProfileEvent {}
