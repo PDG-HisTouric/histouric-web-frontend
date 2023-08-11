@@ -4,6 +4,7 @@ import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/config/navigation/router.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
+import '../../config/helpers/dialogs.dart';
 import '../../infrastructure/datasource/spring_boot_login_datasource.dart';
 import '../../infrastructure/repositories/auth_repository_impl.dart';
 import '../../infrastructure/services/key_value_storage_service_impl.dart';
@@ -64,10 +65,13 @@ class _Login extends StatelessWidget {
         const SizedBox(height: 20),
         CustomElevatedButton(
           label: "Iniciar Sesión",
-          onPressed: () {
+          onPressed: () async {
             if (context.read<LoginBloc>().isStateValid()) {
-              context.read<LoggedUserBloc>().login(email, password);
-              NavigationService.replaceTo(FluroRouterWrapper.dashboardRoute);
+              await context.read<AuthBloc>().login(email, password)
+                  ? NavigationService.replaceTo(
+                      FluroRouterWrapper.dashboardRoute)
+                  : Dialogs.showErrorDialog(
+                      context: context, content: "Credenciales inválidas");
             }
           },
         ),

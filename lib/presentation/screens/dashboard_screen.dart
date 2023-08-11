@@ -10,7 +10,7 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loggedUserBloc = context.watch<LoggedUserBloc>();
+    final loggedUserBloc = context.watch<AuthBloc>();
 
     if (loggedUserBloc.state.authStatus == AuthStatus.checking) {
       return const Center(

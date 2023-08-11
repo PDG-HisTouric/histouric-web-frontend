@@ -5,29 +5,27 @@ import 'package:histouric_web/domain/entities/token.dart';
 import 'package:histouric_web/domain/repositories/repositories.dart';
 
 import '../../../config/helpers/dialogs.dart';
-import '../../../config/navigation/navigation_service.dart';
-import '../../../config/navigation/router.dart';
 import '../../../infrastructure/services/services.dart';
 
-part 'logged_user_event.dart';
-part 'logged_user_state.dart';
+part 'auth_event.dart';
+part 'auth_state.dart';
 
-class LoggedUserBloc extends Bloc<LoggedUserEvent, LoggedUserState> {
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserRepository userRepository;
   final KeyValueStorageService keyValueStorageService;
   final AuthRepository authRepository;
   final BuildContext context;
 
-  LoggedUserBloc({
+  AuthBloc({
     required this.userRepository,
     required this.authRepository,
     required this.keyValueStorageService,
     required this.context,
-  }) : super(LoggedUserState()) {
+  }) : super(AuthState()) {
     on<CheckToken>(_onCheckToken);
   }
 
-  void _onCheckToken(CheckToken event, Emitter<LoggedUserState> emit) async {
+  void _onCheckToken(CheckToken event, Emitter<AuthState> emit) async {
     emit(state.copyWith(authStatus: AuthStatus.checking));
     try {
       String tokenString =
@@ -44,7 +42,6 @@ class LoggedUserBloc extends Bloc<LoggedUserEvent, LoggedUserState> {
           email: histouricUser.email,
           roles: histouricUser.roles.map((role) => role.name).toList()));
     } catch (e) {
-      print("estoy entrando aqui");
       emit(state.copyWith(authStatus: AuthStatus.notAuthenticated));
     }
   }
@@ -53,19 +50,20 @@ class LoggedUserBloc extends Bloc<LoggedUserEvent, LoggedUserState> {
     add(CheckToken());
   }
 
-  void login(String email, String password) async {
-    await saveTokenAndNickname(email, password);
+  Future<bool> login(String email, String password) async {
+    if (!await saveTokenAndNickname(email, password)) return false;
     add(CheckToken());
+    return true;
   }
 
-  Future<void> saveTokenAndNickname(String email, String password) async {
+  Future<bool> saveTokenAndNickname(String email, String password) async {
     try {
       Token token = await authRepository.login(email, password);
       await keyValueStorageService.setKeyValue("token", token.token);
       await keyValueStorageService.setKeyValue("nickname", token.nickname);
+      return true;
     } catch (e) {
-      Dialogs.showErrorDialog(
-          context: context, content: "Credenciales inválidas");
+      return false;
     }
   }
 }

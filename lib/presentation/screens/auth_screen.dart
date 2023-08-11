@@ -20,8 +20,7 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
-    final authStatus = context.watch<LoggedUserBloc>().state.authStatus;
-    print(authStatus);
+    final authStatus = context.watch<AuthBloc>().state.authStatus;
     if (authStatus == AuthStatus.checking) {
       return const Center(
         child: CircularProgressIndicator(),

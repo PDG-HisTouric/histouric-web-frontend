@@ -1,15 +1,15 @@
-part of 'logged_user_bloc.dart';
+part of 'auth_bloc.dart';
 
 enum AuthStatus { checking, authenticated, notAuthenticated }
 
-class LoggedUserState {
+class AuthState {
   final String? token;
   final AuthStatus authStatus;
   final String? nickname;
   final String? email;
   final List<String>? roles;
 
-  LoggedUserState({
+  AuthState({
     this.token,
     this.authStatus = AuthStatus.checking,
     this.nickname,
@@ -17,14 +17,14 @@ class LoggedUserState {
     this.roles,
   });
 
-  LoggedUserState copyWith({
+  AuthState copyWith({
     String? token,
     AuthStatus? authStatus,
     String? nickname,
     String? email,
     List<String>? roles,
   }) {
-    return LoggedUserState(
+    return AuthState(
       token: token ?? this.token,
       authStatus: authStatus ?? this.authStatus,
       nickname: nickname ?? this.nickname,
