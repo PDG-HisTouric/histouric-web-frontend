@@ -1,10 +1,8 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/domain/entities/entities.dart';
-import 'package:histouric_web/domain/entities/token.dart';
 import 'package:histouric_web/domain/repositories/repositories.dart';
 
-import '../../../config/helpers/dialogs.dart';
 import '../../../infrastructure/services/services.dart';
 
 part 'auth_event.dart';
@@ -37,11 +35,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       HistouricUser histouricUser =
           await userRepository.getUserByNickname(nickname);
       emit(state.copyWith(
-          nickname: nickname,
-          token: tokenString,
-          authStatus: AuthStatus.authenticated,
-          email: histouricUser.email,
-          roles: histouricUser.roles.map((role) => role.name).toList()));
+        nickname: nickname,
+        token: tokenString,
+        authStatus: AuthStatus.authenticated,
+        email: histouricUser.email,
+        roles: histouricUser.roles.map((role) => role.name).toList(),
+      ));
     } catch (e) {
       emit(state.copyWith(authStatus: AuthStatus.notAuthenticated));
     }

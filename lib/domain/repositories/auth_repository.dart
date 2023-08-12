@@ -3,6 +3,10 @@ import '../entities/token.dart';
 
 abstract class AuthRepository {
   Future<Token> login(String email, String password);
+
   Future<HistouricUser> register(
-      String nickname, String email, String password);
+    String email,
+    String password,
+    String nickname,
+  );
 }

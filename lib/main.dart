@@ -6,7 +6,7 @@ import 'package:histouric_web/infrastructure/datasource/spring_boot_user_datasou
 import 'package:histouric_web/infrastructure/repositories/repositories.dart';
 import 'package:histouric_web/infrastructure/repositories/user_repository_impl.dart';
 import 'package:histouric_web/infrastructure/services/services.dart';
-import 'package:histouric_web/presentation/blocs/logged_user_bloc/auth_bloc.dart';
+import 'package:histouric_web/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:histouric_web/presentation/screens/auth_screen.dart';
 import 'package:histouric_web/presentation/views/login_view.dart';
 
@@ -48,11 +48,13 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthBloc(
-        userRepository:
-            UserRepositoryImpl(userDatasource: SpringBootUserDatasource()),
+        userRepository: UserRepositoryImpl(
+          userDatasource: SpringBootUserDatasource(),
+        ),
         keyValueStorageService: KeyValueStorageServiceImpl(),
-        authRepository:
-            AuthRepositoryImpl(authDatasource: SpringBootLoginDatasource()),
+        authRepository: AuthRepositoryImpl(
+          authDatasource: SpringBootLoginDatasource(),
+        ),
         context: context,
       ),
       child: _MaterialAppWithFluro(),
