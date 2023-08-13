@@ -23,6 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<CheckToken>(_onCheckToken);
     on<UserLoggedOut>(_onUserLoggedOut);
     on<UserChanged>(_onUserChanged);
+    on<UserLoadedFromAdmin>(_onUserLoadedFromAdmin);
   }
 
   void _onCheckToken(CheckToken event, Emitter<AuthState> emit) async {
@@ -108,6 +109,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       email: email,
       roles: roles,
       token: token,
+    ));
+  }
+
+  void _onUserLoadedFromAdmin(
+      UserLoadedFromAdmin event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(
+      id: event.id,
+      nickname: event.nickname,
+      email: event.email,
+      roles: event.roles,
+    ));
+  }
+
+  void loadUserFromAdmin(
+      {required String id,
+      required String nickname,
+      required String email,
+      required List<String> roles}) {
+    add(UserLoadedFromAdmin(
+      id: id,
+      nickname: nickname,
+      email: email,
+      roles: roles,
     ));
   }
 }

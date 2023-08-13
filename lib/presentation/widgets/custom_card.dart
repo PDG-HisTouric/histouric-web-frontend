@@ -3,15 +3,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 import '../../infrastructure/inputs/inputs.dart';
+import 'card_for_edit.dart';
+import 'card_for_view.dart';
 import 'custom_elevated_button_squared.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard({super.key});
 
+  String _getLabelForMainButton(ProfilePurpose profilePurpose) {
+    if (profilePurpose == ProfilePurpose.editMyProfile) {
+      return 'Guardar';
+    }
+    if (profilePurpose == ProfilePurpose.viewMyProfile) {
+      return 'Editar';
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileBloc = context.watch<ProfileBloc>();
     final colors = Theme.of(context).colorScheme;
+    final ProfilePurpose profilePurpose = profileBloc.state.profilePurpose;
+
+    if (profileBloc.state.initializingControllers) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
     return Card(
       elevation: 4.0,
@@ -23,12 +42,14 @@ class CustomCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (profileBloc.state.isEditing)
+            if (profilePurpose == ProfilePurpose.editMyProfile)
               CardForEdit(
+                buildRoleSelection: _buildRolesSection,
                 profileBloc: profileBloc,
-              )
-            else
+              ),
+            if (profilePurpose == ProfilePurpose.viewMyProfile)
               CardForView(
+                buildRoleSelection: _buildRolesSection,
                 profileBloc: profileBloc,
               ),
             Wrap(
@@ -39,16 +60,20 @@ class CustomCard extends StatelessWidget {
                 CustomElevatedButtonSquared(
                   backgroundColor: colors.primary,
                   onPressed: () {
-                    context.read<ProfileBloc>().state.isEditing
-                        ? context.read<ProfileBloc>().saveChanges()
-                        : context.read<ProfileBloc>().startEditing();
+                    if (profilePurpose == ProfilePurpose.editMyProfile) {
+                      context.read<ProfileBloc>().saveChanges();
+                    }
+                    if (profilePurpose == ProfilePurpose.viewMyProfile) {
+                      context.read<ProfileBloc>().startEditing();
+                    }
                   },
-                  label: profileBloc.state.isEditing ? 'Guardar' : 'Editar',
                   textColor: colors.onPrimary,
                   fontWeightBold: true,
+                  label: _getLabelForMainButton(profilePurpose),
                 ),
-                if (profileBloc.state.isEditing) const SizedBox(width: 16.0),
-                if (profileBloc.state.isEditing)
+                if (profilePurpose == ProfilePurpose.editMyProfile)
+                  const SizedBox(width: 16.0),
+                if (profilePurpose == ProfilePurpose.editMyProfile)
                   CustomElevatedButtonSquared(
                     backgroundColor: colors.secondary,
                     onPressed: context.read<ProfileBloc>().cancelEditing,
@@ -60,134 +85,6 @@ class CustomCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CardForEdit extends StatelessWidget {
-  final ProfileBloc profileBloc;
-
-  const CardForEdit({super.key, required this.profileBloc});
-
-  @override
-  Widget build(BuildContext context) {
-    final isAdminUser =
-        context.watch<AuthBloc>().state.roles!.contains('ADMIN');
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Text("Los campos que deje en blanco no serán actualizados",
-            textAlign: TextAlign.center),
-        const SizedBox(height: 16.0),
-        TextField(
-          controller: profileBloc.state.emailController,
-          decoration: InputDecoration(
-            errorText: profileBloc.state.email.displayError == EmailError.empty
-                ? null
-                : profileBloc.state.email.errorMessage,
-            labelText: 'Correo electrónico',
-          ),
-          onChanged: context.read<ProfileBloc>().changeEmail,
-        ),
-        const SizedBox(height: 16.0),
-        TextField(
-          controller: profileBloc.state.passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: 'Contraseña',
-            errorText:
-                profileBloc.state.password.displayError == PasswordError.empty
-                    ? null
-                    : profileBloc.state.password.errorMessage,
-          ),
-          onChanged: context.read<ProfileBloc>().changePassword,
-        ),
-        const SizedBox(height: 16.0),
-        TextField(
-          controller: profileBloc.state.usernameController,
-          decoration: InputDecoration(
-            labelText: 'Nombre de usuario',
-            errorText:
-                profileBloc.state.nickname.displayError == NicknameError.empty
-                    ? null
-                    : profileBloc.state.nickname.errorMessage,
-          ),
-          onChanged: context.read<ProfileBloc>().changeNickname,
-        ),
-        const SizedBox(height: 16.0),
-        if (isAdminUser) _buildRolesSection(context),
-        if (isAdminUser) const SizedBox(height: 16.0),
-      ],
-    );
-  }
-}
-
-class CardForView extends StatelessWidget {
-  final ProfileBloc profileBloc;
-
-  const CardForView({super.key, required this.profileBloc});
-
-  @override
-  Widget build(BuildContext context) {
-    final isSaving = context.watch<ProfileBloc>().state.isSaving;
-
-    if (isSaving) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _SubtitleAndText(
-          subtitle: 'Correo electrónico',
-          text: profileBloc.state.email.value,
-        ),
-        const SizedBox(height: 16.0),
-        _SubtitleAndText(
-          subtitle: 'Nombre de usuario',
-          text: profileBloc.state.nickname.value,
-        ),
-        const SizedBox(height: 16.0),
-        _buildRolesSection(context),
-        const SizedBox(height: 16.0),
-      ],
-    );
-  }
-}
-
-class _SubtitleAndText extends StatelessWidget {
-  const _SubtitleAndText({
-    required this.subtitle,
-    required this.text,
-  });
-
-  final String subtitle;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        children: [
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(text, textAlign: TextAlign.center),
-        ],
       ),
     );
   }
@@ -239,8 +136,9 @@ String mapRole(String role) {
 
 Widget _buildRoleCard(String role, BuildContext context) {
   final profileBloc = context.watch<ProfileBloc>();
+  final profilePurpose = profileBloc.state.profilePurpose;
   final Set<String> selectedRoles;
-  if (profileBloc.state.isEditing) {
+  if (profilePurpose == ProfilePurpose.editMyProfile) {
     selectedRoles = profileBloc.state.selectedRoles;
   } else {
     selectedRoles = context.watch<AuthBloc>().state.roles!.toSet();
@@ -248,7 +146,7 @@ Widget _buildRoleCard(String role, BuildContext context) {
   final colors = Theme.of(context).colorScheme;
 
   final bool isSelected;
-  if (profileBloc.state.isEditing) {
+  if (profilePurpose == ProfilePurpose.editMyProfile) {
     isSelected = selectedRoles.contains(role);
   } else {
     isSelected = selectedRoles.contains(mapRole(role));
@@ -260,7 +158,7 @@ Widget _buildRoleCard(String role, BuildContext context) {
 
   return GestureDetector(
     onTap: () {
-      if (!profileBloc.state.isEditing) return;
+      if (profilePurpose != ProfilePurpose.editMyProfile) return;
       if (isSelected) {
         profileBloc.removeRole(role);
       } else {

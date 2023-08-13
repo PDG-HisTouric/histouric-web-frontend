@@ -20,7 +20,7 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProfileBloc(
-        forEditing: forEditing,
+        profilePurpose: ProfilePurpose.viewMyProfile,
         context: context,
         authBloc: context.read<AuthBloc>(),
         userRepository:
@@ -38,15 +38,6 @@ class _ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authState = context.watch<AuthBloc>().state;
-    final profileBloc = context.watch<ProfileBloc>();
-
-    if (profileBloc.state.initializingControllers) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
     return const Stack(
       children: [
         Center(
