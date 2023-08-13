@@ -66,22 +66,21 @@ class CustomCard extends StatelessWidget {
 }
 
 class CardForEdit extends StatelessWidget {
-  ProfileBloc profileBloc;
+  final ProfileBloc profileBloc;
 
-  CardForEdit({super.key, required this.profileBloc});
+  const CardForEdit({super.key, required this.profileBloc});
 
   @override
   Widget build(BuildContext context) {
     final isAdminUser =
         context.watch<AuthBloc>().state.roles!.contains('ADMIN');
-    print(profileBloc.state.selectedRoles);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text("Los campos que deje en blanco no serán actualizados",
+        const Text("Los campos que deje en blanco no serán actualizados",
             textAlign: TextAlign.center),
         const SizedBox(height: 16.0),
         TextField(
@@ -128,12 +127,20 @@ class CardForEdit extends StatelessWidget {
 }
 
 class CardForView extends StatelessWidget {
-  ProfileBloc profileBloc;
+  final ProfileBloc profileBloc;
 
-  CardForView({super.key, required this.profileBloc});
+  const CardForView({super.key, required this.profileBloc});
 
   @override
   Widget build(BuildContext context) {
+    final isSaving = context.watch<ProfileBloc>().state.isSaving;
+
+    if (isSaving) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,

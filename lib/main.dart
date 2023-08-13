@@ -69,8 +69,6 @@ class _MaterialAppWithFluro extends StatelessWidget {
 
     BlocProvider.of<AuthBloc>(context, listen: false).checkToken();
 
-    print("lo llamé desde el material app");
-
     return MaterialApp(
       title: 'Histouric Web',
       debugShowCheckedModeBanner: false,
