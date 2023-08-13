@@ -15,6 +15,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authStatus = context.watch<AuthBloc>().state.authStatus;
 
+    print(authStatus);
     if (authStatus == AuthStatus.checking) {
       return const Center(
         child: CircularProgressIndicator(),

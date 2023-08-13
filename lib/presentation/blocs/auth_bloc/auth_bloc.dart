@@ -49,10 +49,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void checkToken() {
+    print("entre a check token");
     add(CheckToken());
   }
 
   Future<bool> login(String email, String password) async {
+    print("entre a login");
     if (!await saveTokenAndNickname(email, password)) return false;
     add(CheckToken());
     return true;

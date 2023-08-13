@@ -53,6 +53,7 @@ class SpringBootUserDatasource extends UserDatasource {
       final response = await dio.put('/$id', data: data);
       HistouricUserResponse histouricUserResponse =
           HistouricUserResponse.fromJson(response.data);
+      configureToken(histouricUserResponse.token!);
       return HistouricUserMapper.fromHistouricUserResponse(
           histouricUserResponse);
     } on DioException catch (e) {
