@@ -26,6 +26,7 @@ class CustomTextFormField extends StatelessWidget {
       borderSide: BorderSide(color: colors.onPrimary),
       borderRadius: BorderRadius.circular(40),
     );
+
     return TextFormField(
       onChanged: onChanged,
       validator: validator,

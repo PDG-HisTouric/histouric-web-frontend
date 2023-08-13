@@ -20,9 +20,8 @@ class SpringBootUserDatasource extends UserDatasource {
   }
 
   @override
-  Future<void> deleteUserById(String id) {
-    // TODO: implement deleteUserById
-    throw UnimplementedError();
+  Future<void> deleteUserById(String id) async {
+    await dio.delete('/$id');
   }
 
   @override
@@ -34,9 +33,16 @@ class SpringBootUserDatasource extends UserDatasource {
   }
 
   @override
-  Future<List<HistouricUser>> getUsers() {
-    // TODO: implement getUsers
-    throw UnimplementedError();
+  Future<List<HistouricUser>> getUsers() async {
+    return await dio.get('/').then((response) {
+      List<HistouricUserResponse> histouricUserResponses =
+          (response.data as List)
+              .map((e) => HistouricUserResponse.fromJson(e))
+              .toList();
+      return histouricUserResponses
+          .map((e) => HistouricUserMapper.fromHistouricUserResponse(e))
+          .toList();
+    }).catchError((e) => throw e);
   }
 
   @override

@@ -5,10 +5,6 @@ import 'package:histouric_web/config/navigation/router.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 import '../../config/helpers/dialogs.dart';
-import '../../infrastructure/datasource/spring_boot_login_datasource.dart';
-import '../../infrastructure/repositories/auth_repository_impl.dart';
-import '../../infrastructure/services/key_value_storage_service_impl.dart';
-import '../blocs/login_bloc/login_bloc.dart';
 import '../widgets/bottom_message_with_button.dart';
 import '../widgets/custom_elevated_button.dart';
 import '../widgets/custom_text_form_field.dart';
@@ -20,7 +16,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginBloc(context: context),
+      create: (context) => LoginFormBloc(context: context),
       child: _Login(),
     );
   }
@@ -30,8 +26,8 @@ class _Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final email = context.watch<LoginBloc>().state.email.value;
-    final password = context.watch<LoginBloc>().state.password.value;
+    final email = context.watch<LoginFormBloc>().state.email.value;
+    final password = context.watch<LoginFormBloc>().state.password.value;
 
     return Column(
       children: [
@@ -48,30 +44,34 @@ class _Login extends StatelessWidget {
           hint: "Correo Electrónico",
           label: "Correo Electrónico",
           onChanged: (value) {
-            context.read<LoginBloc>().emailChanged(value);
+            context.read<LoginFormBloc>().emailChanged(value);
           },
-          errorMessage: context.watch<LoginBloc>().state.email.errorMessage,
+          errorMessage: context.watch<LoginFormBloc>().state.email.errorMessage,
         ),
         const SizedBox(height: 20),
         CustomTextFormField(
           onChanged: (value) {
-            context.read<LoginBloc>().passwordChanged(value);
+            context.read<LoginFormBloc>().passwordChanged(value);
           },
           hint: "Contraseña",
           label: "Contraseña",
           obscureText: true,
-          errorMessage: context.watch<LoginBloc>().state.password.errorMessage,
+          errorMessage:
+              context.watch<LoginFormBloc>().state.password.errorMessage,
         ),
         const SizedBox(height: 20),
         CustomElevatedButton(
           label: "Iniciar Sesión",
           onPressed: () async {
-            if (context.read<LoginBloc>().isStateValid()) {
+            if (context.read<LoginFormBloc>().isStateValid()) {
               await context.read<AuthBloc>().login(email, password)
                   ? NavigationService.replaceTo(
-                      FluroRouterWrapper.dashboardRoute)
+                      FluroRouterWrapper.dashboardRoute,
+                    )
                   : Dialogs.showErrorDialog(
-                      context: context, content: "Credenciales inválidas");
+                      context: context,
+                      content: "Credenciales inválidas",
+                    );
             }
           },
         ),
