@@ -2,6 +2,12 @@ part of 'profile_bloc.dart';
 
 abstract class ProfileEvent {}
 
+class RoleSelected extends ProfileEvent {
+  final String role;
+
+  RoleSelected(this.role);
+}
+
 class RoleAdded extends ProfileEvent {
   final String role;
 
@@ -15,17 +21,9 @@ class RoleRemoved extends ProfileEvent {
 }
 
 class UserSaved extends ProfileEvent {
-  final String? email;
-  final String? password;
-  final String? nickname;
-  final List<String>? selectedRoles;
+  final HistouricUser histouricUser;
 
-  UserSaved({
-    this.email,
-    this.password,
-    this.nickname,
-    this.selectedRoles,
-  });
+  UserSaved({required this.histouricUser});
 }
 
 class EditButtonPressed extends ProfileEvent {}

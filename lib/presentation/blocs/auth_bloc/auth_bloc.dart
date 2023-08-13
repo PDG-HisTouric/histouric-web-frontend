@@ -22,6 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }) : super(AuthState()) {
     on<CheckToken>(_onCheckToken);
     on<UserLoggedOut>(_onUserLoggedOut);
+    on<UserChanged>(_onUserChanged);
   }
 
   void _onCheckToken(CheckToken event, Emitter<AuthState> emit) async {
@@ -35,6 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       HistouricUser histouricUser =
           await userRepository.getUserByNickname(nickname);
       emit(state.copyWith(
+        id: histouricUser.id,
         nickname: nickname,
         token: tokenString,
         authStatus: AuthStatus.authenticated,
@@ -82,5 +84,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void logout() {
     add(UserLoggedOut());
+  }
+
+  void _onUserChanged(UserChanged event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(
+      id: event.id,
+      nickname: event.nickname,
+      email: event.email,
+      roles: event.roles,
+    ));
+  }
+
+  void changeUser({
+    required String id,
+    required String nickname,
+    required String email,
+    required List<String> roles,
+  }) {
+    add(UserChanged(
+      id: id,
+      nickname: nickname,
+      email: email,
+      roles: roles,
+    ));
   }
 }

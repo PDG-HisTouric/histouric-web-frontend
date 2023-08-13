@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/infrastructure/datasource/spring_boot_user_datasource.dart';
 import 'package:histouric_web/infrastructure/inputs/email.dart';
+import 'package:histouric_web/infrastructure/repositories/user_repository_impl.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/blocs/profile_bloc/profile_bloc.dart';
 import 'package:histouric_web/presentation/widgets/container_with_gradient.dart';
@@ -9,12 +11,20 @@ import 'package:histouric_web/presentation/widgets/custom_card.dart';
 import '../widgets/star_painter.dart';
 
 class ProfileView extends StatelessWidget {
-  const ProfileView({super.key});
+  final bool forEditing;
+
+  const ProfileView({super.key, required this.forEditing});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>()),
+      create: (context) => ProfileBloc(
+        forEditing: forEditing,
+        context: context,
+        authBloc: context.read<AuthBloc>(),
+        userRepository:
+            UserRepositoryImpl(userDatasource: SpringBootUserDatasource()),
+      ),
       child: const _ProfileView(),
     );
   }
@@ -28,8 +38,6 @@ class _ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
-
-    print(authState.roles);
 
     return const Stack(
       children: [

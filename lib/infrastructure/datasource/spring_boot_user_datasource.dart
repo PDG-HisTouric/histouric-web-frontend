@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:histouric_web/domain/datasources/datasources.dart';
-import 'package:histouric_web/domain/entities/histouric_user.dart';
-import 'package:histouric_web/infrastructure/mapper/histouric_user_mapper.dart';
+import 'package:histouric_web/domain/entities/entities.dart';
+import 'package:histouric_web/infrastructure/mapper/mappers.dart';
 import 'package:histouric_web/infrastructure/models/histouric_user_response.dart';
 
 class SpringBootUserDatasource extends UserDatasource {
@@ -46,8 +46,12 @@ class SpringBootUserDatasource extends UserDatasource {
   }
 
   @override
-  Future<HistouricUser> updateUserById(String id, HistouricUser histouricUser) {
-    // TODO: implement updateUserById
-    throw UnimplementedError();
+  Future<HistouricUser> updateUserById(
+      String id, HistouricUserWithPassword histouricUser) async {
+    final data = HistouricUserWithPasswordMapper.toMap(histouricUser);
+    final response = await dio.put('/$id', data: data);
+    HistouricUserResponse histouricUserResponse =
+        HistouricUserResponse.fromJson(response.data);
+    return HistouricUserMapper.fromHistouricUserResponse(histouricUserResponse);
   }
 }

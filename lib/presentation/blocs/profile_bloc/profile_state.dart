@@ -6,6 +6,9 @@ class ProfileState {
   final Nickname nickname;
   final Set<String> selectedRoles;
   final bool isEditing;
+  final bool isCreating;
+  final bool isSaving;
+  final bool forEditing;
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   late final TextEditingController usernameController;
@@ -16,6 +19,9 @@ class ProfileState {
     this.password = const Password.pure(),
     this.selectedRoles = const {},
     this.isEditing = false,
+    this.isSaving = false,
+    this.isCreating = false,
+    required this.forEditing,
   }) {
     emailController = TextEditingController(text: email.value);
     emailController.selection = TextSelection.collapsed(
@@ -37,6 +43,8 @@ class ProfileState {
     Nickname? nickname,
     Set<String>? selectedRoles,
     bool? isEditing,
+    bool? isSaving,
+    bool? isCreating,
   }) {
     return ProfileState(
       email: email ?? this.email,
@@ -44,6 +52,9 @@ class ProfileState {
       nickname: nickname ?? this.nickname,
       selectedRoles: selectedRoles ?? this.selectedRoles,
       isEditing: isEditing ?? this.isEditing,
+      isSaving: isSaving ?? this.isSaving,
+      isCreating: isCreating ?? this.isCreating,
+      forEditing: forEditing,
     );
   }
 }

@@ -17,3 +17,17 @@ class ChangeToken extends AuthEvent {
 class CheckToken extends AuthEvent {}
 
 class UserLoggedOut extends AuthEvent {}
+
+class UserChanged extends AuthEvent {
+  final String id;
+  final String nickname;
+  final String email;
+  final List<String> roles;
+
+  UserChanged({
+    required this.id,
+    required this.nickname,
+    required this.email,
+    required this.roles,
+  });
+}
