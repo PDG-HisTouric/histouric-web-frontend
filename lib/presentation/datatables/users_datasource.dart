@@ -15,7 +15,7 @@ class UsersDTS extends DataTableSource {
       DataCell(Text(user.id)),
       DataCell(Text(user.nickname)),
       DataCell(Text(user.email)),
-      DataCell(Text(user.roles.toString())),
+      DataCell(Text(user.roles.map((role) => role.name).join(', '))),
       DataCell(Row(
         children: [
           IconButton(icon: Icon(Icons.edit_outlined), onPressed: () {}),
