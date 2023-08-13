@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/config/navigation/navigation_service.dart';
-import 'package:histouric_web/config/navigation/router.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/presentations.dart';
 import 'package:histouric_web/presentation/widgets/navbar.dart';
@@ -9,15 +7,13 @@ import 'package:histouric_web/presentation/widgets/navbar.dart';
 import '../widgets/sidebar.dart';
 
 class DashboardScreen extends StatelessWidget {
-  Widget child;
+  final Widget child;
 
-  DashboardScreen({super.key, required this.child});
+  const DashboardScreen({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
     final authStatus = context.watch<AuthBloc>().state.authStatus;
-
-    print(authStatus);
 
     if (authStatus == AuthStatus.checking) {
       return const Center(
@@ -39,9 +35,9 @@ class DashboardScreen extends StatelessWidget {
 }
 
 class _Dashboard extends StatefulWidget {
-  Widget child;
+  final Widget child;
 
-  _Dashboard({
+  const _Dashboard({
     super.key,
     required this.child,
   });
@@ -82,7 +78,7 @@ class _DashboardState extends State<_Dashboard>
               Expanded(
                 child: Column(
                   children: [
-                    Navbar(),
+                    const Navbar(),
                     Expanded(
                       child: widget.child,
                     ),
@@ -109,7 +105,7 @@ class _DashboardState extends State<_Dashboard>
                   ),
                 Transform.translate(
                   offset: Offset(sideMenuBloc.state.movement().value, 0),
-                  child: Sidebar(),
+                  child: const Sidebar(),
                 )
               ],
             ),

@@ -17,7 +17,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<HistouricUser> register(
-      String nickname, String email, String password) {
+    String nickname,
+    String email,
+    String password,
+  ) {
     return authDatasource.register(nickname, email, password);
   }
 }

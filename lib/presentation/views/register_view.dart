@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/infrastructure/datasource/datasources.dart';
+import 'package:histouric_web/infrastructure/repositories/auth_repository_impl.dart';
+import 'package:histouric_web/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
 
 import '../../../config/navigation/navigation_service.dart';
 import '../../../config/navigation/router.dart';
+import '../../config/helpers/dialogs.dart';
 import '../widgets/bottom_message_with_button.dart';
 import '../widgets/custom_elevated_button_rounded.dart';
 import '../widgets/custom_text_form_field.dart';
@@ -14,6 +19,29 @@ class RegisterView extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
+    return BlocProvider(
+      create: (context) => SignUpBloc(
+        context: context,
+        authRepository: AuthRepositoryImpl(
+          authDatasource: SpringBootLoginDatasource(),
+        ),
+      ),
+      child: _Register(),
+    );
+  }
+}
+
+class _Register extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final emailErrorMessage =
+        context.watch<SignUpBloc>().state.email.errorMessage;
+    final passwordErrorMessage =
+        context.watch<SignUpBloc>().state.password.errorMessage;
+    final nicknameErrorMessage =
+        context.watch<SignUpBloc>().state.nickname.errorMessage;
+
     return Column(
       children: [
         Text(
@@ -25,23 +53,51 @@ class RegisterView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 30),
-        const CustomTextFormField(
+        CustomTextFormField(
           hint: "Correo Electrónico",
           label: "Correo Electrónico",
+          onChanged: context.read<SignUpBloc>().emailChanged,
+          errorMessage: emailErrorMessage,
         ),
         const SizedBox(height: 20),
-        const CustomTextFormField(
-          hint: "Apodo",
-          label: "Apodo",
-        ),
-        const SizedBox(height: 20),
-        const CustomTextFormField(
+        CustomTextFormField(
           hint: "Contraseña",
           label: "Contraseña",
           obscureText: true,
+          onChanged: context.read<SignUpBloc>().passwordChanged,
+          errorMessage: passwordErrorMessage,
         ),
         const SizedBox(height: 20),
-        CustomElevatedButtonRounded(label: "Crear cuenta", onPressed: () {}),
+        CustomTextFormField(
+          hint: "Confirmar contraseña",
+          label: "Confirmar contraseña",
+          obscureText: true,
+          onChanged: context.read<SignUpBloc>().confirmPasswordChanged,
+          errorMessage: passwordErrorMessage,
+        ),
+        const SizedBox(height: 20),
+        CustomTextFormField(
+          hint: "Nombre de usuario",
+          label: "Nombre de usuario",
+          onChanged: context.read<SignUpBloc>().nicknameChanged,
+          errorMessage: nicknameErrorMessage,
+        ),
+        const SizedBox(height: 20),
+        CustomElevatedButtonRounded(
+          label: "Crear cuenta",
+          onPressed: () async {
+            if (context.read<SignUpBloc>().isStateValid()) {
+              await context.read<SignUpBloc>().signUp()
+                  ? NavigationService.navigateTo(
+                      FluroRouterWrapper.loginRoute,
+                    )
+                  : Dialogs.showErrorDialog(
+                      context: context,
+                      content: "No se pudo crear la cuenta",
+                    );
+            }
+          },
+        ),
         const SizedBox(height: 20),
         const DividerWithMessage(message: "o"),
         const SizedBox(height: 20),

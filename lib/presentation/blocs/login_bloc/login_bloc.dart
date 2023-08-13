@@ -1,10 +1,8 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
 import '../../../config/helpers/dialogs.dart';
-
 import '../../../infrastructure/inputs/email.dart';
 import '../../../infrastructure/inputs/nickname.dart';
 import '../../../infrastructure/inputs/password.dart';
@@ -12,14 +10,15 @@ import '../../../infrastructure/inputs/password.dart';
 part 'login_event.dart';
 part 'login_state.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginFormState> {
+class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
   final BuildContext context;
 
-  LoginBloc({
+  LoginFormBloc({
     required this.context,
   }) : super(LoginFormState()) {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
+    on<LoginSubmitted>(_touchedEveryField);
   }
 
   void _onEmailChanged(LoginEmailChanged event, Emitter<LoginFormState> emit) {
@@ -39,11 +38,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginFormState> {
     ));
   }
 
+  _touchedEveryField(LoginSubmitted event, Emitter<LoginFormState> emit) {
+    final newEmail = Email.dirty(state.email.value);
+    final newPassword = Password.dirty(state.password.value);
+    emit(state.copyWith(
+      email: newEmail,
+      password: newPassword,
+      isValid: Formz.validate([newEmail, newPassword]),
+    ));
+  }
+
   bool isStateValid() {
     if (!state.isValid) {
+      add(LoginSubmitted());
       Dialogs.showErrorDialog(
-          context: context,
-          content: "Por favor, diligencie de manera correcta todos los campos");
+        context: context,
+        content: "Por favor, diligencie de manera correcta todos los campos",
+      );
       return false;
     }
     return true;

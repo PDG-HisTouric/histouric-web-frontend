@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/presentations.dart';
 
-import '../../config/helpers/dialogs.dart';
-import '../../config/navigation/navigation_service.dart';
+import '../blocs/auth_bloc/auth_bloc.dart';
 import '../widgets/container_with_gradient.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -22,10 +20,9 @@ class AuthScreen extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
     final authStatus = context.watch<AuthBloc>().state.authStatus;
+
     if (authStatus == AuthStatus.checking) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (authStatus == AuthStatus.authenticated) {
@@ -40,7 +37,8 @@ class AuthScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.sizeOf(context).width * 0.1),
+                  horizontal: MediaQuery.sizeOf(context).width * 0.1,
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -58,14 +56,12 @@ class AuthScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     Container(
                       width: size.width,
                       height: size.height * 0.6,
                       alignment: Alignment.center,
                       child: child,
-                    )
-                    // child,
+                    ),
                   ],
                 ),
               ),

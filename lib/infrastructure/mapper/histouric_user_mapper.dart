@@ -14,7 +14,8 @@ class HistouricUserMapper {
   }
 
   static HistouricUser fromHistouricUserResponse(
-      HistouricUserResponse histouricUserResponse) {
+    HistouricUserResponse histouricUserResponse,
+  ) {
     return HistouricUser(
       id: histouricUserResponse.id,
       nickname: histouricUserResponse.nickname,
