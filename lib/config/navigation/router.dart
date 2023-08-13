@@ -14,6 +14,7 @@ class FluroRouterWrapper {
 
   //Dashboard Routes
   static String dashboardRoute = '/dashboard';
+  static String usersTable = "/dashboard/users";
 
   static void configureRoutes() {
     //Auth routes
@@ -39,6 +40,13 @@ class FluroRouterWrapper {
     router.define(
       dashboardRoute,
       handler: DashboardHandlers.dashboard,
+      transitionType: TransitionType.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+
+    router.define(
+      usersTable,
+      handler: DashboardHandlers.usersTable,
       transitionType: TransitionType.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     );

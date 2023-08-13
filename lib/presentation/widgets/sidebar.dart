@@ -13,6 +13,9 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isAdmin =
+        context.read<AuthBloc>().state.roles!.contains('ADMIN');
+
     return Container(
       width: 220,
       height: double.infinity,
@@ -25,14 +28,20 @@ class Sidebar extends StatelessWidget {
           MenuItem(
             text: 'Perfil',
             icon: Icons.person_outline,
-            onPressed: () {},
+            onPressed: () {
+              context.read<SidemenuBloc>().closeMenu();
+              NavigationService.navigateTo(FluroRouterWrapper.dashboardRoute);
+            },
           ),
+          const SizedBox(height: 20),
+          if (isAdmin) const AdminOptions(),
           const SizedBox(height: 50),
           const TextSeparator(text: 'Salir'),
           MenuItem(
               text: 'Cerrar sesión',
               icon: Icons.exit_to_app_outlined,
               onPressed: () {
+                context.read<SidemenuBloc>().closeMenu();
                 context.read<AuthBloc>().logout();
                 NavigationService.replaceTo(FluroRouterWrapper.loginRoute);
               }),
@@ -54,5 +63,27 @@ class Sidebar extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         boxShadow: [BoxShadow(color: colorScheme.primary, blurRadius: 10)]);
+  }
+}
+
+class AdminOptions extends StatelessWidget {
+  const AdminOptions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const TextSeparator(text: 'Admin'),
+        MenuItem(
+          text: 'Usuarios',
+          icon: Icons.supervised_user_circle_rounded,
+          onPressed: () {
+            context.read<SidemenuBloc>().closeMenu();
+            NavigationService.navigateTo(FluroRouterWrapper.usersTable);
+          },
+        ),
+      ],
+    );
   }
 }

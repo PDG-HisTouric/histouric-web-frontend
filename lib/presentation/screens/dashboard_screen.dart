@@ -73,6 +73,8 @@ class _DashboardState extends State<_Dashboard>
     return Scaffold(
       body: Stack(
         children: [
+          const ContainerWithGradient(),
+          const BackgroundFigures(),
           Column(
             children: [
               Expanded(
