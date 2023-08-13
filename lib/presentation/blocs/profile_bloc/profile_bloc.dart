@@ -17,15 +17,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final AuthBloc authBloc;
   final UserRepository userRepository;
   final BuildContext context;
-  final bool forEditing;
+  final ProfilePurpose profilePurpose;
 
   ProfileBloc({
     required this.authBloc,
     required this.userRepository,
     required this.context,
-    required this.forEditing,
+    required this.profilePurpose,
   }) : super(ProfileState(
-          forEditing: forEditing,
+          profilePurpose: profilePurpose,
           email: Email.dirty(
             authBloc.state.email!,
           ),
@@ -68,7 +68,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void _onUserSaved(UserSaved event, Emitter<ProfileState> emit) {
     emit(state.copyWith(
-      isEditing: false,
+      profilePurpose: ProfilePurpose.viewMyProfile,
       isSaving: true,
     ));
 
@@ -142,7 +142,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     EditButtonPressed event,
     Emitter<ProfileState> emit,
   ) {
-    emit(state.copyWith(isEditing: true));
+    emit(state.copyWith(profilePurpose: ProfilePurpose.editMyProfile));
     add(ControllersInitialized(
       emailText: authBloc.state.email!,
       nicknameText: authBloc.state.nickname!,
@@ -215,7 +215,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       nickname: Nickname.dirty(authBloc.state.nickname!),
       email: Email.dirty(authBloc.state.email!),
       password: const Password.dirty(""),
-      isEditing: false,
+      profilePurpose: ProfilePurpose.viewMyProfile,
     ));
   }
 

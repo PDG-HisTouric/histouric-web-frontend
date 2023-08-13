@@ -1,15 +1,20 @@
 part of 'profile_bloc.dart';
 
+enum ProfilePurpose {
+  editMyProfile,
+  viewMyProfile,
+  editUserFromAdmin,
+  createUserFromAdmin
+}
+
 class ProfileState {
   final Email email;
   final Password password;
   final Nickname nickname;
   final Set<String> allRoles;
   final Set<String> selectedRoles;
-  final bool isEditing;
-  final bool isCreating;
   final bool isSaving;
-  final bool forEditing;
+  final ProfilePurpose profilePurpose;
   final bool initializingControllers;
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
@@ -20,11 +25,9 @@ class ProfileState {
     this.email = const Email.pure(),
     this.password = const Password.pure(),
     this.selectedRoles = const {},
-    this.isEditing = false,
     this.isSaving = false,
-    this.isCreating = false,
     this.allRoles = const {},
-    required this.forEditing,
+    required this.profilePurpose,
     this.initializingControllers = true,
   });
 
@@ -34,9 +37,8 @@ class ProfileState {
     Nickname? nickname,
     Set<String>? selectedRoles,
     Set<String>? allRoles,
-    bool? isEditing,
     bool? isSaving,
-    bool? isCreating,
+    ProfilePurpose? profilePurpose,
   }) {
     return ProfileState(
       email: email ?? this.email,
@@ -44,10 +46,8 @@ class ProfileState {
       nickname: nickname ?? this.nickname,
       selectedRoles: selectedRoles ?? this.selectedRoles,
       allRoles: allRoles ?? this.allRoles,
-      isEditing: isEditing ?? this.isEditing,
       isSaving: isSaving ?? this.isSaving,
-      isCreating: isCreating ?? this.isCreating,
-      forEditing: forEditing,
+      profilePurpose: profilePurpose ?? this.profilePurpose,
       initializingControllers: initializingControllers,
     )
       ..emailController = emailController
@@ -66,10 +66,8 @@ class ProfileState {
       nickname: nickname,
       selectedRoles: selectedRoles,
       allRoles: allRoles,
-      isEditing: isEditing,
       isSaving: isSaving,
-      isCreating: isCreating,
-      forEditing: forEditing,
+      profilePurpose: profilePurpose,
       initializingControllers: false,
     )
       ..emailController = TextEditingController(text: emailText ?? email.value)
@@ -78,8 +76,4 @@ class ProfileState {
       ..usernameController =
           TextEditingController(text: nicknameText ?? nickname.value);
   }
-
-  // void configureControllers() {
-  //   emailController = TextEditingController(text: email.value);
-  // }
 }
