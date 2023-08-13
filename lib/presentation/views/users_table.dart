@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/infrastructure/datasource/spring_boot_user_datasource.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/presentations.dart';
+import 'package:histouric_web/presentation/widgets/search_input.dart';
 
 import '../../infrastructure/repositories/repositories.dart';
 import '../datatables/users_datasource.dart';
@@ -43,6 +44,7 @@ class UsersTableState extends State<_UsersTable> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final users = context.watch<UsersTableBloc>().state.users;
+    final size = MediaQuery.of(context).size;
 
     return ListView(
       physics: const ClampingScrollPhysics(),
@@ -78,11 +80,21 @@ class UsersTableState extends State<_UsersTable> {
             },
             rowsPerPage: _rowsPerPage,
             actions: [
-              CustomElevatedButtonRounded(
-                label: "Agregar Usuario",
-                onPressed: () {
-                  //TODO LLEVAR A PANTALLA DE CREAR USUARIO
-                },
+              Wrap(
+                children: [
+                  if (size.width > 600)
+                    SearchInput(
+                      onChanged:
+                          context.read<UsersTableBloc>().searchByNickname,
+                    ),
+                  if (size.width > 600) const SizedBox(width: 10),
+                  CustomElevatedButtonRounded(
+                    label: "Agregar Usuario",
+                    onPressed: () {
+                      //TODO LLEVAR A PANTALLA DE CREAR USUARIO
+                    },
+                  ),
+                ],
               ),
             ],
           ),

@@ -19,6 +19,7 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   }) : super(UsersTableState(users: [])) {
     userRepository.configureToken(token);
     on<DataFetched>(_onDataFetched);
+    on<NicknameSearched>(_onNicknameSearched);
   }
 
   void _onDataFetched(DataFetched event, Emitter<UsersTableState> emit) async {
@@ -28,5 +29,17 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
 
   void fetchUsers() {
     add(DataFetched());
+  }
+
+  void _onNicknameSearched(
+      NicknameSearched event, Emitter<UsersTableState> emit) async {
+    List<HistouricUser> histouricUsers =
+        await userRepository.getUsersByNickname(event.nickname);
+    emit(state.copyWith(users: histouricUsers));
+  }
+
+  void searchByNickname(String nickname) {
+    if (nickname.isEmpty) return fetchUsers();
+    add(NicknameSearched(nickname: nickname));
   }
 }

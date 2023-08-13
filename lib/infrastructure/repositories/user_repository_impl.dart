@@ -32,4 +32,9 @@ class UserRepositoryImpl extends UserRepository {
   void configureToken(String token) {
     userDatasource.configureToken(token);
   }
+
+  @override
+  Future<List<HistouricUser>> getUsersByNickname(String nickname) {
+    return userDatasource.getUsersByNickname(nickname);
+  }
 }
