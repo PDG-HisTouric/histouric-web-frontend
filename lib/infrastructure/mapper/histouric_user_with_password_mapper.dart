@@ -8,11 +8,14 @@ class HistouricUserWithPasswordMapper {
       HistouricUserWithPassword histouricUserWithPassword) {
     return {
       'id': histouricUserWithPassword.id,
-      'nickname': histouricUserWithPassword.nickname,
-      'email': histouricUserWithPassword.email,
+      if (histouricUserWithPassword.nickname != null)
+        'nickname': histouricUserWithPassword.nickname,
+      if (histouricUserWithPassword.email != null)
+        'email': histouricUserWithPassword.email,
       if (histouricUserWithPassword.roles != null)
         'roles': histouricUserWithPassword.roles!,
-      'password': histouricUserWithPassword.password,
+      if (histouricUserWithPassword.password != null)
+        'password': histouricUserWithPassword.password,
     };
   }
 }

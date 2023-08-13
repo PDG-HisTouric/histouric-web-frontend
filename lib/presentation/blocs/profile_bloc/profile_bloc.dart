@@ -127,9 +127,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     final user = HistouricUserWithPassword(
       id: authBloc.state.id!,
-      email: state.email.value,
+      email: (state.email.value.isEmpty) ? null : state.email.value,
       password: (state.password.value.isEmpty) ? null : state.password.value,
-      nickname: state.nickname.value,
+      nickname: (state.nickname.value.isEmpty) ? null : state.nickname.value,
       roles: currentUserIsAdmin ? mapRolesFromState() : null,
     );
 
@@ -141,6 +141,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) {
     emit(state.copyWith(isEditing: true));
+    add(ControllersInitialized(
+      emailText: authBloc.state.email!,
+      nicknameText: authBloc.state.nickname!,
+      passwordText: "",
+    ));
   }
 
   void startEditing() {
@@ -222,10 +227,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void _onControllersInitialized(
       ControllersInitialized event, Emitter<ProfileState> emit) {
-    emit(state.configureControllers());
+    emit(state.configureControllers(
+      emailText: event.emailText,
+      passwordText: event.passwordText,
+      nicknameText: event.nicknameText,
+    ));
   }
 
-  void _configureControllers() {
-    add(ControllersInitialized());
+  void _configureControllers({
+    emailText,
+    passwordText,
+    nicknameText,
+  }) {
+    add(ControllersInitialized(
+      emailText: emailText,
+      passwordText: passwordText,
+      nicknameText: nicknameText,
+    ));
   }
 }

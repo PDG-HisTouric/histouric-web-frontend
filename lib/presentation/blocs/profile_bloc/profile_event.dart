@@ -54,6 +54,16 @@ class NicknameChanged extends ProfileEvent {
 
 class CancelButtonPressed extends ProfileEvent {}
 
-class ControllersInitialized extends ProfileEvent {}
+class ControllersInitialized extends ProfileEvent {
+  final String? emailText;
+  final String? passwordText;
+  final String? nicknameText;
+
+  ControllersInitialized({
+    this.emailText,
+    this.passwordText,
+    this.nicknameText,
+  });
+}
 
 class SaveProcessStopped extends ProfileEvent {}
