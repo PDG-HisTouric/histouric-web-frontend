@@ -92,20 +92,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       nickname: event.nickname,
       email: event.email,
       roles: event.roles,
+      token: event.token,
     ));
   }
 
-  void changeUser({
-    required String id,
-    required String nickname,
-    required String email,
-    required List<String> roles,
-  }) {
+  void changeUser(
+      {required String id,
+      required String nickname,
+      required String email,
+      required List<String> roles,
+      String? token}) {
     add(UserChanged(
       id: id,
       nickname: nickname,
       email: email,
       roles: roles,
+      token: token,
     ));
   }
 }

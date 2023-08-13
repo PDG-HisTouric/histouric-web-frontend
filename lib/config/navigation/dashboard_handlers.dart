@@ -14,4 +14,10 @@ class DashboardHandlers {
       ),
     );
   });
+
+  static Handler usersTable = Handler(handlerFunc: (context, parameters) {
+    return DashboardScreen(
+      child: UsersTable(),
+    );
+  });
 }
