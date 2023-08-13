@@ -8,7 +8,7 @@ import '../../../config/navigation/navigation_service.dart';
 import '../../../config/navigation/router.dart';
 import '../../config/helpers/dialogs.dart';
 import '../widgets/bottom_message_with_button.dart';
-import '../widgets/custom_elevated_button.dart';
+import '../widgets/custom_elevated_button_rounded.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/divider_with_message.dart';
 
@@ -83,7 +83,7 @@ class _Register extends StatelessWidget {
           errorMessage: nicknameErrorMessage,
         ),
         const SizedBox(height: 20),
-        CustomElevatedButton(
+        CustomElevatedButtonRounded(
           label: "Crear cuenta",
           onPressed: () async {
             if (context.read<SignUpBloc>().isStateValid()) {

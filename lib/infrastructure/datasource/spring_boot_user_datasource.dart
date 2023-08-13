@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:histouric_web/domain/datasources/datasources.dart';
-import 'package:histouric_web/domain/entities/histouric_user.dart';
-import 'package:histouric_web/infrastructure/mapper/histouric_user_mapper.dart';
+import 'package:histouric_web/domain/entities/entities.dart';
+import 'package:histouric_web/infrastructure/mapper/mappers.dart';
 import 'package:histouric_web/infrastructure/models/histouric_user_response.dart';
 
 class SpringBootUserDatasource extends UserDatasource {
@@ -46,8 +46,33 @@ class SpringBootUserDatasource extends UserDatasource {
   }
 
   @override
-  Future<HistouricUser> updateUserById(String id, HistouricUser histouricUser) {
-    // TODO: implement updateUserById
-    throw UnimplementedError();
+  Future<HistouricUser> updateUserById(
+      String id, HistouricUserWithPassword histouricUser) async {
+    try {
+      final data = HistouricUserWithPasswordMapper.toMap(histouricUser);
+      final response = await dio.put('/$id', data: data);
+      HistouricUserResponse histouricUserResponse =
+          HistouricUserResponse.fromJson(response.data);
+      configureToken(histouricUserResponse.token!);
+      return HistouricUserMapper.fromHistouricUserResponse(
+          histouricUserResponse);
+    } on DioException catch (e) {
+      String errorMessage = e.response!.data['message'];
+      if (errorMessage.contains(
+          "Key (user_nickname)=(${histouricUser.nickname}) already exists")) {
+        throw Exception('El nombre de usuario ya existe');
+      }
+      if (errorMessage.contains(
+          "Key (user_email)=(${histouricUser.email}) already exists")) {
+        throw Exception('El correo electrónico ya existe');
+      }
+
+      if (errorMessage ==
+          "Not enough permissions. You can't remove the last admin role") {
+        throw Exception(
+            'No tienes permisos. No puedes eliminar el ultimo rol de administrador');
+      }
+      throw Exception('Ocurrió un error al guardar los cambios');
+    }
   }
 }

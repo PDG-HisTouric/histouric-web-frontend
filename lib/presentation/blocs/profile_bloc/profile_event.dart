@@ -2,6 +2,12 @@ part of 'profile_bloc.dart';
 
 abstract class ProfileEvent {}
 
+class RoleSelected extends ProfileEvent {
+  final String role;
+
+  RoleSelected(this.role);
+}
+
 class RoleAdded extends ProfileEvent {
   final String role;
 
@@ -14,16 +20,50 @@ class RoleRemoved extends ProfileEvent {
   RoleRemoved(this.role);
 }
 
-class DataChanged extends ProfileEvent {
-  final String email;
-  final String password;
-  final String nickname;
-  final List<String> selectedRoles;
+class SelectedRolesChanged extends ProfileEvent {
+  final List<String> availableRoles;
 
-  DataChanged({
-    required this.email,
-    required this.password,
-    required this.nickname,
-    required this.selectedRoles,
+  SelectedRolesChanged(this.availableRoles);
+}
+
+class UserSaved extends ProfileEvent {
+  final HistouricUser histouricUser;
+
+  UserSaved({required this.histouricUser});
+}
+
+class EditButtonPressed extends ProfileEvent {}
+
+class EmailChanged extends ProfileEvent {
+  final String email;
+
+  EmailChanged(this.email);
+}
+
+class PasswordChanged extends ProfileEvent {
+  final String password;
+
+  PasswordChanged(this.password);
+}
+
+class NicknameChanged extends ProfileEvent {
+  final String nickname;
+
+  NicknameChanged(this.nickname);
+}
+
+class CancelButtonPressed extends ProfileEvent {}
+
+class ControllersInitialized extends ProfileEvent {
+  final String? emailText;
+  final String? passwordText;
+  final String? nicknameText;
+
+  ControllersInitialized({
+    this.emailText,
+    this.passwordText,
+    this.nicknameText,
   });
 }
+
+class SaveProcessStopped extends ProfileEvent {}

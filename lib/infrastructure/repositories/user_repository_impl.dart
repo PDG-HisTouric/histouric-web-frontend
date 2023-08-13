@@ -23,8 +23,9 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<HistouricUser> updateUserById(String id, HistouricUser histouricUser) {
-    return userDatasource.updateUserById(id, histouricUser);
+  Future<HistouricUser> updateUserById(
+      String id, HistouricUserWithPassword histouricUserWithPassword) {
+    return userDatasource.updateUserById(id, histouricUserWithPassword);
   }
 
   @override

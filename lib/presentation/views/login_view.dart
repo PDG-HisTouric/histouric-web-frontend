@@ -6,7 +6,7 @@ import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 import '../../config/helpers/dialogs.dart';
 import '../widgets/bottom_message_with_button.dart';
-import '../widgets/custom_elevated_button.dart';
+import '../widgets/custom_elevated_button_rounded.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/divider_with_message.dart';
 
@@ -60,7 +60,7 @@ class _Login extends StatelessWidget {
               context.watch<LoginFormBloc>().state.password.errorMessage,
         ),
         const SizedBox(height: 20),
-        CustomElevatedButton(
+        CustomElevatedButtonRounded(
           label: "Iniciar Sesión",
           onPressed: () async {
             if (context.read<LoginFormBloc>().isStateValid()) {
