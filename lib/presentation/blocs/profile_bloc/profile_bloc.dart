@@ -1,6 +1,5 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:histouric_web/domain/entities/histouric_user.dart';
 import 'package:histouric_web/domain/repositories/repositories.dart';
 import 'package:histouric_web/infrastructure/inputs/email.dart';
 import 'package:histouric_web/infrastructure/inputs/password.dart';
@@ -41,11 +40,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<PasswordChanged>(_onPasswordChanged);
     on<NicknameChanged>(_onNicknameChanged);
     on<CancelButtonPressed>(_onCancelButtonPressed);
-    on<AvailableRolesChanged>(_onAvailableRolesChanged);
+    on<SelectedRolesChanged>(_onAvailableRolesChanged);
     on<ControllersInitialized>(_onControllersInitialized);
+    on<SaveProcessStopped>(_onSaveProcessStopped);
     _configureControllers();
     userRepository.configureToken(authBloc.state.token!);
-    mapRolesFromInitialRoles();
+    mapRolesFromAuthBloc();
   }
 
   void _onRoleSelected(RoleSelected event, Emitter<ProfileState> emit) {
@@ -61,11 +61,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onAvailableRolesChanged(
-      AvailableRolesChanged event, Emitter<ProfileState> emit) {
-    emit(state.copyWith(allRoles: event.availableRoles.toSet()));
+      SelectedRolesChanged event, Emitter<ProfileState> emit) {
+    emit(state.copyWith(selectedRoles: event.availableRoles.toSet()));
   }
 
-  void _onUserSaved(UserSaved event, Emitter<ProfileState> emit) async {
+  void _onUserSaved(UserSaved event, Emitter<ProfileState> emit) {
     emit(state.copyWith(
       isEditing: false,
       isSaving: true,
@@ -79,10 +79,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         email: updatedUser.email,
         roles: updatedUser.roles.map((role) => role.name).toList());
     emit(state.copyWith(
-      email: Email.dirty(updatedUser.email?.trim() ?? state.email.value),
+      email: Email.dirty(updatedUser.email.trim()),
       password: const Password.dirty(""),
       nickname: Nickname.dirty(
-        updatedUser.nickname?.trim() ?? state.nickname.value,
+        updatedUser.nickname.trim(),
       ),
       selectedRoles: mapSelectedRolesFromList(
               updatedUser.roles.map((role) => role.name).toList())
@@ -101,16 +101,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void saveChanges() async {
     try {
+      HistouricUser histouricUser = await callTheRepository();
       add(UserSaved(
-        histouricUser: await callTheRepository(),
+        histouricUser: histouricUser,
       ));
     } catch (e) {
-      emit(state.copyWith(isSaving: false));
+      add(SaveProcessStopped());
       Dialogs.showErrorDialog(
         context: context,
         content: e.toString().substring(11),
       );
     }
+  }
+
+  void _onSaveProcessStopped(
+    SaveProcessStopped event,
+    Emitter<ProfileState> emit,
+  ) {
+    emit(state.copyWith(isSaving: false));
   }
 
   Future<HistouricUser> callTheRepository() async {
@@ -138,13 +146,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     add(EditButtonPressed());
   }
 
-  void mapRolesFromInitialRoles() {
+  void mapRolesFromAuthBloc() {
     final initialRoles = authBloc.state.roles!;
     List<String> rolesForIcons = mapSelectedRolesFromList(initialRoles);
     for (var role in rolesForIcons) {
       addRole(role);
     }
-    changeAvailableRoles(rolesForIcons);
+    changeSelectedRoles(rolesForIcons);
   }
 
   List<String> mapSelectedRolesFromList(List<String> selectedRoles) {
@@ -193,21 +201,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void _onCancelButtonPressed(
       CancelButtonPressed event, Emitter<ProfileState> emit) {
-    // TextEditingController emailController =
-    //     TextEditingController(text: state.email.value);
-    // emailController.selection = TextSelection.collapsed(
-    //   offset: state.email.value.length,
-    // );
-    // TextEditingController passwordController =
-    //     TextEditingController(text: state.password.value);
-    // passwordController.selection = TextSelection.collapsed(
-    //   offset: state.password.value.length,
-    // );
-    // TextEditingController usernameController =
-    //     TextEditingController(text: state.nickname.value);
-    // usernameController.selection = TextSelection.collapsed(
-    //   offset: state.nickname.value.length,
-    // );
+    mapRolesFromAuthBloc();
 
     emit(state.copyWith(
       nickname: Nickname.dirty(authBloc.state.nickname!),
@@ -221,8 +215,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     add(CancelButtonPressed());
   }
 
-  void changeAvailableRoles(List<String> availableRoles) {
-    add(AvailableRolesChanged(availableRoles));
+  void changeSelectedRoles(List<String> selectedRoles) {
+    add(SelectedRolesChanged(selectedRoles));
   }
 
   void _onControllersInitialized(

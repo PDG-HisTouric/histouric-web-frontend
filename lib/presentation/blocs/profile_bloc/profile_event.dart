@@ -20,10 +20,10 @@ class RoleRemoved extends ProfileEvent {
   RoleRemoved(this.role);
 }
 
-class AvailableRolesChanged extends ProfileEvent {
+class SelectedRolesChanged extends ProfileEvent {
   final List<String> availableRoles;
 
-  AvailableRolesChanged(this.availableRoles);
+  SelectedRolesChanged(this.availableRoles);
 }
 
 class UserSaved extends ProfileEvent {
@@ -55,3 +55,5 @@ class NicknameChanged extends ProfileEvent {
 class CancelButtonPressed extends ProfileEvent {}
 
 class ControllersInitialized extends ProfileEvent {}
+
+class SaveProcessStopped extends ProfileEvent {}

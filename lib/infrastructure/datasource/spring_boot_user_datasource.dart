@@ -58,9 +58,19 @@ class SpringBootUserDatasource extends UserDatasource {
           histouricUserResponse);
     } on DioException catch (e) {
       String errorMessage = e.response!.data['message'];
-      if (errorMessage.contains("user_nickname") &&
-          errorMessage.contains("already exists")) {
+      if (errorMessage.contains(
+          "Key (user_nickname)=(${histouricUser.nickname}) already exists")) {
         throw Exception('El nombre de usuario ya existe');
+      }
+      if (errorMessage.contains(
+          "Key (user_email)=(${histouricUser.email}) already exists")) {
+        throw Exception('El correo electrónico ya existe');
+      }
+
+      if (errorMessage ==
+          "Not enough permissions. You can't remove the last admin role") {
+        throw Exception(
+            'No tienes permisos. No puedes eliminar el ultimo rol de administrador');
       }
       throw Exception('Ocurrió un error al guardar los cambios');
     }

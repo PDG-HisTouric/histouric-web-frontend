@@ -71,6 +71,8 @@ class CardForEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAdminUser =
+        context.watch<AuthBloc>().state.roles!.contains('ADMIN');
     print(profileBloc.state.selectedRoles);
 
     return Column(
@@ -104,10 +106,8 @@ class CardForEdit extends StatelessWidget {
           onChanged: context.read<ProfileBloc>().changeNickname,
         ),
         const SizedBox(height: 16.0),
-        if (profileBloc.state.selectedRoles.contains("Administrador"))
-          _buildRolesSection(context),
-        if (profileBloc.state.selectedRoles.contains("Administrador"))
-          const SizedBox(height: 16.0),
+        if (isAdminUser) _buildRolesSection(context),
+        if (isAdminUser) const SizedBox(height: 16.0),
       ],
     );
   }
@@ -174,8 +174,7 @@ class _SubtitleAndText extends StatelessWidget {
 
 Widget _buildRolesSection(BuildContext context) {
   final profileBloc = context.watch<ProfileBloc>();
-  final Set<String> availableRoles = profileBloc.state.allRoles;
-  final bool isAdminUser = availableRoles.contains('Administrador');
+  final isAdminUser = context.watch<AuthBloc>().state.roles!.contains('ADMIN');
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -204,12 +203,36 @@ final List<String> _roles = [
   'Gestor de Turismo',
 ];
 
+String mapRole(String role) {
+  switch (role) {
+    case 'Administrador':
+      return 'ADMIN';
+    case 'Investigador':
+      return 'RESEARCHER';
+    case 'Gestor de Turismo':
+      return 'TOURISM_MANAGER';
+    default:
+      return '';
+  }
+}
+
 Widget _buildRoleCard(String role, BuildContext context) {
   final profileBloc = context.watch<ProfileBloc>();
-  final Set<String> selectedRoles = profileBloc.state.selectedRoles;
+  final Set<String> selectedRoles;
+  if (profileBloc.state.isEditing) {
+    selectedRoles = profileBloc.state.selectedRoles;
+  } else {
+    selectedRoles = context.watch<AuthBloc>().state.roles!.toSet();
+  }
   final colors = Theme.of(context).colorScheme;
 
-  final bool isSelected = selectedRoles.contains(role);
+  final bool isSelected;
+  if (profileBloc.state.isEditing) {
+    isSelected = selectedRoles.contains(role);
+  } else {
+    isSelected = selectedRoles.contains(mapRole(role));
+  }
+
   final Color cardColor = isSelected ? colors.primary : colors.onPrimary;
   final Color iconColor = isSelected ? colors.onPrimary : colors.primary;
   final IconData iconData = _roleIcons[role] ?? Icons.person;

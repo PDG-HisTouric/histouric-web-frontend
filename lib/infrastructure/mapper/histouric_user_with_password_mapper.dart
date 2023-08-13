@@ -11,7 +11,7 @@ class HistouricUserWithPasswordMapper {
       'nickname': histouricUserWithPassword.nickname,
       'email': histouricUserWithPassword.email,
       if (histouricUserWithPassword.roles != null)
-        'roles': [histouricUserWithPassword.roles!.join(" ")],
+        'roles': histouricUserWithPassword.roles!,
       'password': histouricUserWithPassword.password,
     };
   }
