@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
+import '../../infrastructure/inputs/inputs.dart';
 import 'custom_elevated_button_squared.dart';
 
 class CustomCard extends StatelessWidget {
@@ -80,10 +81,15 @@ class CardForEdit extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        Text("Los campos que deje en blanco no serán actualizados",
+            textAlign: TextAlign.center),
+        const SizedBox(height: 16.0),
         TextField(
           controller: profileBloc.state.emailController,
           decoration: InputDecoration(
-            errorText: profileBloc.state.email.errorMessage,
+            errorText: profileBloc.state.email.displayError == EmailError.empty
+                ? null
+                : profileBloc.state.email.errorMessage,
             labelText: 'Correo electrónico',
           ),
           onChanged: context.read<ProfileBloc>().changeEmail,
@@ -92,16 +98,24 @@ class CardForEdit extends StatelessWidget {
         TextField(
           controller: profileBloc.state.passwordController,
           obscureText: true,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Contraseña',
+            errorText:
+                profileBloc.state.password.displayError == PasswordError.empty
+                    ? null
+                    : profileBloc.state.password.errorMessage,
           ),
           onChanged: context.read<ProfileBloc>().changePassword,
         ),
         const SizedBox(height: 16.0),
         TextField(
           controller: profileBloc.state.usernameController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Nombre de usuario',
+            errorText:
+                profileBloc.state.nickname.displayError == NicknameError.empty
+                    ? null
+                    : profileBloc.state.nickname.errorMessage,
           ),
           onChanged: context.read<ProfileBloc>().changeNickname,
         ),

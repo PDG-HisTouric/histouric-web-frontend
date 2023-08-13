@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:formz/formz.dart';
 import 'package:histouric_web/domain/repositories/repositories.dart';
 import 'package:histouric_web/infrastructure/inputs/email.dart';
 import 'package:histouric_web/infrastructure/inputs/password.dart';
