@@ -16,7 +16,7 @@ class DashboardHandlers {
   });
 
   static Handler usersTable = Handler(handlerFunc: (context, parameters) {
-    return const DashboardScreen(
+    return DashboardScreen(
       child: UsersTable(),
     );
   });

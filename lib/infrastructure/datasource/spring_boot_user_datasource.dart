@@ -34,7 +34,7 @@ class SpringBootUserDatasource extends UserDatasource {
 
   @override
   Future<List<HistouricUser>> getUsers() async {
-    return await dio.get('/').then((response) {
+    return await dio.get('').then((response) {
       List<HistouricUserResponse> histouricUserResponses =
           (response.data as List)
               .map((e) => HistouricUserResponse.fromJson(e))

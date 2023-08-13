@@ -75,10 +75,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final updatedUser = event.histouricUser;
 
     authBloc.changeUser(
-        id: updatedUser.id,
-        nickname: updatedUser.nickname,
-        email: updatedUser.email,
-        roles: updatedUser.roles.map((role) => role.name).toList());
+      id: updatedUser.id,
+      nickname: updatedUser.nickname,
+      email: updatedUser.email,
+      roles: updatedUser.roles.map((role) => role.name).toList(),
+      token: updatedUser.token,
+    );
     emit(state.copyWith(
       email: Email.dirty(updatedUser.email.trim()),
       password: const Password.dirty(""),

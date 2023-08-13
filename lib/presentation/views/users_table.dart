@@ -1,28 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/infrastructure/datasource/spring_boot_user_datasource.dart';
+import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/presentations.dart';
 
+import '../../infrastructure/repositories/repositories.dart';
 import '../datatables/users_datasource.dart';
 
-class UsersTable extends StatefulWidget {
+class UsersTable extends StatelessWidget {
   const UsersTable({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+        create: (context) => UsersTableBloc(
+              token: context.read<AuthBloc>().state.token!,
+              userRepository: UserRepositoryImpl(
+                userDatasource: SpringBootUserDatasource(),
+              ),
+            ),
+        child: const _UsersTable());
+  }
+}
+
+class _UsersTable extends StatefulWidget {
+  const _UsersTable({super.key});
 
   @override
   UsersTableState createState() => UsersTableState();
 }
 
-class UsersTableState extends State<UsersTable> {
+class UsersTableState extends State<_UsersTable> {
   int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
 
   @override
   void initState() {
     super.initState();
-
-    //TODO HACER CONSULTA DE USUARIOS CON BLOC
+    context.read<UsersTableBloc>().fetchUsers();
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final users = context.watch<UsersTableBloc>().state.users;
 
     return ListView(
       physics: const ClampingScrollPhysics(),
@@ -49,7 +69,7 @@ class UsersTableState extends State<UsersTable> {
               DataColumn(label: Text('Roles')),
               DataColumn(label: Text('Acciones')),
             ],
-            source: UsersDTS([], context),
+            source: UsersDTS(users, context),
             header: const Text('Listado de usuarios', maxLines: 2),
             onRowsPerPageChanged: (value) {
               setState(() {

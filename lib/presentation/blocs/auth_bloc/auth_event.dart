@@ -23,11 +23,13 @@ class UserChanged extends AuthEvent {
   final String nickname;
   final String email;
   final List<String> roles;
+  final String? token;
 
   UserChanged({
     required this.id,
     required this.nickname,
     required this.email,
     required this.roles,
+    this.token,
   });
 }

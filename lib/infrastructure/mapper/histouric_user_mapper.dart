@@ -21,6 +21,7 @@ class HistouricUserMapper {
       nickname: histouricUserResponse.nickname,
       email: histouricUserResponse.email,
       roles: RoleMapper.fromRoleResponses(histouricUserResponse.roles),
+      token: histouricUserResponse.token,
     );
   }
 }
