@@ -53,3 +53,5 @@ class NicknameChanged extends ProfileEvent {
 }
 
 class CancelButtonPressed extends ProfileEvent {}
+
+class ControllersInitialized extends ProfileEvent {}

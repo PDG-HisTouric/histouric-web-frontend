@@ -42,6 +42,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<NicknameChanged>(_onNicknameChanged);
     on<CancelButtonPressed>(_onCancelButtonPressed);
     on<AvailableRolesChanged>(_onAvailableRolesChanged);
+    on<ControllersInitialized>(_onControllersInitialized);
+    _configureControllers();
     userRepository.configureToken(authBloc.state.token!);
     mapRolesFromInitialRoles();
   }
@@ -97,12 +99,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     add(RoleSelected(role));
   }
 
-  void saveChanges({
-    String? email,
-    String? password,
-    String? nickname,
-    List<String>? selectedRoles,
-  }) async {
+  void saveChanges() async {
     try {
       add(UserSaved(
         histouricUser: await callTheRepository(),
@@ -131,7 +128,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onEditButtonPressed(
-      EditButtonPressed event, Emitter<ProfileState> emit) {
+    EditButtonPressed event,
+    Emitter<ProfileState> emit,
+  ) {
     emit(state.copyWith(isEditing: true));
   }
 
@@ -194,33 +193,27 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void _onCancelButtonPressed(
       CancelButtonPressed event, Emitter<ProfileState> emit) {
-    TextEditingController emailController =
-        TextEditingController(text: state.email.value);
-    emailController.selection = TextSelection.collapsed(
-      offset: state.email.value.length,
-    );
-    TextEditingController passwordController =
-        TextEditingController(text: state.password.value);
-    passwordController.selection = TextSelection.collapsed(
-      offset: state.password.value.length,
-    );
-    TextEditingController usernameController =
-        TextEditingController(text: state.nickname.value);
-    usernameController.selection = TextSelection.collapsed(
-      offset: state.nickname.value.length,
-    );
+    // TextEditingController emailController =
+    //     TextEditingController(text: state.email.value);
+    // emailController.selection = TextSelection.collapsed(
+    //   offset: state.email.value.length,
+    // );
+    // TextEditingController passwordController =
+    //     TextEditingController(text: state.password.value);
+    // passwordController.selection = TextSelection.collapsed(
+    //   offset: state.password.value.length,
+    // );
+    // TextEditingController usernameController =
+    //     TextEditingController(text: state.nickname.value);
+    // usernameController.selection = TextSelection.collapsed(
+    //   offset: state.nickname.value.length,
+    // );
 
     emit(state.copyWith(
       nickname: Nickname.dirty(authBloc.state.nickname!),
       email: Email.dirty(authBloc.state.email!),
       password: const Password.dirty(""),
       isEditing: false,
-    ));
-
-    emit(state.copyWith(
-      emailController: emailController,
-      passwordController: passwordController,
-      usernameController: usernameController,
     ));
   }
 
@@ -230,5 +223,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void changeAvailableRoles(List<String> availableRoles) {
     add(AvailableRolesChanged(availableRoles));
+  }
+
+  void _onControllersInitialized(
+      ControllersInitialized event, Emitter<ProfileState> emit) {
+    emit(state.configureControllers());
+  }
+
+  void _configureControllers() {
+    add(ControllersInitialized());
   }
 }

@@ -38,6 +38,13 @@ class _ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
+    final profileBloc = context.watch<ProfileBloc>();
+
+    if (profileBloc.state.initializingControllers) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
     return const Stack(
       children: [

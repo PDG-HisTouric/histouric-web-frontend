@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
-import 'package:histouric_web/presentation/presentations.dart';
 
 import 'custom_elevated_button_squared.dart';
 
@@ -20,66 +19,33 @@ class CustomCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            profileBloc.state.isEditing
-                ? TextField(
-                    controller: profileBloc.state.emailController,
-                    decoration: InputDecoration(
-                      errorText: profileBloc.state.email.errorMessage,
-                      labelText: 'Correo electrónico',
-                    ),
-                    onChanged: context.read<ProfileBloc>().changeEmail,
-                  )
-                : _SubtitleAndText(
-                    subtitle: 'Correo electrónico',
-                    text: profileBloc.state.email.value),
-            const SizedBox(height: 16.0),
             if (profileBloc.state.isEditing)
-              TextField(
-                controller: profileBloc.state.passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Contraseña',
-                ),
-                onChanged: context.read<ProfileBloc>().changePassword,
+              CardForEdit(
+                profileBloc: profileBloc,
+              )
+            else
+              CardForView(
+                profileBloc: profileBloc,
               ),
-            const SizedBox(height: 16.0),
-            profileBloc.state.isEditing
-                ? TextField(
-                    controller: profileBloc.state.usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre de usuario',
-                    ),
-                    onChanged: context.read<ProfileBloc>().changeNickname,
-                  )
-                : _SubtitleAndText(
-                    subtitle: 'Nombre de usuario',
-                    text: profileBloc.state.nickname.value,
-                  ),
-            const SizedBox(height: 16.0),
-            if (!profileBloc.state.isEditing) _buildRolesSection(context),
-            const SizedBox(height: 24.0),
             Wrap(
               alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              runAlignment: WrapAlignment.center,
               children: [
                 CustomElevatedButtonSquared(
                   backgroundColor: colors.primary,
                   onPressed: () {
                     context.read<ProfileBloc>().state.isEditing
-                        ? context.read<ProfileBloc>().saveChanges(
-                              email: profileBloc.state.emailController.text,
-                              password:
-                                  profileBloc.state.passwordController.text,
-                              nickname:
-                                  profileBloc.state.usernameController.text,
-                            )
+                        ? context.read<ProfileBloc>().saveChanges()
                         : context.read<ProfileBloc>().startEditing();
                   },
                   label: profileBloc.state.isEditing ? 'Guardar' : 'Editar',
                   textColor: colors.onPrimary,
                   fontWeightBold: true,
                 ),
-                const SizedBox(width: 16.0),
                 if (profileBloc.state.isEditing) const SizedBox(width: 16.0),
                 if (profileBloc.state.isEditing)
                   CustomElevatedButtonSquared(
@@ -98,14 +64,76 @@ class CustomCard extends StatelessWidget {
   }
 }
 
-class CardFroEdit extends StatelessWidget {
-  const CardFroEdit({super.key});
+class CardForEdit extends StatelessWidget {
+  ProfileBloc profileBloc;
+
+  CardForEdit({super.key, required this.profileBloc});
+
+  @override
+  Widget build(BuildContext context) {
+    final authBloc = context.watch<AuthBloc>();
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        TextField(
+          controller: profileBloc.state.emailController,
+          decoration: InputDecoration(
+            errorText: profileBloc.state.email.errorMessage,
+            labelText: 'Correo electrónico',
+          ),
+          onChanged: context.read<ProfileBloc>().changeEmail,
+        ),
+        const SizedBox(height: 16.0),
+        TextField(
+          controller: profileBloc.state.passwordController,
+          obscureText: true,
+          decoration: const InputDecoration(
+            labelText: 'Contraseña',
+          ),
+          onChanged: context.read<ProfileBloc>().changePassword,
+        ),
+        const SizedBox(height: 16.0),
+        TextField(
+          controller: profileBloc.state.usernameController,
+          decoration: const InputDecoration(
+            labelText: 'Nombre de usuario',
+          ),
+          onChanged: context.read<ProfileBloc>().changeNickname,
+        ),
+        const SizedBox(height: 16.0),
+        if (authBloc.state.roles!.contains("Administrador"))
+          _buildRolesSection(context),
+      ],
+    );
+  }
+}
+
+class CardForView extends StatelessWidget {
+  ProfileBloc profileBloc;
+
+  CardForView({super.key, required this.profileBloc});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [],
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _SubtitleAndText(
+          subtitle: 'Correo electrónico',
+          text: profileBloc.state.email.value,
+        ),
+        const SizedBox(height: 16.0),
+        _SubtitleAndText(
+          subtitle: 'Nombre de usuario',
+          text: profileBloc.state.nickname.value,
+        ),
+        const SizedBox(height: 16.0),
+      ],
     );
   }
 }

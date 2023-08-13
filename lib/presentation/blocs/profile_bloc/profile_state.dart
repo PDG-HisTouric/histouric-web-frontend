@@ -10,9 +10,10 @@ class ProfileState {
   final bool isCreating;
   final bool isSaving;
   final bool forEditing;
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-  final TextEditingController usernameController;
+  final bool initializingControllers;
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+  late final TextEditingController usernameController;
 
   ProfileState({
     this.nickname = const Nickname.pure(),
@@ -24,19 +25,8 @@ class ProfileState {
     this.isCreating = false,
     this.allRoles = const {},
     required this.forEditing,
-  })  : emailController = TextEditingController(text: email.value),
-        passwordController = TextEditingController(text: password.value),
-        usernameController = TextEditingController(text: nickname.value) {
-    emailController.selection = TextSelection.collapsed(
-      offset: email.value.length,
-    );
-    passwordController.selection = TextSelection.collapsed(
-      offset: password.value.length,
-    );
-    usernameController.selection = TextSelection.collapsed(
-      offset: nickname.value.length,
-    );
-  }
+    this.initializingControllers = true,
+  });
 
   ProfileState copyWith({
     Email? email,
@@ -47,9 +37,6 @@ class ProfileState {
     bool? isEditing,
     bool? isSaving,
     bool? isCreating,
-    TextEditingController? emailController,
-    TextEditingController? passwordController,
-    TextEditingController? usernameController,
   }) {
     return ProfileState(
       email: email ?? this.email,
@@ -61,6 +48,38 @@ class ProfileState {
       isSaving: isSaving ?? this.isSaving,
       isCreating: isCreating ?? this.isCreating,
       forEditing: forEditing,
-    );
+      initializingControllers: initializingControllers,
+    )
+      ..emailController = emailController
+      ..passwordController = passwordController
+      ..usernameController = usernameController;
   }
+
+  ProfileState configureControllers({
+    String? emailText,
+    String? passwordText,
+    String? nicknameText,
+  }) {
+    return ProfileState(
+      email: email,
+      password: password,
+      nickname: nickname,
+      selectedRoles: selectedRoles,
+      allRoles: allRoles,
+      isEditing: isEditing,
+      isSaving: isSaving,
+      isCreating: isCreating,
+      forEditing: forEditing,
+      initializingControllers: false,
+    )
+      ..emailController = TextEditingController(text: emailText ?? email.value)
+      ..passwordController =
+          TextEditingController(text: passwordText ?? password.value)
+      ..usernameController =
+          TextEditingController(text: nicknameText ?? nickname.value);
+  }
+
+  // void configureControllers() {
+  //   emailController = TextEditingController(text: email.value);
+  // }
 }
