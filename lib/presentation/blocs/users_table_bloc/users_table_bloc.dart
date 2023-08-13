@@ -1,10 +1,6 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/domain/entities/entities.dart';
 import 'package:histouric_web/domain/repositories/repositories.dart';
-import 'package:histouric_web/presentation/blocs/auth_bloc/auth_bloc.dart';
-import 'package:meta/meta.dart';
 
 part 'users_table_event.dart';
 part 'users_table_state.dart';
