@@ -71,7 +71,7 @@ class CardForEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = context.watch<AuthBloc>();
+    print(profileBloc.state.selectedRoles);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -104,8 +104,10 @@ class CardForEdit extends StatelessWidget {
           onChanged: context.read<ProfileBloc>().changeNickname,
         ),
         const SizedBox(height: 16.0),
-        if (authBloc.state.roles!.contains("Administrador"))
+        if (profileBloc.state.selectedRoles.contains("Administrador"))
           _buildRolesSection(context),
+        if (profileBloc.state.selectedRoles.contains("Administrador"))
+          const SizedBox(height: 16.0),
       ],
     );
   }
@@ -132,6 +134,8 @@ class CardForView extends StatelessWidget {
           subtitle: 'Nombre de usuario',
           text: profileBloc.state.nickname.value,
         ),
+        const SizedBox(height: 16.0),
+        _buildRolesSection(context),
         const SizedBox(height: 16.0),
       ],
     );
