@@ -20,6 +20,12 @@ class RoleRemoved extends ProfileEvent {
   RoleRemoved(this.role);
 }
 
+class AvailableRolesChanged extends ProfileEvent {
+  final List<String> availableRoles;
+
+  AvailableRolesChanged(this.availableRoles);
+}
+
 class UserSaved extends ProfileEvent {
   final HistouricUser histouricUser;
 

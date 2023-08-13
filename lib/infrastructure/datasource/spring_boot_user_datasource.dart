@@ -48,10 +48,20 @@ class SpringBootUserDatasource extends UserDatasource {
   @override
   Future<HistouricUser> updateUserById(
       String id, HistouricUserWithPassword histouricUser) async {
-    final data = HistouricUserWithPasswordMapper.toMap(histouricUser);
-    final response = await dio.put('/$id', data: data);
-    HistouricUserResponse histouricUserResponse =
-        HistouricUserResponse.fromJson(response.data);
-    return HistouricUserMapper.fromHistouricUserResponse(histouricUserResponse);
+    try {
+      final data = HistouricUserWithPasswordMapper.toMap(histouricUser);
+      final response = await dio.put('/$id', data: data);
+      HistouricUserResponse histouricUserResponse =
+          HistouricUserResponse.fromJson(response.data);
+      return HistouricUserMapper.fromHistouricUserResponse(
+          histouricUserResponse);
+    } on DioException catch (e) {
+      String errorMessage = e.response!.data['message'];
+      if (errorMessage.contains("user_nickname") &&
+          errorMessage.contains("already exists")) {
+        throw Exception('El nombre de usuario ya existe');
+      }
+      throw Exception('Ocurrió un error al guardar los cambios');
+    }
   }
 }

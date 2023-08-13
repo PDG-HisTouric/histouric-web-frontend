@@ -4,14 +4,15 @@ class ProfileState {
   final Email email;
   final Password password;
   final Nickname nickname;
+  final Set<String> allRoles;
   final Set<String> selectedRoles;
   final bool isEditing;
   final bool isCreating;
   final bool isSaving;
   final bool forEditing;
-  late final TextEditingController emailController;
-  late final TextEditingController passwordController;
-  late final TextEditingController usernameController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final TextEditingController usernameController;
 
   ProfileState({
     this.nickname = const Nickname.pure(),
@@ -21,17 +22,17 @@ class ProfileState {
     this.isEditing = false,
     this.isSaving = false,
     this.isCreating = false,
+    this.allRoles = const {},
     required this.forEditing,
-  }) {
-    emailController = TextEditingController(text: email.value);
+  })  : emailController = TextEditingController(text: email.value),
+        passwordController = TextEditingController(text: password.value),
+        usernameController = TextEditingController(text: nickname.value) {
     emailController.selection = TextSelection.collapsed(
       offset: email.value.length,
     );
-    passwordController = TextEditingController(text: password.value);
     passwordController.selection = TextSelection.collapsed(
       offset: password.value.length,
     );
-    usernameController = TextEditingController(text: nickname.value);
     usernameController.selection = TextSelection.collapsed(
       offset: nickname.value.length,
     );
@@ -42,15 +43,20 @@ class ProfileState {
     Password? password,
     Nickname? nickname,
     Set<String>? selectedRoles,
+    Set<String>? allRoles,
     bool? isEditing,
     bool? isSaving,
     bool? isCreating,
+    TextEditingController? emailController,
+    TextEditingController? passwordController,
+    TextEditingController? usernameController,
   }) {
     return ProfileState(
       email: email ?? this.email,
       password: password ?? this.password,
       nickname: nickname ?? this.nickname,
       selectedRoles: selectedRoles ?? this.selectedRoles,
+      allRoles: allRoles ?? this.allRoles,
       isEditing: isEditing ?? this.isEditing,
       isSaving: isSaving ?? this.isSaving,
       isCreating: isCreating ?? this.isCreating,

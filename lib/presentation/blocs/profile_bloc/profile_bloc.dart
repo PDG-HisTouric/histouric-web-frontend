@@ -41,6 +41,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<PasswordChanged>(_onPasswordChanged);
     on<NicknameChanged>(_onNicknameChanged);
     on<CancelButtonPressed>(_onCancelButtonPressed);
+    on<AvailableRolesChanged>(_onAvailableRolesChanged);
     userRepository.configureToken(authBloc.state.token!);
     mapRolesFromInitialRoles();
   }
@@ -55,6 +56,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   void _onRoleRemoved(RoleRemoved event, Emitter<ProfileState> emit) {
     emit(
         state.copyWith(selectedRoles: state.selectedRoles..remove(event.role)));
+  }
+
+  void _onAvailableRolesChanged(
+      AvailableRolesChanged event, Emitter<ProfileState> emit) {
+    emit(state.copyWith(allRoles: event.availableRoles.toSet()));
   }
 
   void _onUserSaved(UserSaved event, Emitter<ProfileState> emit) async {
@@ -76,7 +82,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       nickname: Nickname.dirty(
         updatedUser.nickname?.trim() ?? state.nickname.value,
       ),
-      selectedRoles: updatedUser.roles.map((role) => role.name).toSet(),
+      selectedRoles: mapSelectedRolesFromList(
+              updatedUser.roles.map((role) => role.name).toList())
+          .toSet(),
       isSaving: false,
     ));
   }
@@ -103,7 +111,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(state.copyWith(isSaving: false));
       Dialogs.showErrorDialog(
         context: context,
-        content: "Ocurrió un error al guardar los cambios.",
+        content: e.toString().substring(11),
       );
     }
   }
@@ -133,15 +141,21 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void mapRolesFromInitialRoles() {
     final initialRoles = authBloc.state.roles!;
-    List<String> rolesForIcons = [];
-    if (initialRoles.contains("ADMIN")) rolesForIcons.add("Administrador");
-    if (initialRoles.contains("RESEARCHER")) rolesForIcons.add("Investigador");
-    if (initialRoles.contains("TOURISM_MANAGER")) {
-      rolesForIcons.add("Gestor de Turismo");
-    }
+    List<String> rolesForIcons = mapSelectedRolesFromList(initialRoles);
     for (var role in rolesForIcons) {
       addRole(role);
     }
+    changeAvailableRoles(rolesForIcons);
+  }
+
+  List<String> mapSelectedRolesFromList(List<String> selectedRoles) {
+    List<String> roles = [];
+    if (selectedRoles.contains("ADMIN")) roles.add("Administrador");
+    if (selectedRoles.contains("RESEARCHER")) roles.add("Investigador");
+    if (selectedRoles.contains("TOURISM_MANAGER")) {
+      roles.add("Gestor de Turismo");
+    }
+    return roles;
   }
 
   List<String> mapRolesFromState() {
@@ -180,10 +194,41 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void _onCancelButtonPressed(
       CancelButtonPressed event, Emitter<ProfileState> emit) {
-    emit(state.copyWith(isEditing: false));
+    TextEditingController emailController =
+        TextEditingController(text: state.email.value);
+    emailController.selection = TextSelection.collapsed(
+      offset: state.email.value.length,
+    );
+    TextEditingController passwordController =
+        TextEditingController(text: state.password.value);
+    passwordController.selection = TextSelection.collapsed(
+      offset: state.password.value.length,
+    );
+    TextEditingController usernameController =
+        TextEditingController(text: state.nickname.value);
+    usernameController.selection = TextSelection.collapsed(
+      offset: state.nickname.value.length,
+    );
+
+    emit(state.copyWith(
+      nickname: Nickname.dirty(authBloc.state.nickname!),
+      email: Email.dirty(authBloc.state.email!),
+      password: const Password.dirty(""),
+      isEditing: false,
+    ));
+
+    emit(state.copyWith(
+      emailController: emailController,
+      passwordController: passwordController,
+      usernameController: usernameController,
+    ));
   }
 
   void cancelEditing() {
     add(CancelButtonPressed());
+  }
+
+  void changeAvailableRoles(List<String> availableRoles) {
+    add(AvailableRolesChanged(availableRoles));
   }
 }

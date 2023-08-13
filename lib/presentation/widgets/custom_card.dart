@@ -80,13 +80,6 @@ class CustomCard extends StatelessWidget {
                   fontWeightBold: true,
                 ),
                 const SizedBox(width: 16.0),
-                CustomElevatedButtonSquared(
-                  backgroundColor: colors.error,
-                  onPressed: () {},
-                  label: 'Eliminar',
-                  textColor: colors.onError,
-                  fontWeightBold: true,
-                ),
                 if (profileBloc.state.isEditing) const SizedBox(width: 16.0),
                 if (profileBloc.state.isEditing)
                   CustomElevatedButtonSquared(
@@ -101,6 +94,18 @@ class CustomCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CardFroEdit extends StatelessWidget {
+  const CardFroEdit({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [],
     );
   }
 }
@@ -137,8 +142,8 @@ class _SubtitleAndText extends StatelessWidget {
 
 Widget _buildRolesSection(BuildContext context) {
   final profileBloc = context.watch<ProfileBloc>();
-  final Set<String> selectedRoles = profileBloc.state.selectedRoles;
-  final bool isAdminUser = selectedRoles.contains('Administrador');
+  final Set<String> availableRoles = profileBloc.state.allRoles;
+  final bool isAdminUser = availableRoles.contains('Administrador');
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -154,7 +159,7 @@ Widget _buildRolesSection(BuildContext context) {
           spacing: 8.0,
           children: (isAdminUser)
               ? _roles.map((role) => _buildRoleCard(role, context)).toList()
-              : selectedRoles
+              : profileBloc.state.selectedRoles
                   .map((role) => _buildRoleCard(role, context))
                   .toList()),
     ],
