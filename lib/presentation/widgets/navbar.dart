@@ -8,11 +8,20 @@ class Navbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sideMenuBloc = context.watch<SidemenuBloc>();
+    final colors = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
       height: 50,
-      decoration: buildBoxDecoration(),
+      decoration: BoxDecoration(
+        color: colors.onPrimary,
+        boxShadow: [
+          BoxShadow(
+            color: colors.onPrimary,
+            blurRadius: 5,
+          )
+        ],
+      ),
       child: Row(
         children: [
           Padding(
@@ -27,8 +36,4 @@ class Navbar extends StatelessWidget {
       ),
     );
   }
-
-  BoxDecoration buildBoxDecoration() => BoxDecoration(
-      color: Colors.white,
-      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)]);
 }

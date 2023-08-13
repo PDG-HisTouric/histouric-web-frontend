@@ -13,3 +13,5 @@ class MenuControllerUpdated extends SidemenuEvent {
 
   MenuControllerUpdated({required this.menuController});
 }
+
+class AnimationControllerDisposed extends SidemenuEvent {}
