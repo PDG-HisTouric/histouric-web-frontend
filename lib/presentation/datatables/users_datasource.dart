@@ -26,10 +26,10 @@ class UsersDTS extends DataTableSource {
               icon: const Icon(Icons.edit_outlined),
               onPressed: () {
                 NavigationService.navigatorKey.currentState!
-                    .pushNamed('/dashboard/users/edit/${user.nickname}')
-                    .then((value) {
-                  context.read<UsersTableBloc>().fetchUsers();
-                });
+                    .pushNamed('/dashboard/users/edit/${user.nickname}');
+                //     .then((value) {
+                //   context.read<UsersTableBloc>().initPageReloaded();
+                // });
               }),
           IconButton(
               icon: Icon(Icons.delete_outline,

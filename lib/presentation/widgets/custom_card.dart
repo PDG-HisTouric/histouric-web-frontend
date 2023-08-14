@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/config/helpers/dialogs.dart';
 import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/widgets/widgets.dart';
@@ -26,6 +27,7 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileBloc = context.watch<ProfileBloc>();
+    print(profileBloc.state.selectedRoles.toList().join(", "));
     final colors = Theme.of(context).colorScheme;
     final ProfilePurpose profilePurpose = profileBloc.state.profilePurpose;
 
@@ -69,15 +71,26 @@ class CustomCard extends StatelessWidget {
                   backgroundColor: colors.primary,
                   onPressed: () {
                     if (profilePurpose == ProfilePurpose.editMyProfile) {
-                      context.read<ProfileBloc>().saveChanges();
+                      if (profileBloc.state.selectedRoles.isEmpty) {
+                        Dialogs.showErrorDialog(
+                            context: context,
+                            content: "Tienes que seleccionar al menos un rol");
+                      } else {
+                        context.read<ProfileBloc>().saveChanges();
+                      }
                     }
                     if (profilePurpose == ProfilePurpose.viewMyProfile) {
                       context.read<ProfileBloc>().startEditing();
                     }
-
                     if (profilePurpose == ProfilePurpose.editUserFromAdmin) {
-                      context.read<ProfileBloc>().saveChanges();
-                      NavigationService.pop();
+                      if (profileBloc.state.selectedRoles.isEmpty) {
+                        Dialogs.showErrorDialog(
+                            context: context,
+                            content: "Tienes que seleccionar al menos un rol");
+                      } else {
+                        context.read<ProfileBloc>().saveChanges();
+                        NavigationService.pop();
+                      }
                     }
                   },
                   textColor: colors.onPrimary,

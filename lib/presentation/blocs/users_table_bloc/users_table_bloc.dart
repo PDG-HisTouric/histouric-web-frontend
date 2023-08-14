@@ -12,16 +12,17 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   UsersTableBloc({
     required this.userRepository,
     required this.token,
-  }) : super(UsersTableState(users: [])) {
+  }) : super(UsersTableState()) {
     userRepository.configureToken(token);
     on<DataFetched>(_onDataFetched);
     on<NicknameSearched>(_onNicknameSearched);
+    on<NicknameSearchStopped>(_onNicknameSearchStopped);
+    print('entre');
   }
 
   void _onDataFetched(DataFetched event, Emitter<UsersTableState> emit) async {
     final List<HistouricUser> users = await userRepository.getUsers();
     emit(state.copyWith(users: users));
-    print("llegue por aca");
   }
 
   void fetchUsers() {
@@ -32,11 +33,21 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
       NicknameSearched event, Emitter<UsersTableState> emit) async {
     List<HistouricUser> histouricUsers =
         await userRepository.getUsersByNickname(event.nickname);
-    emit(state.copyWith(users: histouricUsers));
+    emit(state.copyWith(users: histouricUsers, isSearching: true));
   }
 
   void searchByNickname(String nickname) {
-    if (nickname.isEmpty) return fetchUsers();
+    if (nickname.isEmpty) stopSearching();
     add(NicknameSearched(nickname: nickname));
+  }
+
+  void _onNicknameSearchStopped(
+      NicknameSearchStopped event, Emitter<UsersTableState> emit) async {
+    final List<HistouricUser> users = await userRepository.getUsers();
+    emit(state.copyWith(users: users, isSearching: false));
+  }
+
+  void stopSearching() {
+    add(NicknameSearchStopped());
   }
 }

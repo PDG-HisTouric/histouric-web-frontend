@@ -34,13 +34,20 @@ class SpringBootUserDatasource extends UserDatasource {
 
   @override
   Future<List<HistouricUser>> getUsersByNickname(String nickname) async {
-    final response = await dio.get('/all/$nickname');
-    List<HistouricUserResponse> histouricUserResponses = (response.data as List)
-        .map((e) => HistouricUserResponse.fromJson(e))
-        .toList();
-    return histouricUserResponses
-        .map((e) => HistouricUserMapper.fromHistouricUserResponse(e))
-        .toList();
+    try {
+      if (nickname.isEmpty) return [];
+      final response = await dio.get('/all/$nickname');
+      List<HistouricUserResponse> histouricUserResponses =
+          (response.data as List)
+              .map((e) => HistouricUserResponse.fromJson(e))
+              .toList();
+      return histouricUserResponses
+          .map((e) => HistouricUserMapper.fromHistouricUserResponse(e))
+          .toList();
+    } catch (e) {
+      print('El error esta en nickname');
+      throw Exception('No se encontraron usuarios');
+    }
   }
 
   @override
@@ -53,7 +60,10 @@ class SpringBootUserDatasource extends UserDatasource {
       return histouricUserResponses
           .map((e) => HistouricUserMapper.fromHistouricUserResponse(e))
           .toList();
-    }).catchError((e) => throw e);
+    }).catchError((e) {
+      print('el error esta en el get users');
+      throw e;
+    });
   }
 
   @override

@@ -9,3 +9,5 @@ class NicknameSearched extends UsersTableEvent {
 
   NicknameSearched({required this.nickname});
 }
+
+class NicknameSearchStopped extends UsersTableEvent {}
