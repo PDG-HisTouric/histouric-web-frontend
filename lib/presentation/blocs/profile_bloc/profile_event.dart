@@ -67,3 +67,9 @@ class ControllersInitialized extends ProfileEvent {
 }
 
 class SaveProcessStopped extends ProfileEvent {}
+
+class RolesChanged extends ProfileEvent {
+  final List<String> roles;
+
+  RolesChanged(this.roles);
+}

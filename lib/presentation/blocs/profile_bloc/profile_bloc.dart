@@ -18,12 +18,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final UserRepository userRepository;
   final BuildContext context;
   final ProfilePurpose profilePurpose;
+  final UsersTableBloc? usersTableBloc;
 
   ProfileBloc({
     required this.authBloc,
     required this.userRepository,
     required this.context,
     required this.profilePurpose,
+    this.usersTableBloc,
   }) : super(ProfileState(
           profilePurpose: profilePurpose,
           email: Email.dirty(
@@ -44,6 +46,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<SelectedRolesChanged>(_onAvailableRolesChanged);
     on<ControllersInitialized>(_onControllersInitialized);
     on<SaveProcessStopped>(_onSaveProcessStopped);
+    on<RolesChanged>(_onRolesChanged);
     _configureControllers();
     userRepository.configureToken(authBloc.state.token!);
     mapRolesFromAuthBloc();
@@ -128,12 +131,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     bool currentUserIsAdmin = authBloc.state.roles!.contains("ADMIN");
 
     final user = HistouricUserWithPassword(
-      id: authBloc.state.id!,
-      email: (state.email.value.isEmpty) ? null : state.email.value,
-      password: (state.password.value.isEmpty) ? null : state.password.value,
-      nickname: (state.nickname.value.isEmpty) ? null : state.nickname.value,
-      roles: currentUserIsAdmin ? mapRolesFromState() : null,
-    );
+        id: authBloc.state.id!,
+        email: (state.email.value.isEmpty) ? null : state.email.value,
+        password: (state.password.value.isEmpty) ? null : state.password.value,
+        nickname: (state.nickname.value.isEmpty) ? null : state.nickname.value,
+        roles: mapRolesFromState());
 
     return await userRepository.updateUserById(user.id, user);
   }
@@ -246,5 +248,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       passwordText: passwordText,
       nicknameText: nicknameText,
     ));
+  }
+
+  void _onRolesChanged(RolesChanged event, Emitter<ProfileState> emit) {
+    emit(state.copyWith(
+      email: const Email.dirty(""),
+      password: const Password.dirty(""),
+      nickname: const Nickname.dirty(""),
+    ));
+    saveChanges();
+    usersTableBloc?.fetchUsers();
   }
 }

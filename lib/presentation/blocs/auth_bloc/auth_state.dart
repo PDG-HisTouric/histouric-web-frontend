@@ -9,6 +9,7 @@ class AuthState {
   final String? nickname;
   final String? email;
   final List<String>? roles;
+  final bool changesRequiredReload;
 
   AuthState({
     this.id,
@@ -17,6 +18,7 @@ class AuthState {
     this.nickname,
     this.email,
     this.roles,
+    this.changesRequiredReload = false,
   });
 
   AuthState copyWith({
@@ -26,6 +28,7 @@ class AuthState {
     String? nickname,
     String? email,
     List<String>? roles,
+    bool? changesRequiredReload,
   }) {
     return AuthState(
       id: id ?? this.id,
@@ -34,6 +37,8 @@ class AuthState {
       nickname: nickname ?? this.nickname,
       email: email ?? this.email,
       roles: roles ?? this.roles,
+      changesRequiredReload:
+          changesRequiredReload ?? this.changesRequiredReload,
     );
   }
 }

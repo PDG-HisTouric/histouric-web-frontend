@@ -45,6 +45,7 @@ class UsersTableState extends State<_UsersTable> {
     final colors = Theme.of(context).colorScheme;
     final users = context.watch<UsersTableBloc>().state.users;
     final size = MediaQuery.of(context).size;
+    print("me actualice");
 
     return ListView(
       physics: const ClampingScrollPhysics(),
@@ -71,7 +72,7 @@ class UsersTableState extends State<_UsersTable> {
               DataColumn(label: Text('Roles')),
               DataColumn(label: Text('Acciones')),
             ],
-            source: UsersDTS(users, context),
+            source: UsersDTS(users, context, () {}),
             header: const Text('Listado de usuarios', maxLines: 2),
             onRowsPerPageChanged: (value) {
               setState(() {

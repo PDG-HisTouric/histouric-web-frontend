@@ -21,6 +21,7 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   void _onDataFetched(DataFetched event, Emitter<UsersTableState> emit) async {
     final List<HistouricUser> users = await userRepository.getUsers();
     emit(state.copyWith(users: users));
+    print("llegue por aca");
   }
 
   void fetchUsers() {

@@ -26,10 +26,7 @@ class AuthScreen extends StatelessWidget {
     }
 
     if (authStatus == AuthStatus.authenticated) {
-      return const DashboardScreen(
-          child: ProfileView(
-        forEditing: true,
-      ));
+      return const DashboardScreen(child: ProfileView());
     }
 
     return Scaffold(

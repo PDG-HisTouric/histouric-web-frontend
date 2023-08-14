@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/domain/entities/entities.dart';
+import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 class UsersDTS extends DataTableSource {
   final List<HistouricUser> users;
   final BuildContext context;
+  final Function() onPressedEditButton;
 
-  UsersDTS(this.users, this.context);
+  UsersDTS(this.users, this.context, this.onPressedEditButton);
 
   @override
   DataRow getRow(int index) {
@@ -18,11 +22,21 @@ class UsersDTS extends DataTableSource {
       DataCell(Text(user.roles.map((role) => role.name).join(', '))),
       DataCell(Row(
         children: [
-          IconButton(icon: Icon(Icons.edit_outlined), onPressed: () {}),
+          IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: () {
+                NavigationService.navigatorKey.currentState!
+                    .pushNamed('/dashboard/users/edit/${user.nickname}')
+                    .then((value) {
+                  context.read<UsersTableBloc>().fetchUsers();
+                });
+              }),
           IconButton(
               icon: Icon(Icons.delete_outline,
                   color: Colors.red.withOpacity(0.8)),
-              onPressed: () {}),
+              onPressed: () {
+                context.read<UsersTableBloc>().fetchUsers();
+              }),
         ],
       )),
     ]);
