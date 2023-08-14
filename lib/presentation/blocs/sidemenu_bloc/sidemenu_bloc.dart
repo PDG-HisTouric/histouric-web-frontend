@@ -12,6 +12,7 @@ class SidemenuBloc extends Bloc<SidemenuEvent, SidemenuState> {
     on<MenuClosed>(_onMenuClosed);
     on<MenuToggled>(_onMenuToggled);
     on<MenuControllerUpdated>(_onMenuControllerUpdated);
+    on<AnimationControllerDisposed>(_onAnimationControllerDisposed);
   }
 
   void _onMenuOpened(MenuOpened event, Emitter<SidemenuState> emit) {
@@ -39,8 +40,20 @@ class SidemenuBloc extends Bloc<SidemenuEvent, SidemenuState> {
         menuController: event.menuController, menuInitiated: true));
   }
 
+  void _onAnimationControllerDisposed(
+    AnimationControllerDisposed event,
+    Emitter<SidemenuState> emit,
+  ) {
+    state.menuController.dispose();
+    emit(state.copyWith(menuInitiated: false));
+  }
+
   void updateMenuController(AnimationController menuController) {
     add(MenuControllerUpdated(menuController: menuController));
+  }
+
+  void disposeMenuController() {
+    add(AnimationControllerDisposed());
   }
 
   void closeMenu() {
@@ -49,5 +62,9 @@ class SidemenuBloc extends Bloc<SidemenuEvent, SidemenuState> {
 
   void openMenu() {
     add(MenuOpened());
+  }
+
+  void toggleMenu() {
+    add(MenuToggled());
   }
 }

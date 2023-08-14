@@ -15,6 +15,7 @@ class FluroRouterWrapper {
   //Dashboard Routes
   static String dashboardRoute = '/dashboard';
   static String usersTable = "/dashboard/users";
+  static String editUser = "/dashboard/users/edit/:nickname";
 
   static void configureRoutes() {
     //Auth routes
@@ -47,6 +48,13 @@ class FluroRouterWrapper {
     router.define(
       usersTable,
       handler: DashboardHandlers.usersTable,
+      transitionType: TransitionType.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+
+    router.define(
+      editUser,
+      handler: DashboardHandlers.editUserFromTable,
       transitionType: TransitionType.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     );

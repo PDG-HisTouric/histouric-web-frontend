@@ -13,17 +13,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final KeyValueStorageService keyValueStorageService;
   final AuthRepository authRepository;
   final BuildContext context;
+  final String? token;
 
   AuthBloc({
     required this.userRepository,
     required this.authRepository,
     required this.keyValueStorageService,
     required this.context,
+    this.token,
   }) : super(AuthState()) {
     on<CheckToken>(_onCheckToken);
     on<UserLoggedOut>(_onUserLoggedOut);
     on<UserChanged>(_onUserChanged);
     on<UserLoadedFromAdmin>(_onUserLoadedFromAdmin);
+    on<TokenChanged>(_onTokenChanged);
+    if (token != null) {
+      userRepository.configureToken(token!);
+      changeToken(token: token!);
+    }
   }
 
   void _onCheckToken(CheckToken event, Emitter<AuthState> emit) async {
@@ -115,23 +122,38 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onUserLoadedFromAdmin(
       UserLoadedFromAdmin event, Emitter<AuthState> emit) async {
     emit(state.copyWith(
-      id: event.id,
-      nickname: event.nickname,
-      email: event.email,
-      roles: event.roles,
+      authStatus: AuthStatus.checking,
+    ));
+    try {
+      HistouricUser histouricUser =
+          await userRepository.getUserByNickname(event.nickname);
+      emit(state.copyWith(
+        id: histouricUser.id,
+        nickname: histouricUser.nickname,
+        email: histouricUser.email,
+        roles: histouricUser.roles.map((role) => role.name).toList(),
+        authStatus: AuthStatus.authenticated,
+      ));
+    } catch (e) {
+      emit(state.copyWith(authStatus: AuthStatus.notAuthenticated));
+    }
+  }
+
+  void loadUserFromAdmin({required String nickname}) {
+    add(UserLoadedFromAdmin(
+      nickname: nickname,
     ));
   }
 
-  void loadUserFromAdmin(
-      {required String id,
-      required String nickname,
-      required String email,
-      required List<String> roles}) {
-    add(UserLoadedFromAdmin(
-      id: id,
-      nickname: nickname,
-      email: email,
-      roles: roles,
+  void _onTokenChanged(TokenChanged event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(
+      token: event.token,
+    ));
+  }
+
+  void changeToken({required String token}) {
+    add(TokenChanged(
+      token: token,
     ));
   }
 }

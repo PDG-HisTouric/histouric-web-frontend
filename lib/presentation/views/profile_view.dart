@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/infrastructure/datasource/spring_boot_user_datasource.dart';
-import 'package:histouric_web/infrastructure/inputs/email.dart';
 import 'package:histouric_web/infrastructure/repositories/user_repository_impl.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
-import 'package:histouric_web/presentation/blocs/profile_bloc/profile_bloc.dart';
-import 'package:histouric_web/presentation/widgets/container_with_gradient.dart';
 import 'package:histouric_web/presentation/widgets/custom_card.dart';
 
-import '../widgets/background_figures.dart';
-import '../widgets/star_painter.dart';
-
 class ProfileView extends StatelessWidget {
-  final bool forEditing;
-
-  const ProfileView({super.key, required this.forEditing});
+  const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +24,7 @@ class ProfileView extends StatelessWidget {
 }
 
 class _ProfileView extends StatelessWidget {
-  const _ProfileView({
-    super.key,
-  });
+  const _ProfileView();
 
   @override
   Widget build(BuildContext context) {

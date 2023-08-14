@@ -37,14 +37,25 @@ class UsersTableState extends State<_UsersTable> {
   @override
   void initState() {
     super.initState();
-    context.read<UsersTableBloc>().fetchUsers();
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final users = context.watch<UsersTableBloc>().state.users;
+    final usersTableBloc = context.watch<UsersTableBloc>();
+    final users = usersTableBloc.state.users;
     final size = MediaQuery.of(context).size;
+
+    if (usersTableBloc.state.initializingControllers) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (usersTableBloc.state.nicknameController.text.isNotEmpty) {
+      usersTableBloc
+          .searchByNickname(usersTableBloc.state.nicknameController.text);
+    } else {
+      usersTableBloc.fetchUsers();
+    }
 
     return ListView(
       physics: const ClampingScrollPhysics(),
@@ -71,7 +82,7 @@ class UsersTableState extends State<_UsersTable> {
               DataColumn(label: Text('Roles')),
               DataColumn(label: Text('Acciones')),
             ],
-            source: UsersDTS(users, context),
+            source: UsersDTS(users ?? [], context),
             header: const Text('Listado de usuarios', maxLines: 2),
             onRowsPerPageChanged: (value) {
               setState(() {
@@ -84,9 +95,8 @@ class UsersTableState extends State<_UsersTable> {
                 children: [
                   if (size.width > 600)
                     SearchInput(
-                      onChanged:
-                          context.read<UsersTableBloc>().searchByNickname,
-                    ),
+                        controller: usersTableBloc.state.nicknameController,
+                        onChanged: (value) {}),
                   if (size.width > 600) const SizedBox(width: 10),
                   CustomElevatedButtonRounded(
                     label: "Agregar Usuario",

@@ -35,15 +35,15 @@ class UserChanged extends AuthEvent {
 }
 
 class UserLoadedFromAdmin extends AuthEvent {
-  final String id;
-  final String nickname;
-  final String email;
-  final List<String> roles;
+  String nickname;
 
   UserLoadedFromAdmin({
-    required this.id,
     required this.nickname,
-    required this.email,
-    required this.roles,
   });
+}
+
+class TokenChanged extends AuthEvent {
+  final String token;
+
+  TokenChanged({required this.token});
 }

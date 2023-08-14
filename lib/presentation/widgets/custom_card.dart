@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/config/helpers/dialogs.dart';
+import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
+import 'package:histouric_web/presentation/widgets/widgets.dart';
 
 import '../../infrastructure/inputs/inputs.dart';
 import 'card_for_edit.dart';
@@ -11,7 +14,8 @@ class CustomCard extends StatelessWidget {
   const CustomCard({super.key});
 
   String _getLabelForMainButton(ProfilePurpose profilePurpose) {
-    if (profilePurpose == ProfilePurpose.editMyProfile) {
+    if (profilePurpose == ProfilePurpose.editMyProfile ||
+        profilePurpose == ProfilePurpose.editUserFromAdmin) {
       return 'Guardar';
     }
     if (profilePurpose == ProfilePurpose.viewMyProfile) {
@@ -52,6 +56,11 @@ class CustomCard extends StatelessWidget {
                 buildRoleSelection: _buildRolesSection,
                 profileBloc: profileBloc,
               ),
+            if (profilePurpose == ProfilePurpose.editUserFromAdmin)
+              CardForEditFromAdmin(
+                buildRoleSelection: _buildRolesSection,
+                profileBloc: profileBloc,
+              ),
             Wrap(
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -61,10 +70,26 @@ class CustomCard extends StatelessWidget {
                   backgroundColor: colors.primary,
                   onPressed: () {
                     if (profilePurpose == ProfilePurpose.editMyProfile) {
-                      context.read<ProfileBloc>().saveChanges();
+                      if (profileBloc.state.selectedRoles.isEmpty) {
+                        Dialogs.showErrorDialog(
+                            context: context,
+                            content: "Tienes que seleccionar al menos un rol");
+                      } else {
+                        context.read<ProfileBloc>().saveChanges();
+                      }
                     }
                     if (profilePurpose == ProfilePurpose.viewMyProfile) {
                       context.read<ProfileBloc>().startEditing();
+                    }
+                    if (profilePurpose == ProfilePurpose.editUserFromAdmin) {
+                      if (profileBloc.state.selectedRoles.isEmpty) {
+                        Dialogs.showErrorDialog(
+                            context: context,
+                            content: "Tienes que seleccionar al menos un rol");
+                      } else {
+                        context.read<ProfileBloc>().saveChanges();
+                        NavigationService.pop();
+                      }
                     }
                   },
                   textColor: colors.onPrimary,
@@ -93,6 +118,7 @@ class CustomCard extends StatelessWidget {
 Widget _buildRolesSection(BuildContext context) {
   final profileBloc = context.watch<ProfileBloc>();
   final isAdminUser = context.watch<AuthBloc>().state.roles!.contains('ADMIN');
+  final profilePurpose = profileBloc.state.profilePurpose;
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -106,7 +132,9 @@ Widget _buildRolesSection(BuildContext context) {
       const SizedBox(height: 15.0),
       Wrap(
           spacing: 8.0,
-          children: (isAdminUser)
+          children: (isAdminUser ||
+                  profilePurpose == ProfilePurpose.editUserFromAdmin ||
+                  profilePurpose == ProfilePurpose.createUserFromAdmin)
               ? _roles.map((role) => _buildRoleCard(role, context)).toList()
               : profileBloc.state.selectedRoles
                   .map((role) => _buildRoleCard(role, context))
@@ -138,7 +166,7 @@ Widget _buildRoleCard(String role, BuildContext context) {
   final profileBloc = context.watch<ProfileBloc>();
   final profilePurpose = profileBloc.state.profilePurpose;
   final Set<String> selectedRoles;
-  if (profilePurpose == ProfilePurpose.editMyProfile) {
+  if (profilePurpose != ProfilePurpose.viewMyProfile) {
     selectedRoles = profileBloc.state.selectedRoles;
   } else {
     selectedRoles = context.watch<AuthBloc>().state.roles!.toSet();
@@ -146,7 +174,7 @@ Widget _buildRoleCard(String role, BuildContext context) {
   final colors = Theme.of(context).colorScheme;
 
   final bool isSelected;
-  if (profilePurpose == ProfilePurpose.editMyProfile) {
+  if (profilePurpose != ProfilePurpose.viewMyProfile) {
     isSelected = selectedRoles.contains(role);
   } else {
     isSelected = selectedRoles.contains(mapRole(role));
@@ -158,7 +186,7 @@ Widget _buildRoleCard(String role, BuildContext context) {
 
   return GestureDetector(
     onTap: () {
-      if (profilePurpose != ProfilePurpose.editMyProfile) return;
+      if (profilePurpose == ProfilePurpose.viewMyProfile) return;
       if (isSelected) {
         profileBloc.removeRole(role);
       } else {

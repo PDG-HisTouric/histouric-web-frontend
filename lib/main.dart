@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/infrastructure/datasource/datasources.dart';
-import 'package:histouric_web/infrastructure/datasource/spring_boot_user_datasource.dart';
+
 import 'package:histouric_web/infrastructure/repositories/repositories.dart';
-import 'package:histouric_web/infrastructure/repositories/user_repository_impl.dart';
 import 'package:histouric_web/infrastructure/services/services.dart';
 import 'package:histouric_web/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:histouric_web/presentation/blocs/blocs.dart';
 import 'package:histouric_web/presentation/screens/auth_screen.dart';
 import 'package:histouric_web/presentation/views/login_view.dart';
 
@@ -20,29 +20,6 @@ void main() {
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
-
-  void openDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      //obliga a que se seleccione alguno de los botones, ya no se puede cerrar el diálogo oprimiendo algo afuera
-      builder: (context) => AlertDialog(
-        title: const Text('¿Estas seguro?'),
-        content: const Text(
-            'Amet eu amet laborum occaecat deserunt. Sunt eiusmod exercitation in cillum id quis qui consequat fugiat esse culpa. Consectetur amet proident sint ad consequat id.'),
-        actions: [
-          TextButton(
-            onPressed: () => NavigationService.pop(),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () => NavigationService.pop(),
-            child: const Text('Aceptar'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

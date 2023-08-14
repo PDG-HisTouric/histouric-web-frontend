@@ -43,6 +43,7 @@ class Sidebar extends StatelessWidget {
               onPressed: () {
                 context.read<SidemenuBloc>().closeMenu();
                 context.read<AuthBloc>().logout();
+                context.read<SidemenuBloc>().disposeMenuController();
                 NavigationService.replaceTo(FluroRouterWrapper.loginRoute);
               }),
         ],

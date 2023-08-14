@@ -34,6 +34,7 @@ class SpringBootUserDatasource extends UserDatasource {
 
   @override
   Future<List<HistouricUser>> getUsersByNickname(String nickname) async {
+    if (nickname.isEmpty) return [];
     final response = await dio.get('/all/$nickname');
     List<HistouricUserResponse> histouricUserResponses = (response.data as List)
         .map((e) => HistouricUserResponse.fromJson(e))

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/domain/entities/entities.dart';
+import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 import '../blocs/users_table_bloc/users_table_bloc.dart';
 
@@ -21,7 +23,13 @@ class UsersDTS extends DataTableSource {
       DataCell(Text(user.roles.map((role) => role.name).join(', '))),
       DataCell(Row(
         children: [
-          IconButton(icon: Icon(Icons.edit_outlined), onPressed: () {}),
+          IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: () {
+                var temp = context.read<UsersTableBloc>().state;
+                NavigationService.navigateTo(
+                    '/dashboard/users/edit/${user.nickname}');
+              }),
           IconButton(
             icon: Icon(
               Icons.delete_outline,

@@ -6,3 +6,5 @@ export 'background_figures.dart';
 export 'star_painter.dart';
 export 'container_with_gradient.dart';
 export 'custom_card.dart';
+export 'custom_elevated_button_squared.dart';
+export 'card_for_edit_from_admin.dart';
