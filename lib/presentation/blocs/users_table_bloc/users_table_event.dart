@@ -9,3 +9,9 @@ class NicknameSearched extends UsersTableEvent {
 
   NicknameSearched({required this.nickname});
 }
+
+class UserDeleted extends UsersTableEvent {
+  final String id;
+
+  UserDeleted({required this.id});
+}
