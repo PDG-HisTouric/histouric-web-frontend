@@ -16,6 +16,7 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
     userRepository.configureToken(token);
     on<DataFetched>(_onDataFetched);
     on<NicknameSearched>(_onNicknameSearched);
+    on<UserDeleted>(_onUserDeleted);
   }
 
   void _onDataFetched(DataFetched event, Emitter<UsersTableState> emit) async {
@@ -37,5 +38,14 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   void searchByNickname(String nickname) {
     if (nickname.isEmpty) return fetchUsers();
     add(NicknameSearched(nickname: nickname));
+  }
+
+  void _onUserDeleted(UserDeleted event, Emitter<UsersTableState> emit) async {
+    await userRepository.deleteUserById(event.id);
+    fetchUsers();
+  }
+
+  void deleteUser(String id) {
+    add(UserDeleted(id: id));
   }
 }
