@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/domain/entities/entities.dart';
 import 'package:histouric_web/domain/repositories/repositories.dart';
@@ -13,11 +14,13 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
     required this.userRepository,
     required this.token,
   }) : super(UsersTableState()) {
-    userRepository.configureToken(token);
     on<DataFetched>(_onDataFetched);
     on<NicknameSearched>(_onNicknameSearched);
     on<NicknameSearchStopped>(_onNicknameSearchStopped);
-    print('entre');
+    on<UserDeleted>(_onUserDeleted);
+    on<ControllersOfUserTableInitialized>(_onControllersInitialized);
+    userRepository.configureToken(token);
+    _initializeControllers();
   }
 
   void _onDataFetched(DataFetched event, Emitter<UsersTableState> emit) async {
@@ -49,5 +52,23 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
 
   void stopSearching() {
     add(NicknameSearchStopped());
+  }
+
+  void _onUserDeleted(UserDeleted event, Emitter<UsersTableState> emit) async {
+    await userRepository.deleteUserById(event.id);
+    fetchUsers();
+  }
+
+  void deleteUser(String id) {
+    add(UserDeleted(id: id));
+  }
+
+  void _onControllersInitialized(
+      ControllersOfUserTableInitialized event, Emitter<UsersTableState> emit) {
+    emit(state.configureControllers());
+  }
+
+  void _initializeControllers() {
+    add(ControllersOfUserTableInitialized());
   }
 }

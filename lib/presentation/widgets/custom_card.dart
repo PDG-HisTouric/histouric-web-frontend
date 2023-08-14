@@ -27,7 +27,6 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileBloc = context.watch<ProfileBloc>();
-    print(profileBloc.state.selectedRoles.toList().join(", "));
     final colors = Theme.of(context).colorScheme;
     final ProfilePurpose profilePurpose = profileBloc.state.profilePurpose;
 

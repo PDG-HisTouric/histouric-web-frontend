@@ -11,3 +11,11 @@ class NicknameSearched extends UsersTableEvent {
 }
 
 class NicknameSearchStopped extends UsersTableEvent {}
+
+class UserDeleted extends UsersTableEvent {
+  final String id;
+
+  UserDeleted({required this.id});
+}
+
+class ControllersOfUserTableInitialized extends UsersTableEvent {}

@@ -4,12 +4,13 @@ import 'package:histouric_web/config/navigation/navigation_service.dart';
 import 'package:histouric_web/domain/entities/entities.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
+import '../blocs/users_table_bloc/users_table_bloc.dart';
+
 class UsersDTS extends DataTableSource {
   final List<HistouricUser> users;
   final BuildContext context;
-  final Function() onPressedEditButton;
 
-  UsersDTS(this.users, this.context, this.onPressedEditButton);
+  UsersDTS(this.users, this.context);
 
   @override
   DataRow getRow(int index) {
@@ -25,18 +26,19 @@ class UsersDTS extends DataTableSource {
           IconButton(
               icon: const Icon(Icons.edit_outlined),
               onPressed: () {
-                NavigationService.navigatorKey.currentState!
-                    .pushNamed('/dashboard/users/edit/${user.nickname}');
-                //     .then((value) {
-                //   context.read<UsersTableBloc>().initPageReloaded();
-                // });
+                var temp = context.read<UsersTableBloc>().state;
+                NavigationService.navigateTo(
+                    '/dashboard/users/edit/${user.nickname}');
               }),
           IconButton(
-              icon: Icon(Icons.delete_outline,
-                  color: Colors.red.withOpacity(0.8)),
-              onPressed: () {
-                context.read<UsersTableBloc>().fetchUsers();
-              }),
+            icon: Icon(
+              Icons.delete_outline,
+              color: Colors.red.withOpacity(0.8),
+            ),
+            onPressed: () {
+              context.read<UsersTableBloc>().deleteUser(user.id);
+            },
+          ),
         ],
       )),
     ]);

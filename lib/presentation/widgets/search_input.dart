@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class SearchInput extends StatelessWidget {
   final void Function(String)? onChanged;
+  final TextEditingController? controller;
 
-  const SearchInput({super.key, required this.onChanged});
+  const SearchInput({super.key, required this.onChanged, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +17,7 @@ class SearchInput extends StatelessWidget {
           color: Theme.of(context).colorScheme.surface,
         ),
         child: TextField(
+          controller: controller,
           onChanged: onChanged,
           decoration: const InputDecoration(
             contentPadding: EdgeInsets.all(10.0),

@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:formz/formz.dart';
 import 'package:histouric_web/domain/repositories/repositories.dart';
 import 'package:histouric_web/infrastructure/inputs/email.dart';
 import 'package:histouric_web/infrastructure/inputs/password.dart';
@@ -128,8 +127,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   Future<HistouricUser> callTheRepository() async {
-    bool currentUserIsAdmin = authBloc.state.roles!.contains("ADMIN");
-
     final user = HistouricUserWithPassword(
         id: authBloc.state.id!,
         email: (state.email.value.isEmpty) ? null : state.email.value,
