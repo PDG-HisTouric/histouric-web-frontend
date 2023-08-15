@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
+
+import '../blocs/blocs.dart';
 
 typedef BuildRoleSelection = Widget Function(BuildContext context);
 
@@ -18,11 +19,7 @@ class CardForView extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSaving = context.watch<ProfileBloc>().state.isSaving;
 
-    if (isSaving) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+    if (isSaving) return const Center(child: CircularProgressIndicator());
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -64,10 +61,7 @@ class _SubtitleAndText extends StatelessWidget {
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
           ),
           Text(text, textAlign: TextAlign.center),
         ],

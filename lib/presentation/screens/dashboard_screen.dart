@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
-import 'package:histouric_web/presentation/presentations.dart';
-import 'package:histouric_web/presentation/widgets/navbar.dart';
 
-import '../widgets/sidebar.dart';
+import '../blocs/blocs.dart';
+import '../views/views.dart';
+import '../widgets/widgets.dart';
+import 'auth_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   final Widget child;
@@ -16,9 +16,7 @@ class DashboardScreen extends StatelessWidget {
     final authStatus = context.watch<AuthBloc>().state.authStatus;
 
     if (authStatus == AuthStatus.checking) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (authStatus == AuthStatus.notAuthenticated) {
@@ -27,9 +25,7 @@ class DashboardScreen extends StatelessWidget {
 
     return BlocProvider(
       create: (context) => SidemenuBloc(),
-      child: _Dashboard(
-        child: child,
-      ),
+      child: _Dashboard(child: child),
     );
   }
 }
@@ -37,10 +33,7 @@ class DashboardScreen extends StatelessWidget {
 class _Dashboard extends StatefulWidget {
   final Widget child;
 
-  const _Dashboard({
-    super.key,
-    required this.child,
-  });
+  const _Dashboard({required this.child});
 
   @override
   State<_Dashboard> createState() => _DashboardState();
@@ -61,13 +54,11 @@ class _DashboardState extends State<_Dashboard>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final sideMenuBloc = context.watch<SidemenuBloc>();
-    final size = MediaQuery.of(context).size;
 
     if (sideMenuBloc.state.menuInitiated == false) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Scaffold(
@@ -79,12 +70,7 @@ class _DashboardState extends State<_Dashboard>
             children: [
               Expanded(
                 child: Column(
-                  children: [
-                    const Navbar(),
-                    Expanded(
-                      child: widget.child,
-                    ),
-                  ],
+                  children: [const Navbar(), Expanded(child: widget.child)],
                 ),
               ),
             ],
@@ -108,10 +94,10 @@ class _DashboardState extends State<_Dashboard>
                 Transform.translate(
                   offset: Offset(sideMenuBloc.state.movement().value, 0),
                   child: const Sidebar(),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/infrastructure/datasource/datasources.dart';
-import 'package:histouric_web/infrastructure/repositories/auth_repository_impl.dart';
-import 'package:histouric_web/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
 
-import '../../../config/navigation/navigation_service.dart';
-import '../../../config/navigation/router.dart';
-import '../../config/helpers/dialogs.dart';
-import '../widgets/bottom_message_with_button.dart';
-import '../widgets/custom_elevated_button_rounded.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/divider_with_message.dart';
+import '../../config/config.dart';
+import '../../infrastructure/infrastructure.dart';
+import '../blocs/blocs.dart';
+import '../widgets/widgets.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return BlocProvider(
       create: (context) => SignUpBloc(
         context: context,
@@ -87,7 +79,7 @@ class _Register extends StatelessWidget {
           label: "Crear cuenta",
           onPressed: () async {
             if (context.read<SignUpBloc>().isStateValid()) {
-              await context.read<SignUpBloc>().signUp()
+              context.read<SignUpBloc>().signUp()
                   ? NavigationService.navigateTo(
                       FluroRouterWrapper.loginRoute,
                     )

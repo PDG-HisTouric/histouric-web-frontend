@@ -30,10 +30,7 @@ class CustomElevatedButtonSquared extends StatelessWidget {
           elevation: 4.0,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20.0,
-            vertical: 12.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
           child: Text(
             label,
             style: TextStyle(

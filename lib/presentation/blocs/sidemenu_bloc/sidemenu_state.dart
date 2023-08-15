@@ -27,12 +27,14 @@ class SidemenuState {
 
   Animation<double> movement() {
     return Tween<double>(begin: -230, end: 0).animate(
-        CurvedAnimation(parent: menuController, curve: Curves.easeInOut));
+      CurvedAnimation(parent: menuController, curve: Curves.easeInOut),
+    );
   }
 
   Animation<double> opacity() {
     return Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: menuController, curve: Curves.easeInOut));
+      CurvedAnimation(parent: menuController, curve: Curves.easeInOut),
+    );
   }
 
   void _updateMenuController(AnimationController menuController) {

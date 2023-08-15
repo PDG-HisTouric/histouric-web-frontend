@@ -31,31 +31,22 @@ class CustomTextFormField extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       obscureText: obscureText,
-      style: TextStyle(
-        fontSize: 16,
-        color: colors.onPrimary,
-      ),
+      style: TextStyle(fontSize: 16, color: colors.onPrimary),
       decoration: InputDecoration(
         enabledBorder: border,
         focusedBorder: border.copyWith(
-            borderSide: BorderSide(
-          color: colors.primary,
-        )),
+          borderSide: BorderSide(color: colors.primary),
+        ),
         errorBorder: border.copyWith(
-            borderSide: BorderSide(
-          color: colors.error,
-        )),
+          borderSide: BorderSide(color: colors.error),
+        ),
         focusedErrorBorder: border.copyWith(
-            borderSide: BorderSide(
-          color: colors.error,
-        )),
+          borderSide: BorderSide(color: colors.error),
+        ),
         isDense: true,
         label: label != null ? Text(label!) : null,
         hintText: hint,
-        hintStyle: TextStyle(
-          fontSize: 16,
-          color: colors.onPrimary,
-        ),
+        hintStyle: TextStyle(fontSize: 16, color: colors.onPrimary),
         errorText: errorMessage,
         errorMaxLines: 2,
         focusColor: colors.primary,

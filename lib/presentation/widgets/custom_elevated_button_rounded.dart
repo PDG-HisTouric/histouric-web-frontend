@@ -25,17 +25,10 @@ class CustomElevatedButtonRounded extends StatelessWidget {
           backgroundColor ?? colors.primary,
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         ),
-        // backgroundColor:
-        //     MaterialStateProperty.all<Color>(Colors.white),
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-          const EdgeInsets.symmetric(
-            horizontal: 40,
-            vertical: 15,
-          ),
+          const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
         ),
       ),
       child: Text(

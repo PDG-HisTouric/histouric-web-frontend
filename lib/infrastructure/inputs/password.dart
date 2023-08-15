@@ -13,10 +13,13 @@ class Password extends FormzInput<String, PasswordError> {
 
   String? get errorMessage {
     if (isValid || isPure) return null;
-    if (displayError == PasswordError.empty)
+    if (displayError == PasswordError.empty) {
       return 'La contraseña es requerida';
-    if (displayError == PasswordError.length)
+    }
+    if (displayError == PasswordError.length) {
       return 'La contraseña puede tener máximo 255 caracteres';
+    }
+
     return null;
   }
 

@@ -13,10 +13,13 @@ class Nickname extends FormzInput<String, NicknameError> {
 
   String? get errorMessage {
     if (isValid || isPure) return null;
-    if (displayError == NicknameError.empty)
+    if (displayError == NicknameError.empty) {
       return 'El nombre de usuario es requerido';
-    if (displayError == NicknameError.length)
+    }
+    if (displayError == NicknameError.length) {
       return 'El nombre de usuario puede tener máximo 50 caracteres';
+    }
+
     return null;
   }
 

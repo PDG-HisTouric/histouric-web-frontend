@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/infrastructure/datasource/spring_boot_user_datasource.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
-import 'package:histouric_web/presentation/presentations.dart';
-import 'package:histouric_web/presentation/widgets/search_input.dart';
 
-import '../../infrastructure/repositories/repositories.dart';
-import '../datatables/users_datasource.dart';
+import '../../config/config.dart';
+import '../../infrastructure/infrastructure.dart';
+import '../blocs/blocs.dart';
+import '../datatables/datatables.dart';
+import '../widgets/widgets.dart';
 
 class UsersTable extends StatelessWidget {
   const UsersTable({super.key});
@@ -14,18 +13,19 @@ class UsersTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => UsersTableBloc(
-              token: context.read<AuthBloc>().state.token!,
-              userRepository: UserRepositoryImpl(
-                userDatasource: SpringBootUserDatasource(),
-              ),
-            ),
-        child: const _UsersTable());
+      create: (context) => UsersTableBloc(
+        token: context.read<AuthBloc>().state.token!,
+        userRepository: UserRepositoryImpl(
+          userDatasource: SpringBootUserDatasource(),
+        ),
+      ),
+      child: const _UsersTable(),
+    );
   }
 }
 
 class _UsersTable extends StatefulWidget {
-  const _UsersTable({super.key});
+  const _UsersTable();
 
   @override
   UsersTableState createState() => UsersTableState();
@@ -41,18 +41,19 @@ class UsersTableState extends State<_UsersTable> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final colors = Theme.of(context).colorScheme;
     final usersTableBloc = context.watch<UsersTableBloc>();
     final users = usersTableBloc.state.users;
-    final size = MediaQuery.of(context).size;
 
     if (usersTableBloc.state.initializingControllers) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (usersTableBloc.state.nicknameController.text.isNotEmpty) {
-      usersTableBloc
-          .searchByNickname(usersTableBloc.state.nicknameController.text);
+      usersTableBloc.searchByNickname(
+        usersTableBloc.state.nicknameController.text,
+      );
     } else {
       usersTableBloc.fetchUsers();
     }
@@ -95,20 +96,23 @@ class UsersTableState extends State<_UsersTable> {
                 children: [
                   if (size.width > 600)
                     SearchInput(
-                        controller: usersTableBloc.state.nicknameController,
-                        onChanged: (value) {}),
+                      controller: usersTableBloc.state.nicknameController,
+                      onChanged: (_) {},
+                    ),
                   if (size.width > 600) const SizedBox(width: 10),
                   CustomElevatedButtonRounded(
                     label: "Agregar Usuario",
                     onPressed: () {
-                      //TODO LLEVAR A PANTALLA DE CREAR USUARIO
+                      NavigationService.navigateTo(
+                        FluroRouterWrapper.createUser,
+                      );
                     },
                   ),
                 ],
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

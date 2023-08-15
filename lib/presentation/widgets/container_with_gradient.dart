@@ -30,6 +30,5 @@ class ContainerWithGradient extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }

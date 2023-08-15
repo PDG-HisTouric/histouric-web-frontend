@@ -1,6 +1,6 @@
 import 'package:fluro/fluro.dart';
-import 'package:histouric_web/config/navigation/dashboard_handlers.dart';
 
+import 'dashboard_handlers.dart';
 import 'login_and_register_handlers.dart';
 
 class FluroRouterWrapper {
@@ -16,6 +16,7 @@ class FluroRouterWrapper {
   static String dashboardRoute = '/dashboard';
   static String usersTable = "/dashboard/users";
   static String editUser = "/dashboard/users/edit/:nickname";
+  static String createUser = "/dashboard/users/create";
 
   static void configureRoutes() {
     //Auth routes
@@ -55,6 +56,13 @@ class FluroRouterWrapper {
     router.define(
       editUser,
       handler: DashboardHandlers.editUserFromTable,
+      transitionType: TransitionType.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+
+    router.define(
+      createUser,
+      handler: DashboardHandlers.createUserFromTable,
       transitionType: TransitionType.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     );

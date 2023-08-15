@@ -1,14 +1,9 @@
-import '../../domain/datasources/auth_datasource.dart';
-import '../../domain/entities/histouric_user.dart';
-import '../../domain/entities/token.dart';
-import '../../domain/repositories/auth_repository.dart';
+import '../../domain/domain.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthDatasource authDatasource;
 
-  AuthRepositoryImpl({
-    required this.authDatasource,
-  });
+  AuthRepositoryImpl({required this.authDatasource});
 
   @override
   Future<Token> login(String email, String password) {

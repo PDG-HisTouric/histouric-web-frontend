@@ -1,4 +1,4 @@
-import 'package:histouric_web/infrastructure/models/role_response.dart';
+import 'role_response.dart';
 
 class HistouricUserResponse {
   final String id;
@@ -22,6 +22,7 @@ class HistouricUserResponse {
         nickname: json["nickname"],
         email: json["email"],
         roles: List<RoleResponse>.from(
-            json["roles"].map((x) => RoleResponse.fromJson(x))),
+          json["roles"].map((x) => RoleResponse.fromJson(x)),
+        ),
       );
 }

@@ -37,9 +37,7 @@ class UserChanged extends AuthEvent {
 class UserLoadedFromAdmin extends AuthEvent {
   String nickname;
 
-  UserLoadedFromAdmin({
-    required this.nickname,
-  });
+  UserLoadedFromAdmin({required this.nickname});
 }
 
 class TokenChanged extends AuthEvent {

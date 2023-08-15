@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
-import '../../../config/helpers/dialogs.dart';
-import '../../../infrastructure/inputs/email.dart';
-import '../../../infrastructure/inputs/nickname.dart';
-import '../../../infrastructure/inputs/password.dart';
+import '../../../config/config.dart';
+import '../../../infrastructure/infrastructure.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -23,6 +21,7 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
 
   void _onEmailChanged(LoginEmailChanged event, Emitter<LoginFormState> emit) {
     Email email = Email.dirty(event.email);
+
     emit(state.copyWith(
       email: email,
       isValid: Formz.validate([email, state.password]),
@@ -30,8 +29,11 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
   }
 
   void _onPasswordChanged(
-      LoginPasswordChanged event, Emitter<LoginFormState> emit) {
+    LoginPasswordChanged event,
+    Emitter<LoginFormState> emit,
+  ) {
     Password password = Password.dirty(event.password);
+
     emit(state.copyWith(
       password: password,
       isValid: Formz.validate([state.email, password]),
@@ -41,6 +43,7 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
   _touchedEveryField(LoginSubmitted event, Emitter<LoginFormState> emit) {
     final newEmail = Email.dirty(state.email.value);
     final newPassword = Password.dirty(state.password.value);
+
     emit(state.copyWith(
       email: newEmail,
       password: newPassword,

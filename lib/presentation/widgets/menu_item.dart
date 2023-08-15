@@ -44,8 +44,10 @@ class MenuItemState extends State<MenuItem> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(widget.icon,
-                      color: colorScheme.onPrimary.withOpacity(0.5)),
+                  Icon(
+                    widget.icon,
+                    color: colorScheme.onPrimary.withOpacity(0.5),
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     widget.text,
@@ -53,7 +55,7 @@ class MenuItemState extends State<MenuItem> {
                       fontSize: 14,
                       color: colorScheme.onPrimary,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

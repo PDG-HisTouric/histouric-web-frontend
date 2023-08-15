@@ -1,7 +1,6 @@
-import 'package:histouric_web/domain/entities/entities.dart';
-import 'package:histouric_web/infrastructure/mapper/role_mapper.dart';
-
+import '../../domain/domain.dart';
 import '../models/models.dart';
+import 'role_mapper.dart';
 
 class HistouricUserMapper {
   static Map<String, dynamic> toMap(HistouricUser histouricUser) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/domain/entities/entities.dart';
-import 'package:histouric_web/domain/repositories/repositories.dart';
+
+import '../../../domain/domain.dart';
 
 part 'users_table_event.dart';
 part 'users_table_state.dart';
@@ -33,9 +33,12 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   }
 
   void _onNicknameSearched(
-      NicknameSearched event, Emitter<UsersTableState> emit) async {
+    NicknameSearched event,
+    Emitter<UsersTableState> emit,
+  ) async {
     List<HistouricUser> histouricUsers =
         await userRepository.getUsersByNickname(event.nickname);
+
     emit(state.copyWith(users: histouricUsers, isSearching: true));
   }
 
@@ -45,7 +48,9 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   }
 
   void _onNicknameSearchStopped(
-      NicknameSearchStopped event, Emitter<UsersTableState> emit) async {
+    NicknameSearchStopped event,
+    Emitter<UsersTableState> emit,
+  ) async {
     final List<HistouricUser> users = await userRepository.getUsers();
     emit(state.copyWith(users: users, isSearching: false));
   }
@@ -64,7 +69,9 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   }
 
   void _onControllersInitialized(
-      ControllersOfUserTableInitialized event, Emitter<UsersTableState> emit) {
+    ControllersOfUserTableInitialized event,
+    Emitter<UsersTableState> emit,
+  ) {
     emit(state.configureControllers());
   }
 

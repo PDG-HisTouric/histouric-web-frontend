@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/domain/entities/entities.dart';
-import 'package:histouric_web/infrastructure/datasource/datasources.dart';
-import 'package:histouric_web/infrastructure/repositories/repositories.dart';
-import 'package:histouric_web/infrastructure/services/services.dart';
-import 'package:histouric_web/presentation/blocs/auth_bloc/auth_bloc.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
-import 'package:histouric_web/presentation/presentations.dart';
+
+import '../../infrastructure/infrastructure.dart';
+import '../blocs/blocs.dart';
+import '../widgets/widgets.dart';
 
 class ProfileViewFromAdmin extends StatelessWidget {
   final ProfilePurpose profilePurpose;
@@ -23,22 +20,23 @@ class ProfileViewFromAdmin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => AuthBloc(
-              token: token,
-              userRepository: UserRepositoryImpl(
-                userDatasource: SpringBootUserDatasource(),
-              ),
-              keyValueStorageService: KeyValueStorageServiceImpl(),
-              authRepository: AuthRepositoryImpl(
-                authDatasource: SpringBootLoginDatasource(),
-              ),
-              context: context,
-            ),
-        child: _ProfileViewFromAdmin(
-          token: token,
-          nickname: nickname,
-          profilePurpose: profilePurpose,
-        ));
+      create: (context) => AuthBloc(
+        token: token,
+        userRepository: UserRepositoryImpl(
+          userDatasource: SpringBootUserDatasource(),
+        ),
+        keyValueStorageService: KeyValueStorageServiceImpl(),
+        authRepository: AuthRepositoryImpl(
+          authDatasource: SpringBootLoginDatasource(),
+        ),
+        context: context,
+      ),
+      child: _ProfileViewFromAdmin(
+        token: token,
+        nickname: nickname,
+        profilePurpose: profilePurpose,
+      ),
+    );
   }
 }
 
@@ -48,7 +46,6 @@ class _ProfileViewFromAdmin extends StatefulWidget {
   final String token;
 
   const _ProfileViewFromAdmin({
-    super.key,
     required this.profilePurpose,
     required this.nickname,
     required this.token,
@@ -62,8 +59,9 @@ class _ProfileViewFromAdminState extends State<_ProfileViewFromAdmin> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<AuthBloc>(context, listen: false)
-        .loadUserFromAdmin(nickname: widget.nickname);
+    BlocProvider.of<AuthBloc>(context, listen: false).loadUserFromAdmin(
+      nickname: widget.nickname,
+    );
   }
 
   @override
@@ -71,9 +69,7 @@ class _ProfileViewFromAdminState extends State<_ProfileViewFromAdmin> {
     final authBloc = context.watch<AuthBloc>();
 
     if (authBloc.state.authStatus == AuthStatus.checking) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     return Stack(
@@ -84,17 +80,18 @@ class _ProfileViewFromAdminState extends State<_ProfileViewFromAdmin> {
               width: 400,
               child: BlocProvider(
                 create: (context) => ProfileBloc(
-                    // usersTableBloc: context.read<UsersTableBloc>(),
-                    authBloc: context.read<AuthBloc>(),
-                    userRepository: UserRepositoryImpl(
-                        userDatasource: SpringBootUserDatasource()),
-                    context: context,
-                    profilePurpose: widget.profilePurpose),
+                  authBloc: context.read<AuthBloc>(),
+                  userRepository: UserRepositoryImpl(
+                    userDatasource: SpringBootUserDatasource(),
+                  ),
+                  context: context,
+                  profilePurpose: widget.profilePurpose,
+                ),
                 child: const CustomCard(),
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

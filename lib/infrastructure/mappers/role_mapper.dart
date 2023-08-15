@@ -1,4 +1,4 @@
-import '../../domain/entities/entities.dart';
+import '../../domain/domain.dart';
 import '../models/models.dart';
 
 class RoleMapper {

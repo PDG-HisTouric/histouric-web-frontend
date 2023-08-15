@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/config/navigation/navigation_service.dart';
-import 'package:histouric_web/config/navigation/router.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
 
-import 'sidemenu_title.dart';
+import '../../config/config.dart';
+import '../blocs/blocs.dart';
 import 'menu_item.dart';
+import 'sidemenu_title.dart';
 import 'text_separator.dart';
 
 class Sidebar extends StatelessWidget {
@@ -38,14 +37,15 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 50),
           const TextSeparator(text: 'Salir'),
           MenuItem(
-              text: 'Cerrar sesión',
-              icon: Icons.exit_to_app_outlined,
-              onPressed: () {
-                context.read<SidemenuBloc>().closeMenu();
-                context.read<AuthBloc>().logout();
-                context.read<SidemenuBloc>().disposeMenuController();
-                NavigationService.replaceTo(FluroRouterWrapper.loginRoute);
-              }),
+            text: 'Cerrar sesión',
+            icon: Icons.exit_to_app_outlined,
+            onPressed: () {
+              context.read<SidemenuBloc>().closeMenu();
+              context.read<AuthBloc>().logout();
+              context.read<SidemenuBloc>().disposeMenuController();
+              NavigationService.replaceTo(FluroRouterWrapper.loginRoute);
+            },
+          ),
         ],
       ),
     );
@@ -55,15 +55,13 @@ class Sidebar extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.primary,
-            colorScheme.primary.withOpacity(0.8),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-        boxShadow: [BoxShadow(color: colorScheme.primary, blurRadius: 10)]);
+      gradient: LinearGradient(
+        colors: [colorScheme.primary, colorScheme.primary.withOpacity(0.8)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+      boxShadow: [BoxShadow(color: colorScheme.primary, blurRadius: 10)],
+    );
   }
 }
 

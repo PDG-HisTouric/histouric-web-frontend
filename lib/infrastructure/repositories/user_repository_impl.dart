@@ -1,6 +1,4 @@
-import '../../domain/datasources/datasources.dart';
-import '../../domain/entities/entities.dart';
-import '../../domain/repositories/repositories.dart';
+import '../../domain/domain.dart';
 
 class UserRepositoryImpl extends UserRepository {
   final UserDatasource userDatasource;
@@ -8,9 +6,7 @@ class UserRepositoryImpl extends UserRepository {
   UserRepositoryImpl({required this.userDatasource});
 
   @override
-  Future<void> deleteUserById(String id) {
-    return userDatasource.deleteUserById(id);
-  }
+  Future<void> deleteUserById(String id) => userDatasource.deleteUserById(id);
 
   @override
   Future<HistouricUser> getUserByNickname(String nickname) {
@@ -18,13 +14,13 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<List<HistouricUser>> getUsers() {
-    return userDatasource.getUsers();
-  }
+  Future<List<HistouricUser>> getUsers() => userDatasource.getUsers();
 
   @override
   Future<HistouricUser> updateUserById(
-      String id, HistouricUserWithPassword histouricUserWithPassword) {
+    String id,
+    HistouricUserWithPassword histouricUserWithPassword,
+  ) {
     return userDatasource.updateUserById(id, histouricUserWithPassword);
   }
 
@@ -36,5 +32,12 @@ class UserRepositoryImpl extends UserRepository {
   @override
   Future<List<HistouricUser>> getUsersByNickname(String nickname) {
     return userDatasource.getUsersByNickname(nickname);
+  }
+
+  @override
+  Future<HistouricUser> registerUser(
+    HistouricUserWithPassword histouricUserWithPassword,
+  ) {
+    return userDatasource.registerUser(histouricUserWithPassword);
   }
 }

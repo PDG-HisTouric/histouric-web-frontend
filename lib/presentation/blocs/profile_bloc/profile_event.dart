@@ -73,3 +73,5 @@ class RolesChanged extends ProfileEvent {
 
   RolesChanged(this.roles);
 }
+
+class CreateButtonPressed extends ProfileEvent {}

@@ -1,13 +1,12 @@
-import 'package:histouric_web/domain/entities/entities.dart';
-import 'package:histouric_web/infrastructure/mapper/role_mapper.dart';
-
-import '../models/models.dart';
+import '../../domain/domain.dart';
 
 class HistouricUserWithPasswordMapper {
   static Map<String, dynamic> toMap(
-      HistouricUserWithPassword histouricUserWithPassword) {
+    HistouricUserWithPassword histouricUserWithPassword,
+  ) {
     return {
-      'id': histouricUserWithPassword.id,
+      if (histouricUserWithPassword.id != null)
+        'id': histouricUserWithPassword.id,
       if (histouricUserWithPassword.nickname != null)
         'nickname': histouricUserWithPassword.nickname,
       if (histouricUserWithPassword.email != null)
