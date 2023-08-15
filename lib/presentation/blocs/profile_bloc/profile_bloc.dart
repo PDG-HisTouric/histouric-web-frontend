@@ -1,13 +1,10 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:histouric_web/domain/repositories/repositories.dart';
-import 'package:histouric_web/infrastructure/inputs/email.dart';
-import 'package:histouric_web/infrastructure/inputs/password.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../config/helpers/dialogs.dart';
-import '../../../domain/entities/entities.dart';
-import '../../../infrastructure/inputs/nickname.dart';
+import '../../../domain/domain.dart';
+import '../../../infrastructure/infrastructure.dart';
+import '../blocs.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -27,12 +24,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     this.usersTableBloc,
   }) : super(ProfileState(
           profilePurpose: profilePurpose,
-          email: Email.dirty(
-            authBloc.state.email!,
-          ),
-          nickname: Nickname.dirty(
-            authBloc.state.nickname!,
-          ),
+          email: Email.dirty(authBloc.state.email!),
+          nickname: Nickname.dirty(authBloc.state.nickname!),
         )) {
     on<RoleSelected>(_onRoleSelected);
     on<RoleRemoved>(_onRoleRemoved);
@@ -46,25 +39,65 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ControllersInitialized>(_onControllersInitialized);
     on<SaveProcessStopped>(_onSaveProcessStopped);
     on<RolesChanged>(_onRolesChanged);
+    on<CreateButtonPressed>(_onCreateButtonPressed);
     _configureControllers();
     userRepository.configureToken(authBloc.state.token!);
     mapRolesFromAuthBloc();
+  }
+
+  void createUserFromAdmin() {
+    add(CreateButtonPressed());
+  }
+
+  void _onCreateButtonPressed(
+    CreateButtonPressed event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(isSaving: true));
+
+      HistouricUser histouricUser = await createUser();
+
+      add(UserSaved(histouricUser: histouricUser));
+    } catch (e) {
+      add(SaveProcessStopped());
+
+      Dialogs.showErrorDialog(
+        context: context,
+        content: e.toString().substring(11),
+      );
+    }
+  }
+
+  Future<HistouricUser> createUser() async {
+    final user = HistouricUserWithPassword(
+      email: state.email.value,
+      password: state.password.value,
+      nickname: state.nickname.value,
+      roles: mapRolesFromState(),
+    );
+
+    return await userRepository.registerUser(user);
   }
 
   void _onRoleSelected(RoleSelected event, Emitter<ProfileState> emit) {
     Set<String> newSelectedRoles = state.selectedRoles.map((role) {
       return role;
     }).toSet();
+
     emit(state.copyWith(selectedRoles: newSelectedRoles..add(event.role)));
   }
 
   void _onRoleRemoved(RoleRemoved event, Emitter<ProfileState> emit) {
-    emit(
-        state.copyWith(selectedRoles: state.selectedRoles..remove(event.role)));
+    emit(state.copyWith(
+      selectedRoles: state.selectedRoles..remove(event.role),
+    ));
   }
 
   void _onAvailableRolesChanged(
-      SelectedRolesChanged event, Emitter<ProfileState> emit) {
+    SelectedRolesChanged event,
+    Emitter<ProfileState> emit,
+  ) {
     emit(state.copyWith(selectedRoles: event.availableRoles.toSet()));
   }
 
@@ -83,15 +116,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       roles: updatedUser.roles.map((role) => role.name).toList(),
       token: updatedUser.token,
     );
+
     emit(state.copyWith(
       email: Email.dirty(updatedUser.email.trim()),
       password: const Password.dirty(""),
-      nickname: Nickname.dirty(
-        updatedUser.nickname.trim(),
-      ),
+      nickname: Nickname.dirty(updatedUser.nickname.trim()),
       selectedRoles: mapSelectedRolesFromList(
-              updatedUser.roles.map((role) => role.name).toList())
-          .toSet(),
+        updatedUser.roles.map((role) => role.name).toList(),
+      ).toSet(),
       isSaving: false,
     ));
   }
@@ -106,12 +138,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void saveChanges() async {
     try {
-      HistouricUser histouricUser = await callTheRepository();
-      add(UserSaved(
-        histouricUser: histouricUser,
-      ));
+      HistouricUser histouricUser = await updateUserById();
+      add(UserSaved(histouricUser: histouricUser));
     } catch (e) {
       add(SaveProcessStopped());
+
       Dialogs.showErrorDialog(
         context: context,
         content: e.toString().substring(11),
@@ -126,15 +157,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(state.copyWith(isSaving: false));
   }
 
-  Future<HistouricUser> callTheRepository() async {
+  Future<HistouricUser> updateUserById() async {
     final user = HistouricUserWithPassword(
-        id: authBloc.state.id!,
-        email: (state.email.value.isEmpty) ? null : state.email.value,
-        password: (state.password.value.isEmpty) ? null : state.password.value,
-        nickname: (state.nickname.value.isEmpty) ? null : state.nickname.value,
-        roles: mapRolesFromState());
+      id: authBloc.state.id!,
+      email: (state.email.value.isEmpty) ? null : state.email.value,
+      password: (state.password.value.isEmpty) ? null : state.password.value,
+      nickname: (state.nickname.value.isEmpty) ? null : state.nickname.value,
+      roles: mapRolesFromState(),
+    );
 
-    return await userRepository.updateUserById(user.id, user);
+    return await userRepository.updateUserById(user.id!, user);
   }
 
   void _onEditButtonPressed(
@@ -142,6 +174,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) {
     emit(state.copyWith(profilePurpose: ProfilePurpose.editMyProfile));
+
     add(ControllersInitialized(
       emailText: authBloc.state.email!,
       nicknameText: authBloc.state.nickname!,
@@ -155,30 +188,39 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void mapRolesFromAuthBloc() {
     final initialRoles = authBloc.state.roles!;
+
     List<String> rolesForIcons = mapSelectedRolesFromList(initialRoles);
+
     for (var role in rolesForIcons) {
       addRole(role);
     }
+
     changeSelectedRoles(rolesForIcons);
   }
 
   List<String> mapSelectedRolesFromList(List<String> selectedRoles) {
     List<String> roles = [];
+
     if (selectedRoles.contains("ADMIN")) roles.add("Administrador");
     if (selectedRoles.contains("RESEARCHER")) roles.add("Investigador");
     if (selectedRoles.contains("TOURISM_MANAGER")) {
       roles.add("Gestor de Turismo");
     }
+
     return roles;
   }
 
-  List<String> mapRolesFromState() {
+  List<String>? mapRolesFromState() {
     List<String> roles = [];
+
+    if (!authBloc.state.roles!.contains("ADMIN")) return null;
+
     if (state.selectedRoles.contains("Administrador")) roles.add("ADMIN");
     if (state.selectedRoles.contains("Investigador")) roles.add("RESEARCHER");
     if (state.selectedRoles.contains("Gestor de Turismo")) {
       roles.add("TOURISM_MANAGER");
     }
+
     return roles;
   }
 
@@ -207,7 +249,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onCancelButtonPressed(
-      CancelButtonPressed event, Emitter<ProfileState> emit) {
+    CancelButtonPressed event,
+    Emitter<ProfileState> emit,
+  ) {
     mapRolesFromAuthBloc();
 
     emit(state.copyWith(
@@ -227,7 +271,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onControllersInitialized(
-      ControllersInitialized event, Emitter<ProfileState> emit) {
+    ControllersInitialized event,
+    Emitter<ProfileState> emit,
+  ) {
     emit(state.configureControllers(
       emailText: event.emailText,
       passwordText: event.passwordText,
@@ -253,6 +299,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       password: const Password.dirty(""),
       nickname: const Nickname.dirty(""),
     ));
+
     saveChanges();
     usersTableBloc?.fetchUsers();
   }

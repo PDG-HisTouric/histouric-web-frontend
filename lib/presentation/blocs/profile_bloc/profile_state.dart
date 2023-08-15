@@ -71,9 +71,11 @@ class ProfileState {
       initializingControllers: false,
     )
       ..emailController = TextEditingController(text: emailText ?? email.value)
-      ..passwordController =
-          TextEditingController(text: passwordText ?? password.value)
-      ..usernameController =
-          TextEditingController(text: nicknameText ?? nickname.value);
+      ..passwordController = TextEditingController(
+        text: passwordText ?? password.value,
+      )
+      ..usernameController = TextEditingController(
+        text: nicknameText ?? nickname.value,
+      );
   }
 }

@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/config/navigation/navigation_service.dart';
-import 'package:histouric_web/infrastructure/datasource/datasources.dart';
 
-import 'package:histouric_web/infrastructure/repositories/repositories.dart';
-import 'package:histouric_web/infrastructure/services/services.dart';
-import 'package:histouric_web/presentation/blocs/auth_bloc/auth_bloc.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
-import 'package:histouric_web/presentation/screens/auth_screen.dart';
-import 'package:histouric_web/presentation/views/login_view.dart';
-
-import 'config/navigation/router.dart';
-import 'config/theme/app_theme.dart';
+import 'config/config.dart';
+import 'infrastructure/infrastructure.dart';
+import 'presentation/blocs/blocs.dart';
+import 'presentation/presentation.dart';
 
 void main() {
   FluroRouterWrapper.configureRoutes();

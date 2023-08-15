@@ -1,5 +1,3 @@
-import 'role.dart';
-
 class Token {
   final String token;
   final String nickname;

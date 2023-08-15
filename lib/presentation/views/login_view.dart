@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/config/navigation/navigation_service.dart';
-import 'package:histouric_web/config/navigation/router.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
 
-import '../../config/helpers/dialogs.dart';
-import '../widgets/bottom_message_with_button.dart';
-import '../widgets/custom_elevated_button_rounded.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/divider_with_message.dart';
+import '../../config/config.dart';
+import '../blocs/blocs.dart';
+import '../widgets/widgets.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -43,16 +38,12 @@ class _Login extends StatelessWidget {
         CustomTextFormField(
           hint: "Correo Electrónico",
           label: "Correo Electrónico",
-          onChanged: (value) {
-            context.read<LoginFormBloc>().emailChanged(value);
-          },
+          onChanged: context.read<LoginFormBloc>().emailChanged,
           errorMessage: context.watch<LoginFormBloc>().state.email.errorMessage,
         ),
         const SizedBox(height: 20),
         CustomTextFormField(
-          onChanged: (value) {
-            context.read<LoginFormBloc>().passwordChanged(value);
-          },
+          onChanged: context.read<LoginFormBloc>().passwordChanged,
           hint: "Contraseña",
           label: "Contraseña",
           obscureText: true,

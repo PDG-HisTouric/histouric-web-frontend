@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
+
+import '../blocs/blocs.dart';
 
 class Navbar extends StatelessWidget {
   const Navbar({super.key});
@@ -15,12 +16,7 @@ class Navbar extends StatelessWidget {
       height: 50,
       decoration: BoxDecoration(
         color: colors.onPrimary,
-        boxShadow: [
-          BoxShadow(
-            color: colors.onPrimary,
-            blurRadius: 5,
-          )
-        ],
+        boxShadow: [BoxShadow(color: colors.onPrimary, blurRadius: 5)],
       ),
       child: Row(
         children: [
@@ -31,7 +27,7 @@ class Navbar extends StatelessWidget {
               onPressed: () => sideMenuBloc.openMenu(),
             ),
           ),
-          Spacer(),
+          const Spacer(),
         ],
       ),
     );

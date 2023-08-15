@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/domain/entities/entities.dart';
-import 'package:histouric_web/domain/repositories/repositories.dart';
 
-import '../../../infrastructure/services/services.dart';
+import '../../../domain/domain.dart';
+import '../../../infrastructure/infrastructure.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -27,6 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UserChanged>(_onUserChanged);
     on<UserLoadedFromAdmin>(_onUserLoadedFromAdmin);
     on<TokenChanged>(_onTokenChanged);
+
     if (token != null) {
       userRepository.configureToken(token!);
       changeToken(token: token!);
@@ -35,6 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onCheckToken(CheckToken event, Emitter<AuthState> emit) async {
     emit(state.copyWith(authStatus: AuthStatus.checking));
+
     try {
       String tokenString =
           (await keyValueStorageService.getValue<String>("token"))!;
@@ -85,8 +86,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       roles: null,
       token: null,
     ));
+
     await keyValueStorageService.removeKey("token");
     await keyValueStorageService.removeKey("nickname");
+
     emit(state.copyWith(authStatus: AuthStatus.notAuthenticated));
   }
 
@@ -104,12 +107,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
-  void changeUser(
-      {required String id,
-      required String nickname,
-      required String email,
-      required List<String> roles,
-      String? token}) {
+  void changeUser({
+    required String id,
+    required String nickname,
+    required String email,
+    required List<String> roles,
+    String? token,
+  }) {
     add(UserChanged(
       id: id,
       nickname: nickname,
@@ -120,13 +124,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onUserLoadedFromAdmin(
-      UserLoadedFromAdmin event, Emitter<AuthState> emit) async {
-    emit(state.copyWith(
-      authStatus: AuthStatus.checking,
-    ));
+    UserLoadedFromAdmin event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(authStatus: AuthStatus.checking));
     try {
-      HistouricUser histouricUser =
-          await userRepository.getUserByNickname(event.nickname);
+      HistouricUser histouricUser;
+
+      if (event.nickname.isEmpty) {
+        histouricUser = HistouricUser(
+          id: "",
+          nickname: "",
+          email: "",
+          roles: [],
+          token: "",
+        );
+      } else {
+        histouricUser = await userRepository.getUserByNickname(event.nickname);
+      }
+
       emit(state.copyWith(
         id: histouricUser.id,
         nickname: histouricUser.nickname,
@@ -140,20 +156,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void loadUserFromAdmin({required String nickname}) {
-    add(UserLoadedFromAdmin(
-      nickname: nickname,
-    ));
+    add(UserLoadedFromAdmin(nickname: nickname));
   }
 
   void _onTokenChanged(TokenChanged event, Emitter<AuthState> emit) async {
-    emit(state.copyWith(
-      token: event.token,
-    ));
+    emit(state.copyWith(token: event.token));
   }
 
   void changeToken({required String token}) {
-    add(TokenChanged(
-      token: token,
-    ));
+    add(TokenChanged(token: token));
   }
 }

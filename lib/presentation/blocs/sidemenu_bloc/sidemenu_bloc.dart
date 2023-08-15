@@ -1,7 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'sidemenu_event.dart';
 part 'sidemenu_state.dart';
@@ -27,6 +25,7 @@ class SidemenuBloc extends Bloc<SidemenuEvent, SidemenuState> {
 
   void _onMenuToggled(MenuToggled event, Emitter<SidemenuState> emit) {
     emit(state.copyWith(isMenuOpen: !state.isMenuOpen));
+
     (state.isMenuOpen)
         ? state.menuController.reverse()
         : state.menuController.forward();

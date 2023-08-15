@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:histouric_web/infrastructure/inputs/nickname.dart';
-import 'package:histouric_web/infrastructure/inputs/password.dart';
 
-import '../../../config/helpers/dialogs.dart';
-import '../../../domain/repositories/auth_repository.dart';
-import '../../../infrastructure/inputs/email.dart';
+import '../../../config/config.dart';
+import '../../../domain/domain.dart';
+import '../../../infrastructure/infrastructure.dart';
 
 part 'sign_up_event.dart';
 part 'sign_up_state.dart';
@@ -29,7 +27,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
   bool signUp() {
     add(SignUpTouchedEveryField());
+
     if (!isStateValid()) return false;
+
     if (state.password.value != state.confirmPassword.value) {
       Dialogs.showErrorDialog(
         context: context,
@@ -37,7 +37,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       );
       return false;
     }
+
     add(SignUpSubmitted());
+
     return true;
   }
 
@@ -94,6 +96,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
   void _onEmailChanged(SignUpEmailChanged event, Emitter<SignUpState> emit) {
     Email email = Email.dirty(event.email);
+
     emit(state.copyWith(
       email: email,
       isValid: Formz.validate([email, state.password, state.nickname]),
@@ -105,6 +108,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) {
     Password password = Password.dirty(event.password);
+
     emit(state.copyWith(
       password: password,
       isValid: Formz.validate([state.email, password, state.nickname]),
@@ -116,6 +120,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) {
     Password confirmPassword = Password.dirty(event.confirmPassword);
+
     emit(state.copyWith(
       confirmPassword: confirmPassword,
       isValid: Formz.validate([state.email, state.password, confirmPassword]),
@@ -127,6 +132,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     Emitter<SignUpState> emit,
   ) {
     Nickname nickname = Nickname.dirty(event.nickname);
+
     emit(state.copyWith(
       nickname: nickname,
       isValid: Formz.validate([state.email, state.password, nickname]),

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/blocs/blocs.dart';
 
-import '../../infrastructure/inputs/inputs.dart';
+import '../../infrastructure/infrastructure.dart';
+import '../blocs/blocs.dart';
 
 typedef BuildRoleSelection = Widget Function(BuildContext context);
 
-class CardForEdit extends StatelessWidget {
+class CardForEditOrCreate extends StatelessWidget {
   final ProfileBloc profileBloc;
 
   final BuildRoleSelection buildRoleSelection;
 
-  const CardForEdit({
+  const CardForEditOrCreate({
     super.key,
     required this.profileBloc,
     required this.buildRoleSelection,
@@ -27,8 +27,11 @@ class CardForEdit extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text("Los campos que deje en blanco no serán actualizados",
-            textAlign: TextAlign.center),
+        if (profileBloc.state.profilePurpose == ProfilePurpose.editMyProfile)
+          const Text(
+            "Los campos que deje en blanco no serán actualizados",
+            textAlign: TextAlign.center,
+          ),
         const SizedBox(height: 16.0),
         TextField(
           controller: profileBloc.state.emailController,
@@ -66,8 +69,14 @@ class CardForEdit extends StatelessWidget {
           onChanged: context.read<ProfileBloc>().changeNickname,
         ),
         const SizedBox(height: 16.0),
-        if (isAdminUser) buildRoleSelection(context),
-        if (isAdminUser) const SizedBox(height: 16.0),
+        if (isAdminUser ||
+            profileBloc.state.profilePurpose ==
+                ProfilePurpose.createUserFromAdmin)
+          buildRoleSelection(context),
+        if (isAdminUser ||
+            profileBloc.state.profilePurpose ==
+                ProfilePurpose.createUserFromAdmin)
+          const SizedBox(height: 16.0),
       ],
     );
   }

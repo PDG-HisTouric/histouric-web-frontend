@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/presentations.dart';
 
-import '../blocs/auth_bloc/auth_bloc.dart';
-import '../widgets/container_with_gradient.dart';
+import '../blocs/blocs.dart';
+import '../views/views.dart';
+import '../widgets/widgets.dart';
+import 'dashboard_screen.dart';
 
 class AuthScreen extends StatelessWidget {
   final Widget child;
-  // final BuildContext contextWithNavigator;
 
-  const AuthScreen({
-    super.key,
-    required this.child,
-    // required this.contextWithNavigator,
-  });
+  const AuthScreen({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final colors = Theme.of(context).colorScheme;
-    final size = MediaQuery.of(context).size;
     final authStatus = context.watch<AuthBloc>().state.authStatus;
 
     if (authStatus == AuthStatus.checking) {

@@ -1,5 +1,4 @@
-import '../entities/histouric_user.dart';
-import '../entities/token.dart';
+import '../entities/entities.dart';
 
 abstract class AuthRepository {
   Future<Token> login(String email, String password);

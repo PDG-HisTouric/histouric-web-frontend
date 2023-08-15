@@ -25,9 +25,7 @@ class SearchInput extends StatelessWidget {
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             hintText: "Buscar por nombre",
-            prefixIcon: Icon(
-              Icons.search_outlined,
-            ),
+            prefixIcon: Icon(Icons.search_outlined),
           ),
         ),
       ),
