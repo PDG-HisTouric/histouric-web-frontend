@@ -18,7 +18,6 @@ class UsersDTS extends DataTableSource {
     return DataRow.byIndex(
       index: index,
       cells: [
-        DataCell(Text(user.id)),
         DataCell(Text(user.nickname)),
         DataCell(Text(user.email)),
         DataCell(Text(user.roles.map((role) => role.name).join(', '))),
