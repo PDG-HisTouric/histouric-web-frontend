@@ -21,6 +21,7 @@ class _Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final maxWidth = MediaQuery.sizeOf(context).width * 0.25;
     final email = context.watch<LoginFormBloc>().state.email.value;
     final password = context.watch<LoginFormBloc>().state.password.value;
 
@@ -35,20 +36,27 @@ class _Login extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 30),
-        CustomTextFormField(
-          hint: "Correo Electrónico",
-          label: "Correo Electrónico",
-          onChanged: context.read<LoginFormBloc>().emailChanged,
-          errorMessage: context.watch<LoginFormBloc>().state.email.errorMessage,
+        Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: CustomTextFormField(
+            hint: "Correo Electrónico",
+            label: "Correo Electrónico",
+            onChanged: context.read<LoginFormBloc>().emailChanged,
+            errorMessage:
+                context.watch<LoginFormBloc>().state.email.errorMessage,
+          ),
         ),
         const SizedBox(height: 20),
-        CustomTextFormField(
-          onChanged: context.read<LoginFormBloc>().passwordChanged,
-          hint: "Contraseña",
-          label: "Contraseña",
-          obscureText: true,
-          errorMessage:
-              context.watch<LoginFormBloc>().state.password.errorMessage,
+        Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: CustomTextFormField(
+            onChanged: context.read<LoginFormBloc>().passwordChanged,
+            hint: "Contraseña",
+            label: "Contraseña",
+            obscureText: true,
+            errorMessage:
+                context.watch<LoginFormBloc>().state.password.errorMessage,
+          ),
         ),
         const SizedBox(height: 20),
         CustomElevatedButtonRounded(
@@ -67,7 +75,10 @@ class _Login extends StatelessWidget {
           },
         ),
         const SizedBox(height: 20),
-        const DividerWithMessage(message: "o"),
+        Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: const DividerWithMessage(message: "o"),
+        ),
         const SizedBox(height: 20),
         BottomMessageWithButton(
           message: "¿No tienes una cuenta?",

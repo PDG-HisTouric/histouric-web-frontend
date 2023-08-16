@@ -44,9 +44,14 @@ class CustomTextFormField extends StatelessWidget {
           borderSide: BorderSide(color: colors.error),
         ),
         isDense: true,
-        label: label != null ? Text(label!) : null,
+        label: label != null
+            ? Text(
+                label!,
+                style: TextStyle(fontSize: 16, color: colors.onPrimary),
+              )
+            : null,
         hintText: hint,
-        hintStyle: TextStyle(fontSize: 16, color: colors.onPrimary),
+        hintStyle: TextStyle(fontSize: 16, color: colors.onPrimaryContainer),
         errorText: errorMessage,
         errorMaxLines: 2,
         focusColor: colors.primary,
