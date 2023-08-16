@@ -59,53 +59,58 @@ class CustomCard extends StatelessWidget {
               children: [
                 CustomElevatedButtonSquared(
                   backgroundColor: colors.primary,
-                  onPressed: () {
-                    if (profilePurpose == ProfilePurpose.editMyProfile) {
-                      if (profileBloc.state.selectedRoles.isEmpty) {
-                        Dialogs.showErrorDialog(
-                          context: context,
-                          content: "Tienes que seleccionar al menos un rol",
-                        );
-                      } else {
-                        context.read<ProfileBloc>().saveChanges();
-                      }
-                    }
+                  onPressed: () async {
                     if (profilePurpose == ProfilePurpose.viewMyProfile) {
                       context.read<ProfileBloc>().startEditing();
+                      return;
                     }
+
+                    if (profileBloc.state.selectedRoles.isEmpty) {
+                      Dialogs.showErrorDialog(
+                        context: context,
+                        content: "Tienes que seleccionar al menos un rol",
+                      );
+                      return;
+                    }
+
+                    if (profilePurpose == ProfilePurpose.editMyProfile) {
+                      context.read<ProfileBloc>().saveChanges();
+                      return;
+                    }
+
                     if (profilePurpose == ProfilePurpose.editUserFromAdmin) {
-                      if (profileBloc.state.selectedRoles.isEmpty) {
-                        Dialogs.showErrorDialog(
-                          context: context,
-                          content: "Tienes que seleccionar al menos un rol",
-                        );
-                      } else {
-                        context.read<ProfileBloc>().saveChanges();
-                        NavigationService.pop();
+                      context.read<ProfileBloc>().saveChanges();
+                      while (profileBloc.state.isSaving) {
+                        await Future.delayed(const Duration(milliseconds: 100));
                       }
+                      NavigationService.pop();
+                      return;
                     }
                     if (profilePurpose == ProfilePurpose.createUserFromAdmin) {
-                      if (profileBloc.state.selectedRoles.isEmpty) {
-                        Dialogs.showErrorDialog(
-                          context: context,
-                          content: "Tienes que seleccionar al menos un rol",
-                        );
-                      } else {
-                        context.read<ProfileBloc>().createUserFromAdmin();
-                        NavigationService.pop();
+                      context.read<ProfileBloc>().createUserFromAdmin();
+                      while (profileBloc.state.isSaving) {
+                        await Future.delayed(const Duration(milliseconds: 100));
                       }
+                      NavigationService.pop();
+                      return;
                     }
                   },
                   textColor: colors.onPrimary,
                   fontWeightBold: true,
                   label: _getLabelForMainButton(profilePurpose),
                 ),
-                if (profilePurpose == ProfilePurpose.editMyProfile)
+                if (profilePurpose != ProfilePurpose.viewMyProfile)
                   const SizedBox(width: 16.0),
-                if (profilePurpose == ProfilePurpose.editMyProfile)
+                if (profilePurpose != ProfilePurpose.viewMyProfile)
                   CustomElevatedButtonSquared(
                     backgroundColor: colors.secondary,
-                    onPressed: context.read<ProfileBloc>().cancelEditing,
+                    onPressed: () {
+                      if (profilePurpose == ProfilePurpose.editMyProfile) {
+                        context.read<ProfileBloc>().cancelEditing();
+                      } else {
+                        NavigationService.pop();
+                      }
+                    },
                     label: 'Cancelar',
                     textColor: colors.onSecondary,
                     fontWeightBold: true,

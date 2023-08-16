@@ -213,7 +213,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   List<String>? mapRolesFromState() {
     List<String> roles = [];
 
-    if (!authBloc.state.roles!.contains("ADMIN")) return null;
+    if (!authBloc.state.roles!.contains("ADMIN") &&
+        state.profilePurpose != ProfilePurpose.editUserFromAdmin &&
+        state.profilePurpose != ProfilePurpose.createUserFromAdmin) {
+      return null;
+    }
 
     if (state.selectedRoles.contains("Administrador")) roles.add("ADMIN");
     if (state.selectedRoles.contains("Investigador")) roles.add("RESEARCHER");
