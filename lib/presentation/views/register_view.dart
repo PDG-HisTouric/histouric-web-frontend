@@ -27,6 +27,7 @@ class _Register extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final maxWidth = MediaQuery.sizeOf(context).width * 0.25;
     final emailErrorMessage =
         context.watch<SignUpBloc>().state.email.errorMessage;
     final passwordErrorMessage =
@@ -45,34 +46,46 @@ class _Register extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 30),
-        CustomTextFormField(
-          hint: "Correo Electrónico",
-          label: "Correo Electrónico",
-          onChanged: context.read<SignUpBloc>().emailChanged,
-          errorMessage: emailErrorMessage,
+        Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: CustomTextFormField(
+            hint: "Correo Electrónico",
+            label: "Correo Electrónico",
+            onChanged: context.read<SignUpBloc>().emailChanged,
+            errorMessage: emailErrorMessage,
+          ),
         ),
         const SizedBox(height: 20),
-        CustomTextFormField(
-          hint: "Contraseña",
-          label: "Contraseña",
-          obscureText: true,
-          onChanged: context.read<SignUpBloc>().passwordChanged,
-          errorMessage: passwordErrorMessage,
+        Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: CustomTextFormField(
+            hint: "Contraseña",
+            label: "Contraseña",
+            obscureText: true,
+            onChanged: context.read<SignUpBloc>().passwordChanged,
+            errorMessage: passwordErrorMessage,
+          ),
         ),
         const SizedBox(height: 20),
-        CustomTextFormField(
-          hint: "Confirmar contraseña",
-          label: "Confirmar contraseña",
-          obscureText: true,
-          onChanged: context.read<SignUpBloc>().confirmPasswordChanged,
-          errorMessage: passwordErrorMessage,
+        Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: CustomTextFormField(
+            hint: "Confirmar contraseña",
+            label: "Confirmar contraseña",
+            obscureText: true,
+            onChanged: context.read<SignUpBloc>().confirmPasswordChanged,
+            errorMessage: passwordErrorMessage,
+          ),
         ),
         const SizedBox(height: 20),
-        CustomTextFormField(
-          hint: "Nombre de usuario",
-          label: "Nombre de usuario",
-          onChanged: context.read<SignUpBloc>().nicknameChanged,
-          errorMessage: nicknameErrorMessage,
+        Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: CustomTextFormField(
+            hint: "Nombre de usuario",
+            label: "Nombre de usuario",
+            onChanged: context.read<SignUpBloc>().nicknameChanged,
+            errorMessage: nicknameErrorMessage,
+          ),
         ),
         const SizedBox(height: 20),
         CustomElevatedButtonRounded(
@@ -91,7 +104,10 @@ class _Register extends StatelessWidget {
           },
         ),
         const SizedBox(height: 20),
-        const DividerWithMessage(message: "o"),
+        Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: const DividerWithMessage(message: "o"),
+        ),
         const SizedBox(height: 20),
         BottomMessageWithButton(
           message: "¿Ya tienes una cuenta?",

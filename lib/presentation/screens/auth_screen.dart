@@ -29,37 +29,37 @@ class AuthScreen extends StatelessWidget {
       body: Stack(
         children: [
           const ContainerWithGradient(),
-          Center(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.sizeOf(context).width * 0.1,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: size.width,
-                      height: size.height * 0.2,
-                      alignment: Alignment.topCenter,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        "HisTouric",
-                        style: TextStyle(
-                          color: colors.onPrimary,
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                        ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: size.height * 0.1),
+                  Container(
+                    width: size.width,
+                    alignment: Alignment.topCenter,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      "HisTouric",
+                      style: TextStyle(
+                        color: colors.onPrimary,
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Container(
+                  ),
+                  SizedBox(height: size.height * 0.1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Container(
                       width: size.width,
-                      height: size.height * 0.6,
                       alignment: Alignment.center,
                       child: child,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
