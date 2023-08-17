@@ -77,7 +77,6 @@ class UsersTableState extends State<_UsersTable> {
           padding: const EdgeInsets.all(15.0),
           child: PaginatedDataTable(
             columns: const [
-              DataColumn(label: Text('ID')),
               DataColumn(label: Text('Nombre de usuario')),
               DataColumn(label: Text('Email')),
               DataColumn(label: Text('Roles')),
