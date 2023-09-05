@@ -48,6 +48,16 @@ class TestView extends StatelessWidget {
             print("dataFromJS test ----------- $dataFromJS");
           },
         ),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          child: const Text(
+            "File picker",
+            style: TextStyle(color: Colors.black),
+          ),
+          onPressed: () async {
+            print("file picker");
+          },
+        ),
       ],
     ));
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'config/config.dart';
 import 'infrastructure/infrastructure.dart';
@@ -7,6 +8,8 @@ import 'presentation/blocs/blocs.dart';
 import 'presentation/presentation.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  setPathUrlStrategy();
   FluroRouterWrapper.configureRoutes();
   runApp(const MainApp());
 }
