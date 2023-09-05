@@ -7,7 +7,7 @@ import '../models/models.dart';
 class SpringBootLoginDatasource implements AuthDatasource {
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'http://localhost:8080/api/v1',
+      baseUrl: 'https://histouric-backend.azurewebsites.net/api/v1',
       contentType: 'application/json',
     ),
   );

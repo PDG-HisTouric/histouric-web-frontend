@@ -50,4 +50,8 @@ class DashboardHandlers {
       ),
     );
   });
+
+  static Handler prueba = Handler(handlerFunc: (context, parameters) {
+    return DashboardScreen(child: TestView());
+  });
 }

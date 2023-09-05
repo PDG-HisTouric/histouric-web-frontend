@@ -9,7 +9,7 @@ class SpringBootUserDatasource extends UserDatasource {
 
   SpringBootUserDatasource() {
     dio = Dio(BaseOptions(
-      baseUrl: 'http://localhost:8080/api/v1/users',
+      baseUrl: 'https://histouric-backend.azurewebsites.net/api/v1/users',
       contentType: 'application/json',
     ));
   }

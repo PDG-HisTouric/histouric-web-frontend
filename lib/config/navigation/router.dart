@@ -18,6 +18,9 @@ class FluroRouterWrapper {
   static String editUser = "/dashboard/users/edit/:nickname";
   static String createUser = "/dashboard/users/create";
 
+  //Prueba
+  static String prueba = "/prueba";
+
   static void configureRoutes() {
     //Auth routes
     router.define(
@@ -63,6 +66,14 @@ class FluroRouterWrapper {
     router.define(
       createUser,
       handler: DashboardHandlers.createUserFromTable,
+      transitionType: TransitionType.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+
+    //Prueba
+    router.define(
+      prueba,
+      handler: DashboardHandlers.prueba,
       transitionType: TransitionType.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     );

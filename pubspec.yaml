@@ -15,6 +15,7 @@ dependencies:
   formz: ^0.6.0
   shared_preferences: ^2.2.0
   universal_html: ^2.2.3
+  js: ^0.6.7
 
 dev_dependencies:
   flutter_test:
