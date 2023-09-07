@@ -1,11 +1,11 @@
 name: Azure Static Web Apps CD
 
 env:
-  SECRET_API_KEY: ${{ secrets.SECRET_API_KEY }}
-  SECRET_APP_ID: ${{ secrets.SECRET_APP_ID }}
-  SECRET_BASE_URL: ${{ secrets.SECRET_BASE_URL }}
-  SECRET_CLIENT_ID: ${{ secrets.SECRET_CLIENT_ID }}
-  SECRET_SCOPES: ${{ secrets.SECRET_SCOPES }}
+  API_KEY: ${{ secrets.API_KEY }}
+  APP_ID: ${{ secrets.APP_ID }}
+  BASE_URL: ${{ secrets.BASE_URL }}
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  SCOPES: ${{ secrets.SCOPES }}
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
           channel: 'stable'
           cache: true
       - name: Build flutter web app
-        run: flutter build web --dart-define=SCOPES=${{ env.SECRET_SCOPES }} --dart-define=CLIENT_ID=${{ env.SECRET_CLIENT_ID }} --dart-define=API_KEY=${{ env.SECRET_API_KEY }} --dart-define=APP_ID=${{ env.SECRET_APP_ID }} --dart-define=BASE_URL=${{ env.SECRET_BASE_URL }}
+        run: flutter build web --dart-define=SCOPES=${{ env.SCOPES }} --dart-define=CLIENT_ID=${{ env.CLIENT_ID }} --dart-define=API_KEY=${{ env.API_KEY }} --dart-define=APP_ID=${{ env.APP_ID }} --dart-define=BASE_URL=${{ env.BASE_URL }}
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
