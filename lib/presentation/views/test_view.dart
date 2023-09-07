@@ -27,6 +27,12 @@ class TestView extends StatelessWidget {
             );
           },
         ),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 200),
+          child: Image.network(
+            'https://drive.google.com/uc?export=view&id=1Uj27zjdTO3nfejVPV9GLBP_eAfBBJEM6',
+          ),
+        ),
       ],
     ));
   }

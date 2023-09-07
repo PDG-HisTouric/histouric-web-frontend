@@ -10,7 +10,7 @@ env:
 on:
   push:
     branches:
-      - main
+      - load-image-from-google-picker
 
 jobs:
   build_and_deploy_job:
