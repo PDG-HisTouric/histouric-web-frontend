@@ -1,14 +1,27 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:url_strategy/url_strategy.dart';
+
 import 'config/config.dart';
+import 'config/constants/constants.dart';
 import 'infrastructure/infrastructure.dart';
 import 'presentation/blocs/blocs.dart';
+import 'presentation/js_bridge/js_bridge.dart';
 import 'presentation/presentation.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  setPathUrlStrategy();
   FluroRouterWrapper.configureRoutes();
   runApp(const MainApp());
+  JSHelper.callGapiLoaded();
+  JSHelper.callGisLoaded(
+    clientId: Environment.pickerApiClientId,
+    scopes: Environment.pickerApiScopes,
+  );
 }
 
 class MainApp extends StatelessWidget {

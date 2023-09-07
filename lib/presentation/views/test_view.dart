@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../js/js_helper.dart';
+import '../../config/constants/constants.dart';
+import '../js_bridge/js_bridge.dart';
 
 class TestView extends StatelessWidget {
-  TestView({super.key});
-  final JSHelper _jsHelper = JSHelper();
+  const TestView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,46 +14,20 @@ class TestView extends StatelessWidget {
         const Text('Test View'),
         const SizedBox(height: 20),
         const Text('This view is only for testing purposes'),
+        const SizedBox(height: 20),
         ElevatedButton(
           child: const Text(
-            "Click to Check Platform",
+            "File picker",
             style: TextStyle(color: Colors.black),
           ),
           onPressed: () {
-            getPlatform();
-          },
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          child: const Text(
-            "OpenTab",
-            style: TextStyle(color: Colors.black),
-          ),
-          onPressed: () async {
-            // Loader
-            String dataFromJS = await _jsHelper.callOpenTab();
-            print("dataFromJS ----------- $dataFromJS");
-          },
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          child: const Text(
-            "Call JS Promise Function",
-            style: TextStyle(color: Colors.black),
-          ),
-          onPressed: () async {
-            // Loader
-            String dataFromJS = await _jsHelper.callJSPromise();
-
-            print("dataFromJS test ----------- $dataFromJS");
+            JSHelper.callFilePicker(
+              apiKey: Environment.pickerApiKey,
+              appId: Environment.pickerApiAppId,
+            );
           },
         ),
       ],
     ));
-  }
-
-  void getPlatform() {
-    String platForm = _jsHelper.getPlatformFromJS();
-    print(platForm);
   }
 }
