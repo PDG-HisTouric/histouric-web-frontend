@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../config/constants/constants.dart';
 import '../../domain/domain.dart';
 import '../mappers/mappers.dart';
 import '../models/models.dart';
@@ -9,7 +10,7 @@ class SpringBootUserDatasource extends UserDatasource {
 
   SpringBootUserDatasource() {
     dio = Dio(BaseOptions(
-      baseUrl: 'https://histouric-backend.azurewebsites.net/api/v1/users',
+      baseUrl: '${Environment.baseUrl}/api/v1/users',
       contentType: 'application/json',
     ));
   }

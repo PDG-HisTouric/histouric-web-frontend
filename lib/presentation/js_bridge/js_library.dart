@@ -14,5 +14,11 @@ external dynamic jsPromiseFunction(String message);
 @JS()
 external dynamic jsOpenTabFunction(String url);
 
-///         ^            ^                ^
-///      return     functionName       arguments
+@JS()
+external void handleAuthClick(String apiKey, String appId);
+
+@JS()
+external void gapiLoaded();
+
+@JS()
+external void gisLoaded(String scopes, String clientId);

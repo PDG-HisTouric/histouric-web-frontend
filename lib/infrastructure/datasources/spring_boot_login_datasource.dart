@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../config/constants/constants.dart';
 import '../../domain/domain.dart';
 import '../mappers/mappers.dart';
 import '../models/models.dart';
@@ -7,7 +8,7 @@ import '../models/models.dart';
 class SpringBootLoginDatasource implements AuthDatasource {
   final Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'https://histouric-backend.azurewebsites.net/api/v1',
+      baseUrl: '${Environment.baseUrl}/api/v1',
       contentType: 'application/json',
     ),
   );

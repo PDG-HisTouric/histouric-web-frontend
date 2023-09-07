@@ -41,6 +41,12 @@
   <script src="flutter.js" defer></script>
 </head>
 <body>
+
+  <pre id="content" style="white-space: pre-wrap;"></pre>
+  <script src="google-picker.js"></script>
+  <script async defer src="https://apis.google.com/js/api.js"></script>
+  <script async defer src="https://accounts.google.com/gsi/client"></script>
+
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
@@ -56,5 +62,15 @@
       });
     });
   </script>
+
+
+
+
+<!--<p>Picker API API Quickstart</p>-->
+
+<!--&lt;!&ndash;Add buttons to initiate auth sequence and sign out&ndash;&gt;-->
+<!--<button id="authorize_button" onclick="handleAuthClick()">Authorize</button>-->
+<!--<button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>-->
+
 </body>
 </html>

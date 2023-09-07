@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../js/js_helper.dart';
+import '../../config/constants/constants.dart';
+import '../js_bridge/js_bridge.dart';
 
 class TestView extends StatelessWidget {
   TestView({super.key});
-  final JSHelper _jsHelper = JSHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +14,19 @@ class TestView extends StatelessWidget {
         const Text('Test View'),
         const SizedBox(height: 20),
         const Text('This view is only for testing purposes'),
+        const SizedBox(height: 20),
         ElevatedButton(
           child: const Text(
             "Click to Check Platform",
             style: TextStyle(color: Colors.black),
           ),
           onPressed: () {
+            print(
+              "Probando... ${const String.fromEnvironment("PRUEBA", defaultValue: "no funcionó")}",
+            );
+            print(
+              "Probando... ${const String.fromEnvironment("PRUEBA1", defaultValue: "no funcionó")}",
+            );
             getPlatform();
           },
         ),
@@ -31,7 +38,7 @@ class TestView extends StatelessWidget {
           ),
           onPressed: () async {
             // Loader
-            String dataFromJS = await _jsHelper.callOpenTab();
+            String dataFromJS = await JSHelper.callOpenTab();
             print("dataFromJS ----------- $dataFromJS");
           },
         ),
@@ -43,7 +50,7 @@ class TestView extends StatelessWidget {
           ),
           onPressed: () async {
             // Loader
-            String dataFromJS = await _jsHelper.callJSPromise();
+            String dataFromJS = await JSHelper.callJSPromise();
 
             print("dataFromJS test ----------- $dataFromJS");
           },
@@ -54,8 +61,11 @@ class TestView extends StatelessWidget {
             "File picker",
             style: TextStyle(color: Colors.black),
           ),
-          onPressed: () async {
-            print("file picker");
+          onPressed: () {
+            JSHelper.callFilePicker(
+              apiKey: Environment.pickerApiKey,
+              appId: Environment.pickerApiAppId,
+            );
           },
         ),
       ],
@@ -63,7 +73,7 @@ class TestView extends StatelessWidget {
   }
 
   void getPlatform() {
-    String platForm = _jsHelper.getPlatformFromJS();
+    String platForm = JSHelper.getPlatformFromJS();
     print(platForm);
   }
 }
