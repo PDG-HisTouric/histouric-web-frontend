@@ -67,7 +67,7 @@ function handleAuthClick(apiKey, appId) {
 /**
 *  Sign out the user upon button click.
 */
-function handleSignoutClick() {
+function handleSignOutClick() {
   if (accessToken) {
     accessToken = null;
     google.accounts.oauth2.revoke(accessToken);
