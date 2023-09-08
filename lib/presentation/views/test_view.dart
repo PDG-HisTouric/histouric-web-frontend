@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../../config/constants/constants.dart';
@@ -27,10 +28,25 @@ class TestView extends StatelessWidget {
             );
           },
         ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          child: const Text(
+            "Hacer petición",
+            style: TextStyle(color: Colors.black),
+          ),
+          onPressed: () async {
+            final dio = Dio(BaseOptions(
+              baseUrl:
+                  'https://drive.google.com/uc?id=1Uj27zjdTO3nfejVPV9GLBP_eAfBBJEM6',
+            ));
+            final response = await dio.get('');
+            print(response);
+          },
+        ),
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 200),
           child: Image.network(
-            'https://drive.google.com/uc?export=view&id=1Uj27zjdTO3nfejVPV9GLBP_eAfBBJEM6',
+            'https://lh3.googleusercontent.com/d/1Uj27zjdTO3nfejVPV9GLBP_eAfBBJEM6',
           ),
         ),
       ],

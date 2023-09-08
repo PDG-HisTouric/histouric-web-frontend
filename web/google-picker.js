@@ -108,5 +108,11 @@ async function pickerCallback(data) {
       'fields': '*',
     });
     text += `Drive API response for first document: \n${JSON.stringify(res.result, null, 2)}\n`;
+    console.log('res.result');
+    console.log(res.result);
+    console.log('res.result.webContentLink');
+    console.log(res.result.webContentLink);
+    console.log('text');
+    console.log(text);
   }
 }
