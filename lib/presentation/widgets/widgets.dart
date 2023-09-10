@@ -14,3 +14,6 @@ export 'sidebar.dart';
 export 'sidemenu_title.dart';
 export 'star_painter.dart';
 export 'text_separator.dart';
+export 'html_image.dart';
+export 'rounded_html_image.dart';
+export 'image_carousel.dart';

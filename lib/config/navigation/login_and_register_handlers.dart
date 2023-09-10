@@ -14,4 +14,10 @@ class LoginAndRegisterHandlers {
       return const AuthScreen(child: RegisterView());
     },
   );
+
+  static Handler temp = Handler(
+    handlerFunc: (context, parameters) {
+      return const CreateBICView();
+    },
+  );
 }
