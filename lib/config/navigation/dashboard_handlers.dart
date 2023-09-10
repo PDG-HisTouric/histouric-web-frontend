@@ -57,6 +57,10 @@ class DashboardHandlers {
   });
 
   static Handler prueba = Handler(handlerFunc: (context, parameters) {
-    return DashboardScreen(child: TestView());
+    return const DashboardScreen(child: TestView());
+  });
+
+  static Handler createBic = Handler(handlerFunc: (context, parameters) {
+    return const DashboardScreen(child: CreateBICView());
   });
 }

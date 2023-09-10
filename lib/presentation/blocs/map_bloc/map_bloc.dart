@@ -23,6 +23,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       infoWindow: InfoWindow(
         title: event.name,
         snippet: event.snippet,
+        onTap: event.onInfoWindowTap,
       ),
     );
 
@@ -41,6 +42,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       infoWindow: InfoWindow(
         title: event.name,
         snippet: event.snippet,
+        onTap: event.onInfoWindowTap,
       ),
     );
 
@@ -66,6 +68,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     required String name,
     required String markerId,
     String? snippet,
+    void Function()? onInfoWindowTap,
   }) async {
     Marker lastMarker = state.markers.last;
     add(LastMarkerChanged(
@@ -74,6 +77,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       name: name,
       markerId: markerId,
       snippet: snippet,
+      onInfoWindowTap: onInfoWindowTap,
     ));
     while (state.markers.last == lastMarker) {
       await Future.delayed(const Duration(milliseconds: 50));
@@ -181,13 +185,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 
-  Future<void> addMarker({
-    required double latitude,
-    required double longitude,
-    required String name,
-    required String markerId,
-    String? snippet,
-  }) async {
+  Future<void> addMarker(
+      {required double latitude,
+      required double longitude,
+      required String name,
+      required String markerId,
+      String? snippet,
+      void Function()? onInfoWindowTap}) async {
     int currentNumberOfMarkers = state.markers.length;
     add(MarkerAdded(
       latitude: latitude,
@@ -195,6 +199,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       name: name,
       markerId: markerId,
       snippet: snippet,
+      onInfoWindowTap: onInfoWindowTap,
     ));
     while (state.markers.length != currentNumberOfMarkers + 1) {
       await Future.delayed(const Duration(milliseconds: 50));

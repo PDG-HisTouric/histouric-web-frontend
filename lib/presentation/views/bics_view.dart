@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
+import '../../config/config.dart';
 import '../blocs/blocs.dart';
 
 class BicsView extends StatelessWidget {
@@ -26,7 +27,8 @@ class _BIcsView extends StatefulWidget {
 
 class _BIcsViewState extends State<_BIcsView> {
   bool isCreatingBIC = false;
-  bool isTheFirstMarker = false;
+  bool isTheFirstMarker = true;
+  int counter = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -54,22 +56,33 @@ class _BIcsViewState extends State<_BIcsView> {
           },
           onTap: (latLng) async {
             if (isCreatingBIC) {
-              String newMarkerId = 'nuevo-bic';
+              String newMarkerId = 'nuevo-bic-$counter';
+              String name = 'Continuar aquí';
               if (isTheFirstMarker) {
                 await context.read<MapBloc>().addMarker(
                       latitude: latLng.latitude,
                       longitude: latLng.longitude,
-                      name: 'Nuevo BIC',
+                      name: name,
                       markerId: newMarkerId,
+                      onInfoWindowTap: () {
+                        NavigationService.navigateTo(
+                            FluroRouterWrapper.createBic);
+                      },
                     );
+                isTheFirstMarker = false;
               } else {
                 await context.read<MapBloc>().setLastMarker(
                       latitude: latLng.latitude,
                       longitude: latLng.longitude,
-                      name: 'Nuevo BIC',
+                      name: name,
                       markerId: newMarkerId,
+                      onInfoWindowTap: () {
+                        NavigationService.navigateTo(
+                            FluroRouterWrapper.createBic);
+                      },
                     );
               }
+              counter++;
               mapBlocState.controller?.showMarkerInfoWindow(
                 MarkerId(newMarkerId),
               );

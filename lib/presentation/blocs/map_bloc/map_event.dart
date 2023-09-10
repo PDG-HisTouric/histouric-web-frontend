@@ -10,6 +10,7 @@ class LastMarkerChanged extends MapEvent {
   final String name;
   final String markerId;
   final String? snippet;
+  final void Function()? onInfoWindowTap;
 
   LastMarkerChanged({
     required this.latitude,
@@ -17,6 +18,7 @@ class LastMarkerChanged extends MapEvent {
     required this.name,
     required this.markerId,
     this.snippet,
+    this.onInfoWindowTap,
   });
 }
 
@@ -26,6 +28,7 @@ class MarkerAdded extends MapEvent {
   final String name;
   final String markerId;
   final String? snippet;
+  final void Function()? onInfoWindowTap;
 
   MarkerAdded({
     required this.latitude,
@@ -33,6 +36,7 @@ class MarkerAdded extends MapEvent {
     required this.name,
     required this.markerId,
     this.snippet,
+    this.onInfoWindowTap,
   });
 }
 
