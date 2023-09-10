@@ -4,24 +4,34 @@ abstract class MapEvent {}
 
 class BICsLoaded extends MapEvent {}
 
-class MarkersEstablished extends MapEvent {
-  final List<Marker> markers;
-
-  MarkersEstablished({required this.markers});
-}
-
-class MarkerEstablished extends MapEvent {
+class LastMarkerChanged extends MapEvent {
   final double latitude;
   final double longitude;
   final String name;
-  final String bicId;
+  final String markerId;
   final String? snippet;
 
-  MarkerEstablished({
+  LastMarkerChanged({
     required this.latitude,
     required this.longitude,
     required this.name,
-    required this.bicId,
+    required this.markerId,
+    this.snippet,
+  });
+}
+
+class MarkerAdded extends MapEvent {
+  final double latitude;
+  final double longitude;
+  final String name;
+  final String markerId;
+  final String? snippet;
+
+  MarkerAdded({
+    required this.latitude,
+    required this.longitude,
+    required this.name,
+    required this.markerId,
     this.snippet,
   });
 }

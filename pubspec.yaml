@@ -19,6 +19,7 @@ dependencies:
   url_strategy: ^0.2.0
   google_maps_flutter_web: ^0.5.4+2
   google_maps_flutter: ^2.5.0
+  pointer_interceptor: ^0.9.3+6
 
 dev_dependencies:
   flutter_test:

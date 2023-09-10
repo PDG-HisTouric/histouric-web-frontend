@@ -8,16 +8,17 @@ part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   MapBloc() : super(MapState()) {
-    on<MarkerEstablished>(_onMarkerEstablished);
+    on<MarkerAdded>(_onMarkerAdded);
+    on<LastMarkerChanged>(_onLastMarkerChanged);
     on<MapControllerUpdated>(_onMapControllerUpdated);
   }
 
-  void _onMarkerEstablished(
-    MarkerEstablished event,
+  void _onMarkerAdded(
+    MarkerAdded event,
     Emitter<MapState> emit,
   ) {
     final marker = Marker(
-      markerId: MarkerId(event.bicId),
+      markerId: MarkerId(event.markerId),
       position: LatLng(event.latitude, event.longitude),
       infoWindow: InfoWindow(
         title: event.name,
@@ -27,6 +28,51 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     emit(state.copyWith(
       markers: [...state.markers, marker],
+    ));
+  }
+
+  void _onLastMarkerChanged(
+    LastMarkerChanged event,
+    Emitter<MapState> emit,
+  ) {
+    final marker = Marker(
+      markerId: MarkerId(event.markerId),
+      position: LatLng(event.latitude, event.longitude),
+      infoWindow: InfoWindow(
+        title: event.name,
+        snippet: event.snippet,
+      ),
+    );
+
+    List<Marker> markersWithoutLastMarker =
+        state.markers.sublist(0, state.markers.length - 1);
+    emit(state.copyWith(
+      markers: [...markersWithoutLastMarker, marker],
+    ));
+  }
+
+  void _onMapControllerUpdated(
+    MapControllerUpdated event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.copyWith(
+      controller: event.mapController,
+    ));
+  }
+
+  void setLastMarker({
+    required double latitude,
+    required double longitude,
+    required String name,
+    required String markerId,
+    String? snippet,
+  }) {
+    add(LastMarkerChanged(
+      latitude: latitude,
+      longitude: longitude,
+      name: name,
+      markerId: markerId,
+      snippet: snippet,
     ));
   }
 
@@ -109,11 +155,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     ];
 
     for (var bic in bics) {
-      add(MarkerEstablished(
+      add(MarkerAdded(
         latitude: bic.latitude,
         longitude: bic.longitude,
         name: bic.name,
-        bicId: bic.bicId,
+        markerId: bic.bicId,
         snippet: bic.description,
       ));
     }
@@ -123,19 +169,30 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 
-  void _onMapControllerUpdated(
-    MapControllerUpdated event,
-    Emitter<MapState> emit,
-  ) {
-    emit(state.copyWith(
-      controller: event.mapController,
-    ));
-  }
-
   void setMapController(GoogleMapController controller) async {
     add(MapControllerUpdated(mapController: controller));
 
     while (controller != state.controller) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+  }
+
+  void addMarker({
+    required double latitude,
+    required double longitude,
+    required String name,
+    required String markerId,
+    String? snippet,
+  }) async {
+    int currentNumberOfMarkers = state.markers.length;
+    add(MarkerAdded(
+      latitude: latitude,
+      longitude: longitude,
+      name: name,
+      markerId: markerId,
+      snippet: snippet,
+    ));
+    while (state.markers.length != currentNumberOfMarkers + 1) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
   }
