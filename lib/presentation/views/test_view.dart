@@ -1,13 +1,10 @@
-import 'package:googleapis/chat/v1.dart';
-import 'package:googleapis/drive/v3.dart';
-import 'package:universal_html/html.dart';
+import 'dart:ui_web' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:universal_html/html.dart';
 
 import '../../config/constants/constants.dart';
 import '../js_bridge/js_bridge.dart';
-
-import 'dart:ui_web' as ui;
 
 class TestView extends StatefulWidget {
   const TestView({super.key});
@@ -105,11 +102,10 @@ class _TestViewState extends State<TestView> {
 
 class HtmlImage extends StatelessWidget {
   final String imageId;
+
   HtmlImage({super.key, required this.imageId}) {
     ui.platformViewRegistry.registerViewFactory('image-$imageId', (int viewId) {
-      var image = ImageElement(
-        src: 'https://drive.google.com/uc?id=$imageId',
-      );
+      var image = ImageElement(src: 'https://drive.google.com/uc?id=$imageId');
       image.style.height = '100%';
       image.style.width = '100%';
       return image;

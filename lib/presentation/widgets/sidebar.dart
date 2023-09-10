@@ -14,6 +14,8 @@ class Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isAdmin =
         context.read<AuthBloc>().state.roles!.contains('ADMIN');
+    final bool isResearcher =
+        context.read<AuthBloc>().state.roles!.contains('RESEARCHER');
 
     return Container(
       width: 220,
@@ -22,7 +24,7 @@ class Sidebar extends StatelessWidget {
       child: ListView(
         physics: const ClampingScrollPhysics(),
         children: [
-          SidemenuTitle(),
+          const SidemenuTitle(),
           const TextSeparator(text: 'Usuario'),
           MenuItem(
             text: 'Perfil',
@@ -33,7 +35,9 @@ class Sidebar extends StatelessWidget {
             },
           ),
           const SizedBox(height: 20),
-          if (isAdmin) const AdminOptions(),
+          if (isAdmin) const _AdminOptions(),
+          if (isResearcher) const SizedBox(height: 20),
+          if (isResearcher) const _ResearcherOptions(),
           const SizedBox(height: 50),
           const TextSeparator(text: 'Salir'),
           MenuItem(
@@ -75,8 +79,8 @@ class Sidebar extends StatelessWidget {
   }
 }
 
-class AdminOptions extends StatelessWidget {
-  const AdminOptions({super.key});
+class _AdminOptions extends StatelessWidget {
+  const _AdminOptions();
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +94,28 @@ class AdminOptions extends StatelessWidget {
           onPressed: () {
             context.read<SidemenuBloc>().closeMenu();
             NavigationService.navigateTo(FluroRouterWrapper.usersTable);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _ResearcherOptions extends StatelessWidget {
+  const _ResearcherOptions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const TextSeparator(text: 'Researcher'),
+        MenuItem(
+          text: 'Mapa',
+          icon: Icons.map_outlined,
+          onPressed: () {
+            context.read<SidemenuBloc>().closeMenu();
+            NavigationService.navigateTo(FluroRouterWrapper.bicsScreen);
           },
         ),
       ],
