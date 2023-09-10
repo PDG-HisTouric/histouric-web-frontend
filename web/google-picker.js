@@ -2,6 +2,9 @@ let tokenClient;
 let accessToken = null;
 let pickerInited = false;
 let gisInited = false;
+let selectedFilesIds = [];
+let isPickerOpen = false;
+let isThereAnError = false;
 
 /**
 * Callback after api.js is loaded.
@@ -17,7 +20,6 @@ function gapiLoaded() {
 async function initializePicker() {
   await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
   pickerInited = true;
-  maybeEnableButtons();
 }
 
 /**
@@ -30,16 +32,6 @@ function gisLoaded(scopes, clientId) {
     callback: '', // defined later
   });
   gisInited = true;
-  maybeEnableButtons();
-}
-
-/**
-* Enables user interaction after all libraries are loaded.
-*/
-function maybeEnableButtons() {
-  //  if (pickerInited && gisInited) {
-  //    document.getElementById('authorize_button').style.visibility = 'visible';
-  //  }
 }
 
 /**
@@ -48,10 +40,12 @@ function maybeEnableButtons() {
 function handleAuthClick(apiKey, appId) {
   tokenClient.callback = async (response) => {
     if (response.error !== undefined) {
+      isThereAnError = true;
       throw (response);
     }
     accessToken = response.access_token;
     await createPicker(apiKey, appId);
+    isPickerOpen = true;
   };
 
   if (accessToken === null) {
@@ -78,19 +72,20 @@ function handleSignOutClick() {
 *  Create and render a Picker object for searching images.
 */
 function createPicker(apiKey, appId) {
-  const view = new google.picker.View(google.picker.ViewId.DOCS);
-  view.setMimeTypes('image/png,image/jpeg,image/jpg');
+  const docsView = new google.picker.DocsView(google.picker.ViewId.DOCS);
+  docsView.setMimeTypes('image/png,image/jpeg,image/jpg');
+  docsView.setOwnedByMe(true);
   const picker = new google.picker.PickerBuilder()
     .enableFeature(google.picker.Feature.NAV_HIDDEN)
     .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
     .setDeveloperKey(apiKey)
     .setAppId(appId)
     .setOAuthToken(accessToken)
-    .addView(view)
-    .addView(new google.picker.DocsUploadView())
+    .addView(docsView)
     .setCallback(pickerCallback)
     .build();
   picker.setVisible(true);
+  isPickerOpen = true;
 }
 
 /**
@@ -100,19 +95,42 @@ function createPicker(apiKey, appId) {
 async function pickerCallback(data) {
   if (data.action === google.picker.Action.PICKED) {
     let text = `Picker response: \n${JSON.stringify(data, null, 2)}\n`;
-    const document = data[google.picker.Response.DOCUMENTS][0];
-    const fileId = document[google.picker.Document.ID];
-    console.log(fileId);
-    const res = await gapi.client.drive.files.get({
-      'fileId': fileId,
-      'fields': '*',
-    });
-    text += `Drive API response for first document: \n${JSON.stringify(res.result, null, 2)}\n`;
-    console.log('res.result');
-    console.log(res.result);
-    console.log('res.result.webContentLink');
-    console.log(res.result.webContentLink);
-    console.log('text');
-    console.log(text);
+    const documents = data[google.picker.Response.DOCUMENTS];
+    let filesIds = await shareDocumentsToReadonlyForEveryone(documents);
+    selectedFilesIds = filesIds;
+    isPickerOpen = false;
   }
+}
+
+async function shareDocumentsToReadonlyForEveryone(documents) {
+    let filesIds = [];
+    for (let i = 0; i < documents.length; i++) {
+      const fileId = documents[i][google.picker.Document.ID];
+      await createPermissionToEverybodyCanRead(fileId);
+      filesIds.push(fileId);
+    }
+    return filesIds;
+}
+
+async function createPermissionToEverybodyCanRead(fileId) {
+  await gapi.client.drive.permissions.create({
+    'fileId': fileId,
+    'resource': {
+      'type': 'anyone',
+      'role': 'reader',
+    },
+  });
+
+}
+
+function getSelectedFilesIds() {
+  return selectedFilesIds;
+}
+
+function getIsPickerOpen() {
+  return isPickerOpen;
+}
+
+function getIsThereAnError() {
+    return isThereAnError;
 }
