@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/views/bics_view.dart';
 
 import 'package:url_strategy/url_strategy.dart';
 
@@ -60,7 +61,9 @@ class _MaterialAppWithFluro extends StatelessWidget {
       onGenerateRoute: FluroRouterWrapper.router.generator,
       navigatorKey: NavigationService.navigatorKey,
       // home: const AuthScreen(child: LoginView()),
-      home: const CreateBICView(),
+      home: const Scaffold(
+        body: BicsView(),
+      ),
     );
   }
 }

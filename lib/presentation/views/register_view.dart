@@ -48,7 +48,7 @@ class _Register extends StatelessWidget {
         const SizedBox(height: 30),
         Container(
           constraints: BoxConstraints(maxWidth: maxWidth),
-          child: CustomTextFormField(
+          child: FirstCustomTextFormField(
             hint: "Correo Electrónico",
             label: "Correo Electrónico",
             onChanged: context.read<SignUpBloc>().emailChanged,
@@ -58,7 +58,7 @@ class _Register extends StatelessWidget {
         const SizedBox(height: 20),
         Container(
           constraints: BoxConstraints(maxWidth: maxWidth),
-          child: CustomTextFormField(
+          child: FirstCustomTextFormField(
             hint: "Contraseña",
             label: "Contraseña",
             obscureText: true,
@@ -69,7 +69,7 @@ class _Register extends StatelessWidget {
         const SizedBox(height: 20),
         Container(
           constraints: BoxConstraints(maxWidth: maxWidth),
-          child: CustomTextFormField(
+          child: FirstCustomTextFormField(
             hint: "Confirmar contraseña",
             label: "Confirmar contraseña",
             obscureText: true,
@@ -80,7 +80,7 @@ class _Register extends StatelessWidget {
         const SizedBox(height: 20),
         Container(
           constraints: BoxConstraints(maxWidth: maxWidth),
-          child: CustomTextFormField(
+          child: FirstCustomTextFormField(
             hint: "Nombre de usuario",
             label: "Nombre de usuario",
             onChanged: context.read<SignUpBloc>().nicknameChanged,

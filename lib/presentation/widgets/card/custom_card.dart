@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../config/config.dart';
-import '../blocs/blocs.dart';
+import '../../../config/config.dart';
+import '../../blocs/blocs.dart';
+import '../form/custom_elevated_button_squared.dart';
 import 'card_for_edit_from_admin.dart';
 import 'card_for_edit_or_create.dart';
+
 import 'card_for_view.dart';
-import 'custom_elevated_button_squared.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard({super.key});
