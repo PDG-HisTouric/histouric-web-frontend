@@ -20,4 +20,17 @@ class JSHelper {
   }) {
     gisLoaded(scopes, clientId);
   }
+
+  static bool callGetIsPickerOpen() {
+    return getIsPickerOpen();
+  }
+
+  static List<String> callGetSelectedFilesIds() {
+    List<dynamic> filesIds = getSelectedFilesIds();
+    return filesIds.map((e) => e.toString()).toList();
+  }
+
+  static bool callGetIsThereAnError() {
+    return getIsThereAnError();
+  }
 }
