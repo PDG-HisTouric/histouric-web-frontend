@@ -1,5 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/views/bics_view.dart';
 
 import '../../presentation/blocs/blocs.dart';
 import '../../presentation/presentation.dart';
@@ -49,6 +50,10 @@ class DashboardHandlers {
         nickname: '',
       ),
     );
+  });
+
+  static Handler bicsScreen = Handler(handlerFunc: (context, parameters) {
+    return const DashboardScreen(child: BicsView());
   });
 
   static Handler prueba = Handler(handlerFunc: (context, parameters) {
