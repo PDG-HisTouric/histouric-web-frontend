@@ -17,7 +17,7 @@ class FluroRouterWrapper {
   static String usersTable = "/dashboard/users";
   static String editUser = "/dashboard/users/edit/:nickname";
   static String createUser = "/dashboard/users/create";
-  static String bicsScreen = "/dashboard/users/edit";
+  static String bicsScreen = "/dashboard/map";
 
   //Prueba
   static String prueba = "/prueba";
