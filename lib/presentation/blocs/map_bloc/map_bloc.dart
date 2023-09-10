@@ -60,13 +60,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     ));
   }
 
-  void setLastMarker({
+  Future<void> setLastMarker({
     required double latitude,
     required double longitude,
     required String name,
     required String markerId,
     String? snippet,
-  }) {
+  }) async {
+    Marker lastMarker = state.markers.last;
     add(LastMarkerChanged(
       latitude: latitude,
       longitude: longitude,
@@ -74,6 +75,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       markerId: markerId,
       snippet: snippet,
     ));
+    while (state.markers.last == lastMarker) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 
   void loadBICsFromBICRepository() async {
@@ -177,7 +181,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 
-  void addMarker({
+  Future<void> addMarker({
     required double latitude,
     required double longitude,
     required String name,

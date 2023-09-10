@@ -52,23 +52,27 @@ class _BIcsViewState extends State<_BIcsView> {
               },
             );
           },
-          onTap: (latLng) {
+          onTap: (latLng) async {
             if (isCreatingBIC) {
+              String newMarkerId = 'nuevo-bic';
               if (isTheFirstMarker) {
-                context.read<MapBloc>().addMarker(
+                await context.read<MapBloc>().addMarker(
                       latitude: latLng.latitude,
                       longitude: latLng.longitude,
                       name: 'Nuevo BIC',
-                      markerId: 'nuevo-bic',
+                      markerId: newMarkerId,
                     );
               } else {
-                context.read<MapBloc>().setLastMarker(
+                await context.read<MapBloc>().setLastMarker(
                       latitude: latLng.latitude,
                       longitude: latLng.longitude,
                       name: 'Nuevo BIC',
-                      markerId: 'nuevo-bic',
+                      markerId: newMarkerId,
                     );
               }
+              mapBlocState.controller?.showMarkerInfoWindow(
+                MarkerId(newMarkerId),
+              );
             }
           },
         ),
