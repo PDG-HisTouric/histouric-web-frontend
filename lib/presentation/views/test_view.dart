@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:histouric_web/domain/entities/entities.dart';
 
 import '../../config/constants/constants.dart';
 import '../js_bridge/js_bridge.dart';
@@ -25,7 +26,7 @@ class _TestViewState extends State<TestView> {
     }
   }
 
-  List<String> filesIds = [];
+  List<HistouricImageInfo> imagesInfo = [];
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +52,8 @@ class _TestViewState extends State<TestView> {
                 await _waitUntilThePickerIsClosed();
                 if (!JSHelper.callGetIsThereAnError()) {
                   setState(() {
-                    filesIds = [
-                      ...filesIds,
+                    imagesInfo = [
+                      ...imagesInfo,
                       ...JSHelper.callGetSelectedFilesIds()
                     ];
                   });
@@ -60,20 +61,20 @@ class _TestViewState extends State<TestView> {
               },
             ),
             const SizedBox(height: 20),
-            if (filesIds.isEmpty)
+            if (imagesInfo.isEmpty)
               const Text(
                 'No files selected',
                 style: TextStyle(color: Colors.red),
               ),
-            if (filesIds.isNotEmpty) ...[
+            if (imagesInfo.isNotEmpty) ...[
               const Text('Selected files:'),
               const SizedBox(height: 20),
             ],
-            if (filesIds.isNotEmpty)
+            if (imagesInfo.isNotEmpty)
               Wrap(
-                children: filesIds
+                children: imagesInfo
                     .map(
-                      (id) => ClipRRect(
+                      (imageInfo) => ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: SizedBox(
                           width: 400,
@@ -81,9 +82,12 @@ class _TestViewState extends State<TestView> {
                           child: FittedBox(
                             fit: BoxFit.cover,
                             child: SizedBox(
-                              height: 853,
-                              width: 1280,
-                              child: HtmlImage(url: id, isFromDrive: true),
+                              height: imageInfo.height,
+                              width: imageInfo.width,
+                              child: HtmlImage(
+                                url: imageInfo.id,
+                                isFromDrive: true,
+                              ),
                             ),
                           ),
                         ),

@@ -1,11 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/blocs/bic_block/bic_bloc.dart';
 
+import '../../config/constants/constants.dart';
+import '../../domain/entities/entities.dart';
+import '../js_bridge/js_bridge.dart';
 import '../widgets/widgets.dart';
 
 class CreateBICView extends StatelessWidget {
   final void Function()? onClosePressed;
+  final void Function() goToTheBeginningOfTheForm;
 
-  const CreateBICView({super.key, required this.onClosePressed});
+  const CreateBICView({
+    super.key,
+    required this.onClosePressed,
+    required this.goToTheBeginningOfTheForm,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => BicBloc(),
+      child: _CreateBICView(
+        onClosePressed: onClosePressed,
+        goToTheBeginningOfTheForm: goToTheBeginningOfTheForm,
+      ),
+    );
+  }
+}
+
+class _CreateBICView extends StatelessWidget {
+  const _CreateBICView({
+    required this.onClosePressed,
+    required this.goToTheBeginningOfTheForm,
+  });
+
+  final void Function()? onClosePressed;
+  final void Function() goToTheBeginningOfTheForm;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +61,10 @@ class CreateBICView extends StatelessWidget {
           FittedBox(
             child: SizedBox(
               width: 600,
-              child: _Form(onClosedPressed: onClosePressed),
+              child: _Form(
+                onClosedPressed: onClosePressed,
+                goToTheBeginningOfTheForm: goToTheBeginningOfTheForm,
+              ),
             ),
           )
         ],
@@ -41,46 +75,62 @@ class CreateBICView extends StatelessWidget {
 
 class _Form extends StatelessWidget {
   final void Function()? onClosedPressed;
+  final void Function() goToTheBeginningOfTheForm;
 
-  _Form({required this.onClosedPressed});
-
-  final List<String> filesIds = [
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Ermita_cali.jpg/300px-Ermita_cali.jpg',
-    'https://images.mnstatic.com/a9/f3/a9f36d28a6458cdc67726fd09ea08674.jpg',
-    'https://www.elpais.com.co/resizer/WtXtPEaGFNQoo2BSOPV18x5AKUA=/arc-anglerfish-arc2-prod-semana/public/6HIDALNZSVGVNNVOWZFUJ6LZBA.jpg',
-  ];
+  _Form({
+    required this.onClosedPressed,
+    required this.goToTheBeginningOfTheForm,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final formState = context.watch<BicBloc>().state;
+
     return Form(
       child: Column(
         children: [
-          const SecondCustomTextFormField(
+          SecondCustomTextFormField(
             labelText: 'Nombre',
             hintText: 'Ingresa el nombre del Bien de Interés Cultural',
+            onChanged: context.read<BicBloc>().nameChanged,
+            errorMessage: context.read<BicBloc>().state.bicName.errorMessage,
           ),
           const SizedBox(height: 16.0),
-          const SecondCustomTextFormField(
+          SecondCustomTextFormField(
             labelText: 'Descripción',
             hintText: 'Ingresa la descripción del Bien de Interés Cultural',
             minLines: 3,
             maxLines: 5,
+            onChanged: context.read<BicBloc>().descriptionChanged,
+            errorMessage:
+                context.read<BicBloc>().state.bicDescription.errorMessage,
           ),
           Row(
             children: [
               Checkbox(
-                checkColor: Colors.white,
-                value: false,
-                onChanged: (value) {},
-              ),
+                  checkColor: Colors.white,
+                  value: formState.exists,
+                  onChanged: (value) {
+                    context.read<BicBloc>().existsChanged();
+                  }),
               const Text('El Bien de Interés Cultural existe'),
             ],
           ),
           const SizedBox(height: 16.0),
-          ImageCarousel(filesIds: filesIds),
+          if (formState.driveImagesInfo.isEmpty)
+            const Text(
+              'No hay imágenes seleccionadas',
+              style: TextStyle(color: Colors.black),
+            ),
+          if (formState.driveImagesInfo.isNotEmpty)
+            ImageCarousel(imagesInfo: formState.driveImagesInfo),
           const SizedBox(height: 16.0),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              _loadAnImageFromDrive(
+                context.read<BicBloc>().driveImageInfoAdded,
+              );
+            },
             child: const Text('Agregar fotos desde Google Drive'),
           ),
           const SizedBox(height: 16.0),
@@ -89,7 +139,12 @@ class _Form extends StatelessWidget {
             child: Wrap(
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (!context.read<BicBloc>().isStateValid()) {
+                      goToTheBeginningOfTheForm();
+                      return;
+                    }
+                  },
                   child: const Text('Crear'),
                 ),
                 const SizedBox(width: 16.0),
@@ -108,5 +163,37 @@ class _Form extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  _loadAnImageFromDrive(
+      void Function(HistouricImageInfo)
+          functionToLoadTheImageInTheBlock) async {
+    JSHelper.callFilePicker(
+      apiKey: Environment.pickerApiKey,
+      appId: Environment.pickerApiAppId,
+    );
+    _waitUntilThePickerIsOpen().then((value) {
+      _waitUntilThePickerIsClosed().then((value) {
+        if (!JSHelper.callGetIsThereAnError()) {
+          final imagesInfo = JSHelper.callGetSelectedFilesIds();
+          for (var imageInfo in imagesInfo) {
+            functionToLoadTheImageInTheBlock(imageInfo);
+          }
+        }
+      });
+    });
+  }
+
+  _waitUntilThePickerIsOpen() async {
+    while (
+        !JSHelper.callGetIsThereAnError() && !JSHelper.callGetIsPickerOpen()) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+  }
+
+  _waitUntilThePickerIsClosed() async {
+    while (JSHelper.callGetIsPickerOpen()) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:histouric_web/domain/entities/histouric_image_info.dart';
 import 'package:js/js_util.dart';
 
 import 'js_library.dart';
@@ -25,9 +26,11 @@ class JSHelper {
     return getIsPickerOpen();
   }
 
-  static List<String> callGetSelectedFilesIds() {
-    List<dynamic> filesIds = getSelectedFilesIds();
-    return filesIds.map((e) => e.toString()).toList();
+  static List<HistouricImageInfo> callGetSelectedFilesIds() {
+    List<List<dynamic>> filesInfo = getSelectedFilesInfo();
+    return filesInfo
+        .map((fileInfo) => HistouricImageInfo.fromList(fileInfo))
+        .toList();
   }
 
   static bool callGetIsThereAnError() {

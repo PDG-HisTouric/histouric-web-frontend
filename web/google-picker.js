@@ -2,7 +2,7 @@ let tokenClient;
 let accessToken = null;
 let pickerInited = false;
 let gisInited = false;
-let selectedFilesIds = [];
+let selectedFilesInfo = [];
 let isPickerOpen = false;
 let isThereAnError = false;
 
@@ -96,20 +96,35 @@ async function pickerCallback(data) {
   if (data.action === google.picker.Action.PICKED) {
     let text = `Picker response: \n${JSON.stringify(data, null, 2)}\n`;
     const documents = data[google.picker.Response.DOCUMENTS];
-    let filesIds = await shareDocumentsToReadonlyForEveryone(documents);
-    selectedFilesIds = filesIds;
+    await shareDocumentsToReadonlyForEveryone(documents);
+    await getInfoOfImages(documents);
     isPickerOpen = false;
   }
 }
 
+async function getInfoOfImages(documents) {
+  selectedFilesInfo = [];
+  for (let i = 0; i < documents.length; i++) {
+    let imageInfo = [];
+    const fileId = documents[i][google.picker.Document.ID];
+    imageInfo.push(fileId);
+    const res = await gapi.client.drive.files.get({
+      'fileId': fileId,
+      'fields': '*',
+    });
+    const width = res.result.imageMediaMetadata.width;
+    const height = res.result.imageMediaMetadata.height;
+    imageInfo.push(width);
+    imageInfo.push(height);
+    selectedFilesInfo.push(imageInfo);
+  }
+}
+
 async function shareDocumentsToReadonlyForEveryone(documents) {
-    let filesIds = [];
-    for (let i = 0; i < documents.length; i++) {
-      const fileId = documents[i][google.picker.Document.ID];
-      await createPermissionToEverybodyCanRead(fileId);
-      filesIds.push(fileId);
-    }
-    return filesIds;
+  for (let i = 0; i < documents.length; i++) {
+    const fileId = documents[i][google.picker.Document.ID];
+    await createPermissionToEverybodyCanRead(fileId);
+  }
 }
 
 async function createPermissionToEverybodyCanRead(fileId) {
@@ -123,8 +138,8 @@ async function createPermissionToEverybodyCanRead(fileId) {
 
 }
 
-function getSelectedFilesIds() {
-  return selectedFilesIds;
+function getSelectedFilesInfo() {
+  return selectedFilesInfo;
 }
 
 function getIsPickerOpen() {
@@ -132,5 +147,5 @@ function getIsPickerOpen() {
 }
 
 function getIsThereAnError() {
-    return isThereAnError;
+  return isThereAnError;
 }

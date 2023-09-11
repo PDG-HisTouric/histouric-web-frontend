@@ -31,6 +31,8 @@ class _BIcsViewState extends State<_BIcsView> {
   int counter = 0;
   bool isCardOpen = false;
 
+  final ScrollController _scrollController = ScrollController();
+
   void toggleCard() {
     setState(() {
       isCardOpen = !isCardOpen;
@@ -146,9 +148,19 @@ class _BIcsViewState extends State<_BIcsView> {
               child: Card(
                 elevation: 5.0,
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: CreateBICView(onClosePressed: toggleCard),
+                    child: CreateBICView(
+                      onClosePressed: toggleCard,
+                      goToTheBeginningOfTheForm: () {
+                        _scrollController.animateTo(
+                          0.0,
+                          curve: Curves.easeOut,
+                          duration: const Duration(milliseconds: 300),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
