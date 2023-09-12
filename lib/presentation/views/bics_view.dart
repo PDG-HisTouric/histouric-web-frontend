@@ -136,12 +136,14 @@ class _BIcsViewState extends State<_BIcsView> {
             ),
           ),
         AnimatedPositioned(
-          top: isCardOpen ? 100 : -500, // Posición inicial y final de la card
+          top: isCardOpen ? 100 : -500,
+          // Posición inicial y final de la card
           left: 0,
           right: 0,
-          duration:
-              const Duration(milliseconds: 300), // Duración de la animación
-          curve: Curves.easeInOut, // Curva de la animación
+          duration: const Duration(milliseconds: 300),
+          // Duración de la animación
+          curve: Curves.easeInOut,
+          // Curva de la animación
           child: Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width < maxWidth
@@ -194,13 +196,20 @@ class _BIcsViewState extends State<_BIcsView> {
   }
 
   Future<void> toggleBICCreation() async {
-    await context
+    context
         .read<MapBloc>()
-        .deleteMarker(context.read<MapBloc>().state.markerFroBICCreationId);
-    setState(() {
-      isCreatingBIC = !isCreatingBIC;
-      isTheFirstMarker = true;
-    });
+        .deleteMarker(context.read<MapBloc>().state.markerFroBICCreationId)
+        .then(
+      (value) {
+        setState(() {
+          isCreatingBIC = !isCreatingBIC;
+          isTheFirstMarker = true;
+        });
+        if (isCreatingBIC) {
+          _showSnackBar(context, 'Toca el mapa para crear un BIC');
+        }
+      },
+    );
   }
 
   void _showMarkerInfoWindow(LatLng latLng, String newMarkerId) {
@@ -211,5 +220,13 @@ class _BIcsViewState extends State<_BIcsView> {
       longitude = latLng.longitude;
       latitude = latLng.latitude;
     });
+  }
+
+  _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 }

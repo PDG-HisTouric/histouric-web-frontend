@@ -152,20 +152,12 @@ class _Form extends StatelessWidget {
                         context.read<BicBloc>().toggleBICCreation().then(
                             (value) =>
                                 context.read<BicBloc>().onClosePressed());
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text('¡El BIC se ha creado correctamente!'),
-                          ),
-                        );
+                        _showSnackBar(
+                            context, '¡El BIC se ha creado correctamente!');
                       } else {
                         context.read<BicBloc>().onClosePressed();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text('¡Ha ocurrido un error al crear el BIC!'),
-                          ),
-                        );
+                        _showSnackBar(
+                            context, '¡Ha ocurrido un error al crear el BIC!');
                       }
                     });
                   },
@@ -218,5 +210,13 @@ class _Form extends StatelessWidget {
     while (JSHelper.callGetIsPickerOpen()) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
+  }
+
+  _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 }
