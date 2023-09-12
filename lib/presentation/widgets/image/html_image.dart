@@ -9,7 +9,7 @@ class HtmlImage extends StatelessWidget {
   HtmlImage({super.key, required this.url, required this.isFromDrive}) {
     ui.platformViewRegistry.registerViewFactory('image-$url', (int viewId) {
       var image = isFromDrive
-          ? ImageElement(src: 'https://drive.google.com/uc?id=$url')
+          ? ImageElement(src: 'https://drive.google.com/uc?export=view&id=$url')
           : ImageElement(src: url);
       image.style.height = '100%';
       image.style.width = '100%';

@@ -8,7 +8,7 @@ class BIC {
   final String description;
   final bool exists;
   final List<String> nicknames;
-  final List<String> images;
+  final List<String> imagesUris;
   final List<BICHistory> histories;
 
   BIC({
@@ -19,7 +19,7 @@ class BIC {
     required this.description,
     required this.exists,
     required this.nicknames,
-    required this.images,
+    required this.imagesUris,
     required this.histories,
   });
 }

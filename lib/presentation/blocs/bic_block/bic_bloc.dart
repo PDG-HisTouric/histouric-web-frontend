@@ -8,13 +8,18 @@ part 'bic_event.dart';
 part 'bic_state.dart';
 
 class BicBloc extends Bloc<BicEvent, BicState> {
-  BicBloc() : super(BicState()) {
+  final BICRepository bicRepository;
+  final String token;
+
+  BicBloc({required this.bicRepository, required this.token})
+      : super(BicState()) {
     on<BicNameChanged>(_onNameChanged);
     on<BicDescriptionChanged>(_onDescriptionChanged);
     on<BicExistsChanged>(_onExistsChanged);
     on<BicSubmitted>(_createBic);
     on<BicTouchedEveryField>(_touchedEveryField);
     on<BicDriveImageInfoAdded>(_driveImageInfoAdded);
+    bicRepository.configureToken(token);
   }
 
   void _onNameChanged(BicNameChanged event, Emitter<BicState> emit) {

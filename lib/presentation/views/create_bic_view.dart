@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/blocs/bic_block/bic_bloc.dart';
 
 import '../../config/constants/constants.dart';
 import '../../domain/entities/entities.dart';
+import '../../infrastructure/datasources/datasources.dart';
+import '../../infrastructure/repositories/repositories.dart';
+import '../blocs/blocs.dart';
 import '../js_bridge/js_bridge.dart';
 import '../widgets/widgets.dart';
 
@@ -20,7 +22,10 @@ class CreateBICView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BicBloc(),
+      create: (context) => BicBloc(
+        bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
+        token: context.read<AuthBloc>().state.token!,
+      ),
       child: _CreateBICView(
         onClosePressed: onClosePressed,
         goToTheBeginningOfTheForm: goToTheBeginningOfTheForm,

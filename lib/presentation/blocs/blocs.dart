@@ -5,3 +5,4 @@ export 'sidemenu_bloc/sidemenu_bloc.dart';
 export 'sign_up_bloc/sign_up_bloc.dart';
 export 'users_table_bloc/users_table_bloc.dart';
 export 'map_bloc/map_bloc.dart';
+export 'bic_block/bic_bloc.dart';

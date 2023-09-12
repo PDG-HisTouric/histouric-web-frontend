@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:histouric_web/infrastructure/repositories/bic_repository_impl.dart';
 import 'package:histouric_web/presentation/presentation.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
+import '../../infrastructure/datasources/datasources.dart';
 import '../blocs/blocs.dart';
 
 class BicsView extends StatelessWidget {
@@ -12,7 +14,9 @@ class BicsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MapBloc(),
+      create: (context) => MapBloc(
+          token: context.read<AuthBloc>().state.token!,
+          bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl())),
       child: const _BIcsView(),
     );
   }
