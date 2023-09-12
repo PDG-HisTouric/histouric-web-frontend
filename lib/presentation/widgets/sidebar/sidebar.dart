@@ -52,16 +52,6 @@ class Sidebar extends StatelessWidget {
                 NavigationService.replaceTo(FluroRouterWrapper.loginRoute);
               },
             ),
-            const SizedBox(height: 50),
-            const TextSeparator(text: 'Prueba'),
-            MenuItem(
-              text: 'Prueba',
-              icon: Icons.lightbulb_circle,
-              onPressed: () {
-                context.read<SidemenuBloc>().closeMenu();
-                NavigationService.navigateTo(FluroRouterWrapper.prueba);
-              },
-            ),
           ],
         ),
       ),
