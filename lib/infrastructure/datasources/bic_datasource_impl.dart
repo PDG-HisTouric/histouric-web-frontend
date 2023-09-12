@@ -21,15 +21,15 @@ class BICDatasourceImpl implements BICDatasource {
 
   @override
   Future<BIC> createBIC(BIC bic) {
-    return dio.post('/', data: bic).then(
-          (response) => BICMapper.fromBICResponse(response.data),
+    return dio.post('', data: BICMapper.toMap(bic)).then(
+          (response) =>
+              BICMapper.fromBICResponse(BICResponse.fromJson(response.data)),
         );
   }
 
   @override
   Future<List<BIC>> getBICs() {
     return dio.get('').then((response) {
-      var temp = response.data;
       List<BICResponse> bicResponses =
           (response.data as List).map((e) => BICResponse.fromJson(e)).toList();
 

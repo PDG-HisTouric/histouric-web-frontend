@@ -32,16 +32,11 @@ class _BIcsView extends StatefulWidget {
 class _BIcsViewState extends State<_BIcsView> {
   bool isCreatingBIC = false;
   bool isTheFirstMarker = true;
-  int counter = 0;
   bool isCardOpen = false;
+  double latitude = 0;
+  double longitude = 0;
 
   final ScrollController _scrollController = ScrollController();
-
-  void toggleCard() {
-    setState(() {
-      isCardOpen = !isCardOpen;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,29 +66,39 @@ class _BIcsViewState extends State<_BIcsView> {
           },
           onTap: (latLng) async {
             if (isCreatingBIC) {
-              String newMarkerId = 'nuevo-bic-$counter';
-              String name = 'Continuar aquí';
-              if (isTheFirstMarker) {
-                await context.read<MapBloc>().addMarker(
-                      latitude: latLng.latitude,
-                      longitude: latLng.longitude,
-                      name: name,
-                      markerId: newMarkerId,
-                      onInfoWindowTap: toggleCard,
-                    );
-                isTheFirstMarker = false;
-              } else {
-                await context.read<MapBloc>().setLastMarker(
-                      latitude: latLng.latitude,
-                      longitude: latLng.longitude,
-                      name: name,
-                      markerId: newMarkerId,
-                      onInfoWindowTap: toggleCard,
-                    );
-              }
-              counter++;
-              mapBlocState.controller?.showMarkerInfoWindow(
-                MarkerId(newMarkerId),
+              await context.read<MapBloc>().changeMarkerIdForBICCreation().then(
+                (value) {
+                  String newMarkerId =
+                      context.read<MapBloc>().state.markerFroBICCreationId;
+                  String name = 'Continuar aquí';
+                  if (isTheFirstMarker) {
+                    context
+                        .read<MapBloc>()
+                        .addMarker(
+                          latitude: latLng.latitude,
+                          longitude: latLng.longitude,
+                          name: name,
+                          markerId: newMarkerId,
+                          onInfoWindowTap: toggleCard,
+                        )
+                        .then((value) {
+                      isTheFirstMarker = false;
+                      _showMarkerInfoWindow(latLng, newMarkerId);
+                    });
+                  } else {
+                    context
+                        .read<MapBloc>()
+                        .setLastMarker(
+                          latitude: latLng.latitude,
+                          longitude: latLng.longitude,
+                          name: name,
+                          markerId: newMarkerId,
+                          onInfoWindowTap: toggleCard,
+                        )
+                        .then((value) =>
+                            _showMarkerInfoWindow(latLng, newMarkerId));
+                  }
+                },
               );
             }
           },
@@ -106,17 +111,13 @@ class _BIcsViewState extends State<_BIcsView> {
               child: isCreatingBIC
                   ? ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          isCreatingBIC = false;
-                        });
+                        toggleBICCreation();
                       },
                       child: const Text('Cancelar'),
                     )
                   : ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          isCreatingBIC = true;
-                        });
+                        toggleBICCreation();
                       },
                       child: const Text('Crear Bien de Interés Cultural'),
                     ),
@@ -156,14 +157,12 @@ class _BIcsViewState extends State<_BIcsView> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CreateBICView(
+                      latitude: latitude,
+                      longitude: longitude,
                       onClosePressed: toggleCard,
-                      goToTheBeginningOfTheForm: () {
-                        _scrollController.animateTo(
-                          0.0,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300),
-                        );
-                      },
+                      goToTheBeginningOfTheForm: _goToTheBeginningOfTheForm,
+                      minimizeInfoWindow: _minimizeInfoWindow,
+                      toggleBICCreation: toggleBICCreation,
                     ),
                   ),
                 ),
@@ -173,5 +172,44 @@ class _BIcsViewState extends State<_BIcsView> {
         ),
       ],
     );
+  }
+
+  void _goToTheBeginningOfTheForm() {
+    _scrollController.animateTo(
+      0.0,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  void _minimizeInfoWindow() {
+    context.read<MapBloc>().state.controller?.hideMarkerInfoWindow(
+        MarkerId(context.read<MapBloc>().state.markerFroBICCreationId));
+  }
+
+  void toggleCard() {
+    setState(() {
+      isCardOpen = !isCardOpen;
+    });
+  }
+
+  Future<void> toggleBICCreation() async {
+    await context
+        .read<MapBloc>()
+        .deleteMarker(context.read<MapBloc>().state.markerFroBICCreationId);
+    setState(() {
+      isCreatingBIC = !isCreatingBIC;
+      isTheFirstMarker = true;
+    });
+  }
+
+  void _showMarkerInfoWindow(LatLng latLng, String newMarkerId) {
+    context.read<MapBloc>().state.controller?.showMarkerInfoWindow(
+          MarkerId(newMarkerId),
+        );
+    setState(() {
+      longitude = latLng.longitude;
+      latitude = latLng.latitude;
+    });
   }
 }

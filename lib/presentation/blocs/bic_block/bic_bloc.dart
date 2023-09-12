@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:histouric_web/domain/domain.dart';
@@ -10,9 +12,24 @@ part 'bic_state.dart';
 class BicBloc extends Bloc<BicEvent, BicState> {
   final BICRepository bicRepository;
   final String token;
+  final double latitude;
+  final double longitude;
+  final _submitCompleter = Completer<void>();
+  final void Function() minimizeInfoWindow;
+  final void Function() onClosePressed;
+  final void Function() goToTheBeginningOfTheForm;
+  final Future<void> Function() toggleBICCreation;
 
-  BicBloc({required this.bicRepository, required this.token})
-      : super(BicState()) {
+  BicBloc({
+    required this.bicRepository,
+    required this.token,
+    required this.latitude,
+    required this.longitude,
+    required this.minimizeInfoWindow,
+    required this.onClosePressed,
+    required this.goToTheBeginningOfTheForm,
+    required this.toggleBICCreation,
+  }) : super(BicState()) {
     on<BicNameChanged>(_onNameChanged);
     on<BicDescriptionChanged>(_onDescriptionChanged);
     on<BicExistsChanged>(_onExistsChanged);
@@ -47,8 +64,37 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     ));
   }
 
-  void _createBic(BicSubmitted event, Emitter<BicState> emit) {
-    //TODO: CONECTAR CON EL BACKEND
+  Future<void> _createBic(BicSubmitted event, Emitter<BicState> emit) async {
+    if (!isStateValid()) return;
+    emit(state.copyWith(status: SubmissionStatus.submissionInProgress));
+    while (state.status != SubmissionStatus.submissionInProgress) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+    try {
+      await bicRepository.createBIC(
+        BIC(
+          name: state.bicName.value,
+          description: state.bicDescription.value,
+          exists: state.exists,
+          latitude: latitude,
+          longitude: longitude,
+          nicknames: [],
+          histories: [],
+          imagesUris: state.driveImagesInfo.map((e) => e.id).toList(),
+        ),
+      );
+      emit(state.copyWith(status: SubmissionStatus.submissionSuccess));
+      while (state.status != SubmissionStatus.submissionSuccess) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+      _submitCompleter.complete();
+    } catch (e) {
+      emit(state.copyWith(status: SubmissionStatus.submissionFailure));
+      while (state.status != SubmissionStatus.submissionFailure) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+      _submitCompleter.complete();
+    }
   }
 
   void _touchedEveryField(BicTouchedEveryField event, Emitter<BicState> emit) {
@@ -93,8 +139,9 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     add(BicExistsChanged(exists: !state.exists));
   }
 
-  void submit() {
+  Future<void> submit() async {
     add(BicSubmitted());
+    await _submitCompleter.future;
   }
 
   void driveImageInfoAdded(HistouricImageInfo driveImageInfo) {

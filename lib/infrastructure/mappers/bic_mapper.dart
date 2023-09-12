@@ -15,4 +15,17 @@ class BICMapper {
       histories: [],
     );
   }
+
+  static Map<String, dynamic> toMap(BIC bic) {
+    return {
+      'name': bic.name,
+      'latitude': bic.latitude,
+      'longitude': bic.longitude,
+      'description': bic.description,
+      'existss': bic.exists,
+      'nicknames': bic.nicknames,
+      'imagesUris': bic.imagesUris,
+      'histories': bic.histories,
+    };
+  }
 }

@@ -1,7 +1,7 @@
 import 'bic_history.dart';
 
 class BIC {
-  final String bicId;
+  final String? bicId;
   final String name;
   final double latitude;
   final double longitude;
@@ -12,7 +12,7 @@ class BIC {
   final List<BICHistory> histories;
 
   BIC({
-    required this.bicId,
+    this.bicId,
     required this.name,
     required this.latitude,
     required this.longitude,

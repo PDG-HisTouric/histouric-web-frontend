@@ -10,38 +10,44 @@ import '../js_bridge/js_bridge.dart';
 import '../widgets/widgets.dart';
 
 class CreateBICView extends StatelessWidget {
-  final void Function()? onClosePressed;
+  final void Function() onClosePressed;
   final void Function() goToTheBeginningOfTheForm;
+  final void Function() minimizeInfoWindow;
+  final Future<void> Function() toggleBICCreation;
+  final double latitude;
+  final double longitude;
 
   const CreateBICView({
     super.key,
     required this.onClosePressed,
     required this.goToTheBeginningOfTheForm,
+    required this.latitude,
+    required this.longitude,
+    required this.minimizeInfoWindow,
+    required this.toggleBICCreation,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
+      key: Key('$latitude$longitude'),
       create: (context) => BicBloc(
+        goToTheBeginningOfTheForm: goToTheBeginningOfTheForm,
+        onClosePressed: onClosePressed,
+        minimizeInfoWindow: minimizeInfoWindow,
+        toggleBICCreation: toggleBICCreation,
+        latitude: latitude,
+        longitude: longitude,
         bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
         token: context.read<AuthBloc>().state.token!,
       ),
-      child: _CreateBICView(
-        onClosePressed: onClosePressed,
-        goToTheBeginningOfTheForm: goToTheBeginningOfTheForm,
-      ),
+      child: const _CreateBICView(),
     );
   }
 }
 
 class _CreateBICView extends StatelessWidget {
-  const _CreateBICView({
-    required this.onClosePressed,
-    required this.goToTheBeginningOfTheForm,
-  });
-
-  final void Function()? onClosePressed;
-  final void Function() goToTheBeginningOfTheForm;
+  const _CreateBICView();
 
   @override
   Widget build(BuildContext context) {
@@ -55,21 +61,14 @@ class _CreateBICView extends StatelessWidget {
                   style: TextStyle(fontSize: 20)),
               const Spacer(),
               CloseButton(
-                onPressed: onClosePressed,
+                onPressed: context.read<BicBloc>().onClosePressed,
               )
             ],
           ),
-          // Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: size.width * 0.3),
-          //   child: _Form(),
-          // ),
-          FittedBox(
+          const FittedBox(
             child: SizedBox(
               width: 600,
-              child: _Form(
-                onClosedPressed: onClosePressed,
-                goToTheBeginningOfTheForm: goToTheBeginningOfTheForm,
-              ),
+              child: _Form(),
             ),
           )
         ],
@@ -79,13 +78,7 @@ class _CreateBICView extends StatelessWidget {
 }
 
 class _Form extends StatelessWidget {
-  final void Function()? onClosedPressed;
-  final void Function() goToTheBeginningOfTheForm;
-
-  _Form({
-    required this.onClosedPressed,
-    required this.goToTheBeginningOfTheForm,
-  });
+  const _Form();
 
   @override
   Widget build(BuildContext context) {
@@ -144,20 +137,45 @@ class _Form extends StatelessWidget {
             child: Wrap(
               children: [
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (!context.read<BicBloc>().isStateValid()) {
-                      goToTheBeginningOfTheForm();
+                      context.read<BicBloc>().goToTheBeginningOfTheForm();
                       return;
                     }
+                    context.read<BicBloc>().submit().then((value) {
+                      SubmissionStatus submissionStatus =
+                          context.read<BicBloc>().state.status;
+                      if (submissionStatus ==
+                          SubmissionStatus.submissionSuccess) {
+                        context.read<MapBloc>().loadBICsFromBICRepository();
+                        context.read<BicBloc>().minimizeInfoWindow();
+                        context.read<BicBloc>().toggleBICCreation().then(
+                            (value) =>
+                                context.read<BicBloc>().onClosePressed());
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text('¡El BIC se ha creado correctamente!'),
+                          ),
+                        );
+                      } else {
+                        context.read<BicBloc>().onClosePressed();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text('¡Ha ocurrido un error al crear el BIC!'),
+                          ),
+                        );
+                      }
+                    });
                   },
                   child: const Text('Crear'),
                 ),
                 const SizedBox(width: 16.0),
                 ElevatedButton(
-                  onPressed: onClosedPressed,
+                  onPressed: context.read<BicBloc>().onClosePressed,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.red, // Cambia el color de fondo a rojo
+                    backgroundColor: Colors.red,
                   ),
                   child: const Text('Cancelar',
                       style: TextStyle(color: Colors.black)),

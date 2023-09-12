@@ -58,3 +58,13 @@ class FocusLocationChanged extends MapEvent {
 
   FocusLocationChanged({required this.latitude, required this.longitude});
 }
+
+class MarkerIdForBICCreationChanged extends MapEvent {
+  MarkerIdForBICCreationChanged();
+}
+
+class MarkerDeleted extends MapEvent {
+  final String markerId;
+
+  MarkerDeleted({required this.markerId});
+}
