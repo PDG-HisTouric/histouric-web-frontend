@@ -41,8 +41,8 @@ class _BIcsViewState extends State<_BIcsView> {
   @override
   Widget build(BuildContext context) {
     final mapBlocState = context.watch<MapBloc>().state;
-    double maxWidth = 650; // Ancho máximo deseado
-    double maxHeight = 500; // Alto máximo deseado
+    double maxWidth = 650;
+    double maxHeight = 500;
 
     return Stack(
       children: [

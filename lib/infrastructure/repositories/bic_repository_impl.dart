@@ -21,4 +21,9 @@ class BICRepositoryImpl implements BICRepository {
   void configureToken(String token) {
     bicDatasource.configureToken(token);
   }
+
+  @override
+  Future<List<BIC>> getBICsByNameOrNickname(String nameOrNickname) {
+    return bicDatasource.getBICsByNameOrNickname(nameOrNickname);
+  }
 }
