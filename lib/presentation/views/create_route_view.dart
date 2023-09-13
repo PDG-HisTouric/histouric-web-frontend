@@ -19,7 +19,7 @@ class CreateRouteView extends StatelessWidget {
         create: (context) => MapBloc(
           // token: context.read<AuthBloc>().state.token!,
           token:
-              "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0X21hbmFnZXJAZ21haWwuY29tIiwiaWF0IjoxNjk0NTg0MjQ0LCJleHAiOjE2OTQ1ODc4NDR9.wxmDeWfDq60Oha9DTcAYTmr0oA3AxvQOUMDmeJRU0MY",
+              "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0X21hbmFnZXJAZ21haWwuY29tIiwiaWF0IjoxNjk0NTkwOTk5LCJleHAiOjE2OTQ1OTQ1OTl9.FnE35F2IrfFnaL0z4VR0uotQ6HqCXy8VsjGV8YBkQs0",
           bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
         ),
       ),
@@ -28,7 +28,7 @@ class CreateRouteView extends StatelessWidget {
           bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
           // token: context.read<AuthBloc>().state.token!,
           token:
-              "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0X21hbmFnZXJAZ21haWwuY29tIiwiaWF0IjoxNjk0NTg0MjQ0LCJleHAiOjE2OTQ1ODc4NDR9.wxmDeWfDq60Oha9DTcAYTmr0oA3AxvQOUMDmeJRU0MY",
+              "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0X21hbmFnZXJAZ21haWwuY29tIiwiaWF0IjoxNjk0NTkwOTk5LCJleHAiOjE2OTQ1OTQ1OTl9.FnE35F2IrfFnaL0z4VR0uotQ6HqCXy8VsjGV8YBkQs0",
         ),
       ),
     ], child: const _CreateRouteView());
@@ -44,10 +44,10 @@ class _CreateRouteView extends StatefulWidget {
 
 class _CreateRouteViewState extends State<_CreateRouteView> {
   bool changeBICsOrder = false;
+  int count = 0;
 
   @override
   Widget build(BuildContext context) {
-    final mapBlocState = context.watch<MapBloc>().state;
     final routeBlocState = context.watch<RouteBloc>().state;
 
     return Row(
@@ -94,13 +94,21 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                                   buildDefaultDragHandles: false,
                                   onReorder: (oldIndex, newIndex) async {
                                     setState(() => changeBICsOrder = true);
-                                    await context
+                                    context
                                         .read<RouteBloc>()
                                         .changeBICsOrder(
                                           newIndex: newIndex,
                                           oldIndex: oldIndex,
-                                        );
-                                    setState(() => changeBICsOrder = false);
+                                        )
+                                        .then((value) {
+                                      context
+                                          .read<MapBloc>()
+                                          .changePolylinePoints(context
+                                              .read<RouteBloc>()
+                                              .state
+                                              .bicsForRoute);
+                                      setState(() => changeBICsOrder = false);
+                                    });
                                   },
                                   children: [
                                     for (final bic
@@ -137,7 +145,23 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                                       subtitle: Text(bic.description),
                                       trailing: IconButton(
                                         onPressed: () {
-                                          context.read<RouteBloc>().addBIC(bic);
+                                          context
+                                              .read<RouteBloc>()
+                                              .addBIC(bic)
+                                              .then((value) {
+                                            context.read<MapBloc>().addMarker(
+                                                  latitude: bic.latitude,
+                                                  longitude: bic.longitude,
+                                                  name: bic.name,
+                                                  markerId: bic.bicId!,
+                                                );
+                                            context
+                                                .read<MapBloc>()
+                                                .changePolylinePoints(context
+                                                    .read<RouteBloc>()
+                                                    .state
+                                                    .bicsForRoute);
+                                          });
                                         },
                                         icon: const Icon(Icons.add),
                                       ),
@@ -160,26 +184,8 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
             ),
           ),
         ),
-        Expanded(
-          child: GoogleMap(
-            markers: mapBlocState.markersSet,
-            mapType: MapType.normal,
-            initialCameraPosition: const CameraPosition(
-              target: LatLng(3.451929471542798, -76.5319398863662),
-              zoom: 15,
-            ),
-            myLocationEnabled: true,
-            zoomControlsEnabled: true,
-            myLocationButtonEnabled: true,
-            onMapCreated: (controller) {
-              controller.getVisibleRegion().then(
-                (value) async {
-                  context.read<MapBloc>().setMapController(controller);
-                  context.read<MapBloc>().loadBICsFromBICRepository();
-                },
-              );
-            },
-          ),
+        const Expanded(
+          child: _GoogleMap(),
         ),
       ],
     );
@@ -199,15 +205,48 @@ class _CustomRow extends StatelessWidget {
       subtitle: Text(bic.description),
       trailing: IconButton(
         onPressed: () {
-          context.read<RouteBloc>().deleteBIC(index);
+          context.read<RouteBloc>().deleteBIC(index).then((value) {
+            context.read<MapBloc>().deleteMarker(bic.bicId!);
+            context.read<MapBloc>().changePolylinePoints(
+                context.read<RouteBloc>().state.bicsForRoute);
+          });
         },
         icon: const Icon(Icons.delete),
       ),
       leading: ReorderableDragStartListener(
         index: index,
-        key: ValueKey(bic.bicId),
+        key: ValueKey(bic.bicId!),
         child: const Icon(Icons.drag_handle),
       ),
+    );
+  }
+}
+
+class _GoogleMap extends StatelessWidget {
+  const _GoogleMap();
+
+  @override
+  Widget build(BuildContext context) {
+    final mapBlocState = context.watch<MapBloc>().state;
+
+    return GoogleMap(
+      polylines: Set<Polyline>.of(mapBlocState.polylines.values),
+      markers: mapBlocState.markersSet,
+      mapType: MapType.normal,
+      initialCameraPosition: const CameraPosition(
+        target: LatLng(3.451929471542798, -76.5319398863662),
+        zoom: 15,
+      ),
+      myLocationEnabled: true,
+      zoomControlsEnabled: true,
+      myLocationButtonEnabled: true,
+      onMapCreated: (controller) {
+        controller.getVisibleRegion().then(
+          (value) async {
+            context.read<MapBloc>().setMapController(controller);
+          },
+        );
+      },
     );
   }
 }

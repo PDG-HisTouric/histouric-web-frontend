@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../domain/entities/entities.dart';
 import '../../../domain/repositories/repositories.dart';
@@ -12,7 +13,9 @@ part 'route_state.dart';
 class RouteBloc extends Bloc<RouteEvent, RouteState> {
   final BICRepository bicRepository;
   final String token;
-  Completer<void> changeBICCompleter = Completer<void>();
+  Completer<void> _changeBICCompleter = Completer<void>();
+  Completer<void> _newBICCompleter = Completer<void>();
+  Completer<void> _deleteBICCompleter = Completer<void>();
 
   RouteBloc({required this.bicRepository, required this.token})
       : super(RouteState()) {
@@ -29,13 +32,23 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     emit(state.copyWith(name: event.name));
   }
 
-  void _onBICAdded(BICAdded event, Emitter<RouteState> emit) {
+  void _onBICAdded(BICAdded event, Emitter<RouteState> emit) async {
+    int previousLength = state.bicsForRoute.length;
     emit(state.copyWith(bicsForRoute: [...state.bicsForRoute, event.bic]));
+    while (state.bicsForRoute.length != previousLength + 1) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+    _newBICCompleter.complete();
   }
 
-  void _onBICDeleted(BICDeleted event, Emitter<RouteState> emit) {
+  void _onBICDeleted(BICDeleted event, Emitter<RouteState> emit) async {
+    int previousLength = state.bicsForRoute.length;
     emit(state.copyWith(
         bicsForRoute: state.bicsForRoute..removeAt(event.index)));
+    while (state.bicsForRoute.length != previousLength - 1) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+    _deleteBICCompleter.complete();
   }
 
   void _onSearchTextFieldChanged(
@@ -60,17 +73,21 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     while (state.bicsForRoute != bicsForRoute) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
-    changeBICCompleter.complete();
+    _changeBICCompleter.complete();
   }
 
-  void addBIC(BIC bic) {
+  Future<void> addBIC(BIC bic) async {
     add(BICAdded(bic: bic));
+    await _newBICCompleter.future;
+    _newBICCompleter = Completer<void>();
     state.searchController.clear();
     changeSearchTextField("");
   }
 
-  void deleteBIC(int index) {
+  Future<void> deleteBIC(int index) async {
     add(BICDeleted(index: index));
+    await _deleteBICCompleter.future;
+    _deleteBICCompleter = Completer<void>();
   }
 
   void changeRouteName(String name) {
@@ -84,7 +101,7 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   Future<void> changeBICsOrder(
       {required int oldIndex, required int newIndex}) async {
     add(BICsOrderChanged(oldIndex: oldIndex, newIndex: newIndex));
-    await changeBICCompleter.future;
-    changeBICCompleter = Completer<void>();
+    await _changeBICCompleter.future;
+    _changeBICCompleter = Completer<void>();
   }
 }
