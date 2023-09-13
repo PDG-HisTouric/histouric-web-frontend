@@ -1,16 +1,16 @@
 part of 'map_bloc.dart';
 
 class MapState {
-  final bool isControllerReady;
   final List<Marker> markers;
   final GoogleMapController? controller;
   final Map<PolylineId, Polyline> polylines;
+  final String markerFroBICCreationId;
 
   MapState({
-    this.isControllerReady = false,
     this.markers = const [],
     this.controller,
     this.polylines = const {},
+    required this.markerFroBICCreationId,
   });
 
   Set<Marker> get markersSet {
@@ -18,16 +18,17 @@ class MapState {
   }
 
   MapState copyWith({
-    bool? isControllerReady,
     List<Marker>? markers,
     GoogleMapController? controller,
     Map<PolylineId, Polyline>? polylines,
+    String? markerFroBICCreationId,
   }) {
     return MapState(
-      isControllerReady: isControllerReady ?? this.isControllerReady,
       markers: markers ?? this.markers,
       controller: controller ?? this.controller,
       polylines: polylines ?? this.polylines,
+      markerFroBICCreationId:
+          markerFroBICCreationId ?? this.markerFroBICCreationId,
     );
   }
 }

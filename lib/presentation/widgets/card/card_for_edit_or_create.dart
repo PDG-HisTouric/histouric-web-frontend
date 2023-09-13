@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../infrastructure/infrastructure.dart';
-import '../blocs/blocs.dart';
+import '../../../infrastructure/infrastructure.dart';
+import '../../blocs/blocs.dart';
 
 typedef BuildRoleSelection = Widget Function(BuildContext context);
 

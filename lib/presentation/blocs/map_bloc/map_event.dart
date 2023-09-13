@@ -4,16 +4,46 @@ abstract class MapEvent {}
 
 class BICsLoaded extends MapEvent {}
 
-class MarkersSetted extends MapEvent {
-  final List<Marker> markers;
+class LastMarkerChanged extends MapEvent {
+  final double latitude;
+  final double longitude;
+  final String name;
+  final String markerId;
+  final String? snippet;
+  final void Function()? onInfoWindowTap;
 
-  MarkersSetted({required this.markers});
+  LastMarkerChanged({
+    required this.latitude,
+    required this.longitude,
+    required this.name,
+    required this.markerId,
+    this.snippet,
+    this.onInfoWindowTap,
+  });
 }
 
-class PolylinesSetted extends MapEvent {
+class MarkerAdded extends MapEvent {
+  final double latitude;
+  final double longitude;
+  final String name;
+  final String markerId;
+  final String? snippet;
+  final void Function()? onInfoWindowTap;
+
+  MarkerAdded({
+    required this.latitude,
+    required this.longitude,
+    required this.name,
+    required this.markerId,
+    this.snippet,
+    this.onInfoWindowTap,
+  });
+}
+
+class PolylinesEstablished extends MapEvent {
   final Map<PolylineId, Polyline> polylines;
 
-  PolylinesSetted({required this.polylines});
+  PolylinesEstablished({required this.polylines});
 }
 
 class MapControllerUpdated extends MapEvent {
@@ -27,4 +57,14 @@ class FocusLocationChanged extends MapEvent {
   final double longitude;
 
   FocusLocationChanged({required this.latitude, required this.longitude});
+}
+
+class MarkerIdForBICCreationChanged extends MapEvent {
+  MarkerIdForBICCreationChanged();
+}
+
+class MarkerDeleted extends MapEvent {
+  final String markerId;
+
+  MarkerDeleted({required this.markerId});
 }

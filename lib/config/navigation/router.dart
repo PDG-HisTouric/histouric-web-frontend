@@ -17,10 +17,7 @@ class FluroRouterWrapper {
   static String usersTable = "/dashboard/users";
   static String editUser = "/dashboard/users/edit/:nickname";
   static String createUser = "/dashboard/users/create";
-  static String bicsScreen = "/dashboard/users/edit";
-
-  //Prueba
-  static String prueba = "/prueba";
+  static String bicsScreen = "/dashboard/map";
 
   static void configureRoutes() {
     //Auth routes
@@ -74,14 +71,6 @@ class FluroRouterWrapper {
     router.define(
       bicsScreen,
       handler: DashboardHandlers.bicsScreen,
-      transitionType: TransitionType.fadeIn,
-      transitionDuration: const Duration(milliseconds: 300),
-    );
-
-    //Prueba
-    router.define(
-      prueba,
-      handler: DashboardHandlers.prueba,
       transitionType: TransitionType.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     );

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
-import '../../config/config.dart';
-import '../blocs/blocs.dart';
+import '../../../config/config.dart';
+import '../../blocs/blocs.dart';
 import 'menu_item.dart';
 import 'sidemenu_title.dart';
 import 'text_separator.dart';
@@ -17,50 +18,42 @@ class Sidebar extends StatelessWidget {
     final bool isResearcher =
         context.read<AuthBloc>().state.roles!.contains('RESEARCHER');
 
-    return Container(
-      width: 220,
-      height: double.infinity,
-      decoration: buildBoxDecoration(context),
-      child: ListView(
-        physics: const ClampingScrollPhysics(),
-        children: [
-          const SidemenuTitle(),
-          const TextSeparator(text: 'Usuario'),
-          MenuItem(
-            text: 'Perfil',
-            icon: Icons.person_outline,
-            onPressed: () {
-              context.read<SidemenuBloc>().closeMenu();
-              NavigationService.navigateTo(FluroRouterWrapper.dashboardRoute);
-            },
-          ),
-          const SizedBox(height: 20),
-          if (isAdmin) const _AdminOptions(),
-          if (isResearcher) const SizedBox(height: 20),
-          if (isResearcher) const _ResearcherOptions(),
-          const SizedBox(height: 50),
-          const TextSeparator(text: 'Salir'),
-          MenuItem(
-            text: 'Cerrar sesión',
-            icon: Icons.exit_to_app_outlined,
-            onPressed: () {
-              context.read<SidemenuBloc>().closeMenu();
-              context.read<AuthBloc>().logout();
-              context.read<SidemenuBloc>().disposeMenuController();
-              NavigationService.replaceTo(FluroRouterWrapper.loginRoute);
-            },
-          ),
-          const SizedBox(height: 50),
-          const TextSeparator(text: 'Prueba'),
-          MenuItem(
-            text: 'Prueba',
-            icon: Icons.lightbulb_circle,
-            onPressed: () {
-              context.read<SidemenuBloc>().closeMenu();
-              NavigationService.navigateTo(FluroRouterWrapper.prueba);
-            },
-          ),
-        ],
+    return PointerInterceptor(
+      child: Container(
+        width: 220,
+        height: double.infinity,
+        decoration: buildBoxDecoration(context),
+        child: ListView(
+          physics: const ClampingScrollPhysics(),
+          children: [
+            const SidemenuTitle(),
+            const TextSeparator(text: 'Usuario'),
+            MenuItem(
+              text: 'Perfil',
+              icon: Icons.person_outline,
+              onPressed: () {
+                context.read<SidemenuBloc>().closeMenu();
+                NavigationService.navigateTo(FluroRouterWrapper.dashboardRoute);
+              },
+            ),
+            const SizedBox(height: 20),
+            if (isAdmin) const _AdminOptions(),
+            if (isResearcher) const SizedBox(height: 20),
+            if (isResearcher) const _ResearcherOptions(),
+            const SizedBox(height: 50),
+            const TextSeparator(text: 'Salir'),
+            MenuItem(
+              text: 'Cerrar sesión',
+              icon: Icons.exit_to_app_outlined,
+              onPressed: () {
+                context.read<SidemenuBloc>().closeMenu();
+                context.read<AuthBloc>().logout();
+                context.read<SidemenuBloc>().disposeMenuController();
+                NavigationService.replaceTo(FluroRouterWrapper.loginRoute);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

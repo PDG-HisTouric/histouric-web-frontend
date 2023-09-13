@@ -40,7 +40,7 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
     ));
   }
 
-  _touchedEveryField(LoginSubmitted event, Emitter<LoginFormState> emit) {
+  void _touchedEveryField(LoginSubmitted event, Emitter<LoginFormState> emit) {
     final newEmail = Email.dirty(state.email.value);
     final newPassword = Password.dirty(state.password.value);
 

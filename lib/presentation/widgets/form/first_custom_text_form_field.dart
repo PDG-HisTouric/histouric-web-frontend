@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-class CustomTextFormField extends StatelessWidget {
+class FirstCustomTextFormField extends StatelessWidget {
   final String? label;
   final String? hint;
   final String? errorMessage;
   final void Function(String value)? onChanged;
   final String? Function(String? value)? validator;
   final bool obscureText;
+  final double borderRadius;
 
-  const CustomTextFormField({
+  const FirstCustomTextFormField({
     super.key,
     this.label,
     this.hint,
@@ -16,6 +17,7 @@ class CustomTextFormField extends StatelessWidget {
     this.onChanged,
     this.validator,
     this.obscureText = false,
+    this.borderRadius = 40,
   });
 
   @override
@@ -24,7 +26,7 @@ class CustomTextFormField extends StatelessWidget {
 
     final border = OutlineInputBorder(
       borderSide: BorderSide(color: colors.onPrimary),
-      borderRadius: BorderRadius.circular(40),
+      borderRadius: BorderRadius.circular(borderRadius),
     );
 
     return TextFormField(

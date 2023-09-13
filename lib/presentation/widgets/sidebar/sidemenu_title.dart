@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../blocs/blocs.dart';
+import '../../blocs/blocs.dart';
 
 class SidemenuTitle extends StatelessWidget {
   const SidemenuTitle({super.key});

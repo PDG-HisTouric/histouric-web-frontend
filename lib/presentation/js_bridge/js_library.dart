@@ -16,7 +16,7 @@ external void gisLoaded(String scopes, String clientId);
 external bool getIsPickerOpen();
 
 @JS()
-external List<String> getSelectedFilesIds();
+external List<List<dynamic>> getSelectedFilesInfo();
 
 @JS()
 external bool getIsThereAnError();

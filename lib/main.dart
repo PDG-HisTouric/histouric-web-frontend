@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/screens/screens.dart';
+import 'package:histouric_web/presentation/views/bics_view.dart';
+import 'package:histouric_web/presentation/views/views.dart';
 
 import 'package:url_strategy/url_strategy.dart';
 
@@ -10,7 +13,6 @@ import 'config/constants/constants.dart';
 import 'infrastructure/infrastructure.dart';
 import 'presentation/blocs/blocs.dart';
 import 'presentation/js_bridge/js_bridge.dart';
-import 'presentation/presentation.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +62,9 @@ class _MaterialAppWithFluro extends StatelessWidget {
       onGenerateRoute: FluroRouterWrapper.router.generator,
       navigatorKey: NavigationService.navigatorKey,
       home: const AuthScreen(child: LoginView()),
+      // home: const Scaffold(
+      //   body: BicsView(),
+      // ),
     );
   }
 }

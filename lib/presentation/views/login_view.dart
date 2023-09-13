@@ -38,7 +38,7 @@ class _Login extends StatelessWidget {
         const SizedBox(height: 30),
         Container(
           constraints: BoxConstraints(maxWidth: maxWidth),
-          child: CustomTextFormField(
+          child: FirstCustomTextFormField(
             hint: "Correo Electrónico",
             label: "Correo Electrónico",
             onChanged: context.read<LoginFormBloc>().emailChanged,
@@ -49,7 +49,7 @@ class _Login extends StatelessWidget {
         const SizedBox(height: 20),
         Container(
           constraints: BoxConstraints(maxWidth: maxWidth),
-          child: CustomTextFormField(
+          child: FirstCustomTextFormField(
             onChanged: context.read<LoginFormBloc>().passwordChanged,
             hint: "Contraseña",
             label: "Contraseña",
