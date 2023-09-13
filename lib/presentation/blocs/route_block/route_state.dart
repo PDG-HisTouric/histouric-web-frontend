@@ -6,6 +6,7 @@ class RouteState {
   final List<BIC> bicsForSearch;
   final String searchTextField;
   final Map<PolylineId, Polyline> polylines;
+  final int counter;
 
   late final TextEditingController searchController;
 
@@ -15,6 +16,7 @@ class RouteState {
     this.bicsForSearch = const [],
     this.searchTextField = "",
     this.polylines = const {},
+    this.counter = 0,
   });
 
   RouteState copyWith({
@@ -23,6 +25,7 @@ class RouteState {
     List<BIC>? bicsForSearch,
     String? searchTextField,
     Map<PolylineId, Polyline>? polylines,
+    int? counter,
   }) {
     return RouteState(
       name: name ?? this.name,
@@ -30,6 +33,7 @@ class RouteState {
       bicsForSearch: bicsForSearch ?? this.bicsForSearch,
       searchTextField: searchTextField ?? this.searchTextField,
       polylines: polylines ?? this.polylines,
+      counter: counter ?? this.counter,
     )..searchController = searchController;
   }
 

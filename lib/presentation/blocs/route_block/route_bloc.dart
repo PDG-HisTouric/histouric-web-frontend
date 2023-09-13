@@ -14,7 +14,7 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   final BICRepository bicRepository;
   final String token;
   Completer<void> _changeBICCompleter = Completer<void>();
-  Completer<void> _newBICCompleter = Completer<void>();
+  Completer<BIC> _newBICCompleter = Completer<BIC>();
   Completer<void> _deleteBICCompleter = Completer<void>();
 
   RouteBloc({required this.bicRepository, required this.token})
@@ -34,11 +34,25 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   void _onBICAdded(BICAdded event, Emitter<RouteState> emit) async {
     int previousLength = state.bicsForRoute.length;
-    emit(state.copyWith(bicsForRoute: [...state.bicsForRoute, event.bic]));
+    BIC bic = event.bic;
+    BIC newBIC = BIC(
+      bicId: '${bic.bicId}${state.counter}',
+      name: bic.name,
+      latitude: bic.latitude,
+      longitude: bic.longitude,
+      description: bic.description,
+      exists: bic.exists,
+      nicknames: bic.nicknames,
+      imagesUris: bic.imagesUris,
+      histories: bic.histories,
+    );
+    emit(state.copyWith(
+        bicsForRoute: [...state.bicsForRoute, newBIC],
+        counter: state.counter + 1));
     while (state.bicsForRoute.length != previousLength + 1) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
-    _newBICCompleter.complete();
+    _newBICCompleter.complete(newBIC);
   }
 
   void _onBICDeleted(BICDeleted event, Emitter<RouteState> emit) async {
@@ -76,12 +90,13 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     _changeBICCompleter.complete();
   }
 
-  Future<void> addBIC(BIC bic) async {
+  Future<BIC> addBIC(BIC bic) async {
     add(BICAdded(bic: bic));
-    await _newBICCompleter.future;
-    _newBICCompleter = Completer<void>();
+    BIC bicCreated = await _newBICCompleter.future;
+    _newBICCompleter = Completer<BIC>();
     state.searchController.clear();
     changeSearchTextField("");
+    return bicCreated;
   }
 
   Future<void> deleteBIC(int index) async {

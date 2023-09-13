@@ -119,7 +119,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     PolylinePointsChanged event,
     Emitter<MapState> emit,
   ) async {
-    if (event.bics.length < 2) return;
+    if (event.bics.length < 2) {
+      emit(state.copyWith(
+        polylines: {},
+      ));
+      return;
+    }
     List<LatLng> polylineCoordinates = [];
     PolylinePoints polylinePoints = PolylinePoints();
     Map<PolylineId, Polyline> polylines = await _getPolyline(
