@@ -11,7 +11,7 @@ env:
 on:
   push:
     branches:
-      - create-route-view
+      - main
 
 jobs:
   build_and_deploy_job:
