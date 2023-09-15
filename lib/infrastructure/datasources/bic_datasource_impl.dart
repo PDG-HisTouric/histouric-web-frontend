@@ -36,4 +36,14 @@ class BICDatasourceImpl implements BICDatasource {
       return bicResponses.map((e) => BICMapper.fromBICResponse(e)).toList();
     });
   }
+
+  @override
+  Future<List<BIC>> getBICsByNameOrNickname(String nameOrNickname) {
+    return dio.get('/name/$nameOrNickname').then((response) {
+      List<BICResponse> bicResponses =
+          (response.data as List).map((e) => BICResponse.fromJson(e)).toList();
+
+      return bicResponses.map((e) => BICMapper.fromBICResponse(e)).toList();
+    });
+  }
 }

@@ -17,6 +17,8 @@ class Sidebar extends StatelessWidget {
         context.read<AuthBloc>().state.roles!.contains('ADMIN');
     final bool isResearcher =
         context.read<AuthBloc>().state.roles!.contains('RESEARCHER');
+    final bool isTourismManager =
+        context.read<AuthBloc>().state.roles!.contains('TOURISM_MANAGER');
 
     return PointerInterceptor(
       child: Container(
@@ -40,6 +42,8 @@ class Sidebar extends StatelessWidget {
             if (isAdmin) const _AdminOptions(),
             if (isResearcher) const SizedBox(height: 20),
             if (isResearcher) const _ResearcherOptions(),
+            if (isTourismManager) const SizedBox(height: 20),
+            if (isTourismManager) const _TourismManagerOptions(),
             const SizedBox(height: 50),
             const TextSeparator(text: 'Salir'),
             MenuItem(
@@ -80,7 +84,7 @@ class _AdminOptions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TextSeparator(text: 'Admin'),
+        const TextSeparator(text: 'Administrador'),
         MenuItem(
           text: 'Usuarios',
           icon: Icons.supervised_user_circle_rounded,
@@ -102,13 +106,35 @@ class _ResearcherOptions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TextSeparator(text: 'Researcher'),
+        const TextSeparator(text: 'Investigador'),
         MenuItem(
           text: 'Mapa',
           icon: Icons.map_outlined,
           onPressed: () {
             context.read<SidemenuBloc>().closeMenu();
             NavigationService.navigateTo(FluroRouterWrapper.bicsScreen);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _TourismManagerOptions extends StatelessWidget {
+  const _TourismManagerOptions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const TextSeparator(text: 'Gestor de turismo'),
+        MenuItem(
+          text: 'Crear ruta',
+          icon: Icons.route,
+          onPressed: () {
+            context.read<SidemenuBloc>().closeMenu();
+            NavigationService.navigateTo(FluroRouterWrapper.createRoute);
           },
         ),
       ],

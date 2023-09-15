@@ -55,4 +55,8 @@ class DashboardHandlers {
   static Handler bicsScreen = Handler(handlerFunc: (context, parameters) {
     return const DashboardScreen(child: BicsView());
   });
+
+  static Handler createRoute = Handler(handlerFunc: (context, parameters) {
+    return const DashboardScreen(child: CreateRouteView());
+  });
 }

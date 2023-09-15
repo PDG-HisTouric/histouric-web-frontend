@@ -9,4 +9,7 @@ class Environment {
       const String.fromEnvironment('APP_ID', defaultValue: 'APP_ID not found');
   static String baseUrl = const String.fromEnvironment('BASE_URL',
       defaultValue: 'BASE_URL not found');
+  static String directionsApiKey = const String.fromEnvironment(
+      'DIRECTIONS_API_KEY',
+      defaultValue: 'DIRECTIONS_API_KEY not found');
 }

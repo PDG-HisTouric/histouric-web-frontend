@@ -6,6 +6,7 @@ env:
   BASE_URL: ${{ secrets.BASE_URL }}
   CLIENT_ID: ${{ secrets.CLIENT_ID }}
   SCOPES: ${{ secrets.SCOPES }}
+  DIRECTIONS_API_KEY: ${{ secrets.DIRECTIONS_API_KEY }}
 
 on:
   push:
@@ -30,7 +31,7 @@ jobs:
           channel: 'stable'
           cache: true
       - name: Build flutter web app
-        run: flutter build web --dart-define=SCOPES=${{ env.SCOPES }} --dart-define=CLIENT_ID=${{ env.CLIENT_ID }} --dart-define=API_KEY=${{ env.API_KEY }} --dart-define=APP_ID=${{ env.APP_ID }} --dart-define=BASE_URL=${{ env.BASE_URL }}
+        run: flutter build web --dart-define=SCOPES=${{ env.SCOPES }} --dart-define=CLIENT_ID=${{ env.CLIENT_ID }} --dart-define=API_KEY=${{ env.API_KEY }} --dart-define=APP_ID=${{ env.APP_ID }} --dart-define=BASE_URL=${{ env.BASE_URL }} --dart-define=DIRECTIONS_API_KEY=${{ env.DIRECTIONS_API_KEY }}
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1

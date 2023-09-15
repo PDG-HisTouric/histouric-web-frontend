@@ -68,3 +68,9 @@ class MarkerDeleted extends MapEvent {
 
   MarkerDeleted({required this.markerId});
 }
+
+class PolylinePointsChanged extends MapEvent {
+  final List<BIC> bics;
+
+  PolylinePointsChanged({required this.bics});
+}
