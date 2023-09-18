@@ -112,6 +112,22 @@ async function getInfoOfImages(documents) {
       'fileId': fileId,
       'fields': '*',
     });
+    console.log("****************************************");
+    console.log("*******TOKEN CLIENT*********************");
+    console.log("****************************************");
+    console.log(tokenClient);
+    console.log("****************************************");
+    console.log("*******ACCESS TOKEN*********************");
+    console.log("****************************************");
+    console.log(accessToken);
+    console.log("****************************************");
+    console.log("*******RES*********************");
+    console.log("****************************************");
+    console.log(res);
+    console.log("****************************************");
+    console.log("*****************RES RESULT***************");
+    console.log("****************************************");
+    console.log(res.result);
     const width = res.result.imageMediaMetadata.width;
     const height = res.result.imageMediaMetadata.height;
     imageInfo.push(width);
