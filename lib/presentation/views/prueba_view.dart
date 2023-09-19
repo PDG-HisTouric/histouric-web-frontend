@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:histouric_web/config/constants/constants.dart';
 import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
@@ -6,6 +5,7 @@ import 'dart:ui_web' as ui;
 import 'package:universal_html/html.dart';
 
 import '../../domain/entities/entities.dart';
+import '../widgets/video/video.dart';
 
 class PruebaView extends StatefulWidget {
   const PruebaView({super.key});
@@ -124,55 +124,6 @@ class _PruebaViewState extends State<PruebaView> {
     while (GooglePicker.callGetIsPickerOpen()) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
-  }
-}
-
-class HtmlVideoContainer extends StatelessWidget {
-  final String url;
-  final double width;
-  final double height;
-
-  const HtmlVideoContainer({
-    super.key,
-    required this.url,
-    this.width = 640,
-    this.height = 360,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: HtmlVideo(src: url),
-      ),
-    );
-  }
-}
-
-class HtmlVideo extends StatelessWidget {
-  final String src;
-
-  HtmlVideo({
-    super.key,
-    required this.src,
-  }) {
-    ui.platformViewRegistry.registerViewFactory('video-$src', (int viewId) {
-      VideoElement videoElement = VideoElement()
-        ..controls = true
-        ..children.addAll([SourceElement()..src = src]);
-      videoElement.style.width = '100%';
-      videoElement.style.height = '100%';
-
-      return videoElement;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return HtmlElementView(viewType: 'video-$src');
   }
 }
 
