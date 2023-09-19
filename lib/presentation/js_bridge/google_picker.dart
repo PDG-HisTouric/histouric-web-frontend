@@ -1,14 +1,14 @@
 import 'package:histouric_web/domain/entities/histouric_image_info.dart';
-import 'package:js/js_util.dart';
 
-import 'js_library.dart';
+import 'js_functions_google_picker.dart';
 
-class JSHelper {
+class GooglePicker {
   static void callFilePicker({
     required String apiKey,
     required String appId,
+    required String mediaType,
   }) async {
-    handleAuthClick(apiKey, appId);
+    loginAndOpenPicker(apiKey, appId, mediaType);
   }
 
   static void callGapiLoaded() {
@@ -26,8 +26,12 @@ class JSHelper {
     return getIsPickerOpen();
   }
 
-  static List<HistouricImageInfo> callGetSelectedFilesIds() {
-    List<List<dynamic>> filesInfo = getSelectedFilesInfo();
+  static String callGetSelectedAudioId() {
+    return getSelectedAudioId();
+  }
+
+  static List<HistouricImageInfo> getSelectedImagesIds() {
+    List<List<dynamic>> filesInfo = getSelectedImagesInfo();
     return filesInfo
         .map((fileInfo) => HistouricImageInfo.fromList(fileInfo))
         .toList();

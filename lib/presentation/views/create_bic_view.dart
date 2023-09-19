@@ -125,7 +125,7 @@ class _Form extends StatelessWidget {
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
-              _loadAnImageFromDrive(
+              _loadImagesFromDrive(
                 context.read<BicBloc>().driveImageInfoAdded,
               );
             },
@@ -180,17 +180,18 @@ class _Form extends StatelessWidget {
     );
   }
 
-  _loadAnImageFromDrive(
+  void _loadImagesFromDrive(
       void Function(HistouricImageInfo)
           functionToLoadTheImageInTheBlock) async {
-    JSHelper.callFilePicker(
+    GooglePicker.callFilePicker(
       apiKey: Environment.pickerApiKey,
       appId: Environment.pickerApiAppId,
+      mediaType: 'image',
     );
     _waitUntilThePickerIsOpen().then((value) {
       _waitUntilThePickerIsClosed().then((value) {
-        if (!JSHelper.callGetIsThereAnError()) {
-          final imagesInfo = JSHelper.callGetSelectedFilesIds();
+        if (!GooglePicker.callGetIsThereAnError()) {
+          final imagesInfo = GooglePicker.getSelectedImagesIds();
           for (var imageInfo in imagesInfo) {
             functionToLoadTheImageInTheBlock(imageInfo);
           }
@@ -199,20 +200,20 @@ class _Form extends StatelessWidget {
     });
   }
 
-  _waitUntilThePickerIsOpen() async {
-    while (
-        !JSHelper.callGetIsThereAnError() && !JSHelper.callGetIsPickerOpen()) {
+  Future<void> _waitUntilThePickerIsOpen() async {
+    while (!GooglePicker.callGetIsThereAnError() &&
+        !GooglePicker.callGetIsPickerOpen()) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
   }
 
-  _waitUntilThePickerIsClosed() async {
-    while (JSHelper.callGetIsPickerOpen()) {
+  Future<void> _waitUntilThePickerIsClosed() async {
+    while (GooglePicker.callGetIsPickerOpen()) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
   }
 
-  _showSnackBar(BuildContext context, String message) {
+  void _showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),

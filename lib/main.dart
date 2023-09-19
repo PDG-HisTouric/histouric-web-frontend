@@ -20,8 +20,8 @@ void main() {
   setPathUrlStrategy();
   FluroRouterWrapper.configureRoutes();
   runApp(const MainApp());
-  JSHelper.callGapiLoaded();
-  JSHelper.callGisLoaded(
+  GooglePicker.callGapiLoaded();
+  GooglePicker.callGisLoaded(
     clientId: Environment.pickerApiClientId,
     scopes: Environment.pickerApiScopes,
   );
