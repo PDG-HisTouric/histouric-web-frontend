@@ -186,7 +186,7 @@ class _Form extends StatelessWidget {
     GooglePicker.callFilePicker(
       apiKey: Environment.pickerApiKey,
       appId: Environment.pickerApiAppId,
-      mediaType: 'image',
+      mediaType: MediaType.image,
     );
     _waitUntilThePickerIsOpen().then((value) {
       _waitUntilThePickerIsClosed().then((value) {

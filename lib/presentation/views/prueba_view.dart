@@ -36,7 +36,7 @@ class _PruebaViewState extends State<PruebaView> {
           ),
           ElevatedButton(
             onPressed: () {
-              _loadAudioFromDrive('audio');
+              _loadAudioFromDrive(MediaType.audio);
             },
             child: const Text('Cargar audio de Drive'),
           ),
@@ -51,7 +51,7 @@ class _PruebaViewState extends State<PruebaView> {
     });
   }
 
-  void _loadAudioFromDrive(String temp) {
+  void _loadAudioFromDrive(MediaType temp) {
     GooglePicker.callFilePicker(
       apiKey: Environment.pickerApiKey,
       appId: Environment.pickerApiAppId,
