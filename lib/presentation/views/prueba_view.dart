@@ -40,6 +40,13 @@ class _PruebaViewState extends State<PruebaView> {
             },
             child: const Text('Cargar audio de Drive'),
           ),
+          SizedBox(
+            width: 400,
+            height: 300,
+            child: HtmlVideo(
+                src:
+                    'https://drive.google.com/uc?export=download&id=1XpZ1yK5sRKD2SrQEC_c-1Nw9ZI_XRj8u'),
+          ),
         ],
       )),
     );
@@ -84,6 +91,27 @@ class _PruebaViewState extends State<PruebaView> {
   }
 }
 
+class HtmlVideo extends StatelessWidget {
+  final String src;
+
+  HtmlVideo({super.key, required this.src}) {
+    ui.platformViewRegistry.registerViewFactory('video-$src', (int viewId) {
+      VideoElement videoElement = VideoElement()
+        ..controls = true
+        ..children.addAll([SourceElement()..src = src]);
+      videoElement.style.width = '100%';
+      videoElement.style.height = '100%';
+
+      return videoElement;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return HtmlElementView(viewType: 'video-$src');
+  }
+}
+
 class HtmlAudio extends StatelessWidget {
   final void Function(String currentTime) onChangeAudioTime;
   final String src;
@@ -96,11 +124,7 @@ class HtmlAudio extends StatelessWidget {
             (event) => onChangeAudioTime(
                 (event.target as AudioElement).currentTime.toString()))
         ..controls = true
-        ..children.addAll([
-          SourceElement()
-            ..src = src
-            ..type = 'audio/mp3',
-        ]);
+        ..children.addAll([SourceElement()..src = src]);
       audioElement.style.width = '100%';
       audioElement.style.height = '100%';
 
