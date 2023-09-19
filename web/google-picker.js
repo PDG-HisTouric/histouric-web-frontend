@@ -2,7 +2,8 @@ let tokenClient;
 let accessToken = null;
 let pickerInited = false;
 let gisInited = false;
-let selectedFilesInfo = [];
+let selectedImagesInfo;
+let selectedVideosInfo;
 let selectedAudioId;
 let isPickerOpen = false;
 let isThereAnError = false;
@@ -83,7 +84,7 @@ function createPicker(apiKey, appId) {
         feature = google.picker.Feature.MULTISELECT_ENABLED;
         break;
     case 'video':
-        docsView.setMimeTypes('video/mp4');
+        docsView.setMimeTypes('video/mp4,video/webm');
         feature = google.picker.Feature.MULTISELECT_ENABLED;
         break;
     case 'audio':
@@ -91,7 +92,7 @@ function createPicker(apiKey, appId) {
         feature = google.picker.Feature.MULTISELECT_DISABLED;
         break;
     default:
-        docsView.setMimeTypes('image/png,image/jpeg,image/jpg,audio/mpeg,audio/wav,audio/mp3,video/mp4');
+        docsView.setMimeTypes('image/png,image/jpeg,image/jpg,audio/mpeg,audio/wav,audio/mp3,video/mp4,video/webm');
         feature = google.picker.Feature.MULTISELECT_ENABLED;
         break;
   }
@@ -134,21 +135,37 @@ async function pickerCallback(data) {
 }
 
 async function getInfoOfImages(documents) {
-  selectedFilesInfo = [];
+  selectedImagesInfo = [];
   for (let i = 0; i < documents.length; i++) {
     let imageInfo = [];
     const fileId = documents[i][google.picker.Document.ID];
     imageInfo.push(fileId);
-    const res = await gapi.client.drive.files.get({
-      'fileId': fileId,
-      'fields': '*',
-    });
-    const width = res.result.imageMediaMetadata.width;
-    const height = res.result.imageMediaMetadata.height;
-    imageInfo.push(width);
-    imageInfo.push(height);
-    selectedFilesInfo.push(imageInfo);
+    const fileInfo = await getInfoOfDriveFileById(fileId);
+    imageInfo.push(fileInfo.imageMediaMetadata.width);
+    imageInfo.push(fileInfo.imageMediaMetadata.height);
+    selectedImagesInfo.push(imageInfo);
   }
+}
+
+async function getInfoOfVideos(documents) {
+  selectedVideosInfo = [];
+  for (let i = 0; i < documents.length; i++) {
+    let videoInfo = [];
+    const fileId = documents[i][google.picker.Document.ID];
+    videoInfo.push(fileId);
+    const fileInfo = await getInfoOfDriveFileById(fileId);
+    videoInfo.push(fileInfo.videoMediaMetadata.width);
+    videoInfo.push(fileInfo.videoMediaMetadata.height);
+    selectedVideosInfo.push(videoInfo);
+  }
+}
+
+async function getInfoOfDriveFileById(fileId) {
+    const res = await gapi.client.drive.files.get({
+        'fileId': fileId,
+        'fields': '*',
+    });
+    return res.result;
 }
 
 async function shareDocumentsToReadonlyForEveryone(documents) {
@@ -170,11 +187,15 @@ async function createPermissionToEverybodyCanRead(fileId) {
 }
 
 function getSelectedImagesInfo() {
-  return selectedFilesInfo;
+  return selectedImagesInfo;
 }
 
 function getSelectedAudioId() {
   return selectedAudioId;
+}
+
+function getSelectedVideosInfo() {
+  return selectedVideosInfo;
 }
 
 function getIsPickerOpen() {

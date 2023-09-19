@@ -191,7 +191,7 @@ class _Form extends StatelessWidget {
     _waitUntilThePickerIsOpen().then((value) {
       _waitUntilThePickerIsClosed().then((value) {
         if (!GooglePicker.callGetIsThereAnError()) {
-          final imagesInfo = GooglePicker.getSelectedImagesIds();
+          final imagesInfo = GooglePicker.getInfoOfSelectedImages();
           for (var imageInfo in imagesInfo) {
             functionToLoadTheImageInTheBlock(imageInfo);
           }

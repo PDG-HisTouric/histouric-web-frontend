@@ -22,4 +22,7 @@ external List<List<dynamic>> getSelectedImagesInfo();
 external String getSelectedAudioId();
 
 @JS()
+external List<List<dynamic>> getSelectedVideosInfo();
+
+@JS()
 external bool getIsThereAnError();

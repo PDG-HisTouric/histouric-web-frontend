@@ -1,8 +1,9 @@
+import 'package:histouric_web/domain/domain.dart';
 import 'package:histouric_web/domain/entities/histouric_image_info.dart';
 
 import 'js_functions_google_picker.dart';
 
-enum MediaType { audio, image }
+enum MediaType { audio, image, video }
 
 class GooglePicker {
   static void callFilePicker({
@@ -32,14 +33,34 @@ class GooglePicker {
     return getSelectedAudioId();
   }
 
-  static List<HistouricImageInfo> getSelectedImagesIds() {
-    List<List<dynamic>> filesInfo = getSelectedImagesInfo();
-    return filesInfo
-        .map((fileInfo) => HistouricImageInfo.fromList(fileInfo))
+  static List<HistouricImageInfo> getInfoOfSelectedImages() {
+    List<List<dynamic>> imagesInfo = getSelectedImagesInfo();
+    return imagesInfo
+        .map((imageInfo) => HistouricImageInfo.fromList(imageInfo))
+        .toList();
+  }
+
+  static List<HistouricVideoInfo> getInfoOfSelectedVideos() {
+    List<List<dynamic>> videosInfo = getSelectedVideosInfo();
+    return videosInfo
+        .map(
+            (videoInfo) => HistouricVideoInfo.fromListOfGooglePicker(videoInfo))
         .toList();
   }
 
   static bool callGetIsThereAnError() {
     return getIsThereAnError();
+  }
+
+  static Future<void> waitUntilThePickerIsOpen() async {
+    while (!callGetIsThereAnError() && !callGetIsPickerOpen()) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+  }
+
+  static Future<void> waitUntilThePickerIsClosed() async {
+    while (callGetIsPickerOpen()) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 }

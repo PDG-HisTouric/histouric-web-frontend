@@ -5,6 +5,8 @@ import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
 import 'dart:ui_web' as ui;
 import 'package:universal_html/html.dart';
 
+import '../../domain/entities/entities.dart';
+
 class PruebaView extends StatefulWidget {
   const PruebaView({super.key});
 
@@ -15,40 +17,56 @@ class PruebaView extends StatefulWidget {
 class _PruebaViewState extends State<PruebaView> {
   String time = '';
   String src = '';
+  List<HistouricVideoInfo> videosInfo = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-          child: Column(
-        children: [
-          Text(time),
-          const SizedBox(height: 20),
-          Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 1)),
-            width: 400,
-            height: 60,
-            child: HtmlAudio(
-              src: src,
-              onChangeAudioTime: _onChangeAudioTime,
+        child: Column(
+          children: [
+            Text(time),
+            const SizedBox(height: 20),
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 1)),
+              width: 400,
+              height: 60,
+              child: HtmlAudio(
+                src: src,
+                onChangeAudioTime: _onChangeAudioTime,
+              ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _loadAudioFromDrive(MediaType.audio);
-            },
-            child: const Text('Cargar audio de Drive'),
-          ),
-          SizedBox(
-            width: 400,
-            height: 300,
-            child: HtmlVideo(
-                src:
-                    'https://drive.google.com/uc?export=download&id=1XpZ1yK5sRKD2SrQEC_c-1Nw9ZI_XRj8u'),
-          ),
-        ],
-      )),
+            ElevatedButton(
+              onPressed: () {
+                _loadAudioFromDrive();
+              },
+              child: const Text('Cargar audio de Drive'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _loadVideoFromDrive();
+              },
+              child: const Text('Cargar video de Drive'),
+            ),
+            Column(
+              children: videosInfo
+                  .map(
+                    (videoInfo) => Row(
+                      children: [
+                        const Spacer(),
+                        HtmlVideoContainer(
+                          url: videoInfo.url,
+                        ),
+                        const Spacer(),
+                      ],
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -58,11 +76,11 @@ class _PruebaViewState extends State<PruebaView> {
     });
   }
 
-  void _loadAudioFromDrive(MediaType temp) {
+  void _loadAudioFromDrive() {
     GooglePicker.callFilePicker(
       apiKey: Environment.pickerApiKey,
       appId: Environment.pickerApiAppId,
-      mediaType: temp,
+      mediaType: MediaType.audio,
     );
 
     _waitUntilThePickerIsOpen().then((value) {
@@ -71,6 +89,24 @@ class _PruebaViewState extends State<PruebaView> {
           final audioId = GooglePicker.callGetSelectedAudioId();
           setState(() {
             src = 'https://drive.google.com/uc?export=download&id=$audioId';
+          });
+        }
+      });
+    });
+  }
+
+  void _loadVideoFromDrive() {
+    GooglePicker.callFilePicker(
+      apiKey: Environment.pickerApiKey,
+      appId: Environment.pickerApiAppId,
+      mediaType: MediaType.video,
+    );
+
+    GooglePicker.waitUntilThePickerIsOpen().then((value) {
+      GooglePicker.waitUntilThePickerIsClosed().then((value) {
+        if (!GooglePicker.callGetIsThereAnError()) {
+          setState(() {
+            videosInfo = GooglePicker.getInfoOfSelectedVideos();
           });
         }
       });
@@ -91,10 +127,38 @@ class _PruebaViewState extends State<PruebaView> {
   }
 }
 
+class HtmlVideoContainer extends StatelessWidget {
+  final String url;
+  final double width;
+  final double height;
+
+  const HtmlVideoContainer({
+    super.key,
+    required this.url,
+    this.width = 640,
+    this.height = 360,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: HtmlVideo(src: url),
+      ),
+    );
+  }
+}
+
 class HtmlVideo extends StatelessWidget {
   final String src;
 
-  HtmlVideo({super.key, required this.src}) {
+  HtmlVideo({
+    super.key,
+    required this.src,
+  }) {
     ui.platformViewRegistry.registerViewFactory('video-$src', (int viewId) {
       VideoElement videoElement = VideoElement()
         ..controls = true
