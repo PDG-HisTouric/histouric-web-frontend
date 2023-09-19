@@ -5,6 +5,7 @@ import 'dart:ui_web' as ui;
 import 'package:universal_html/html.dart';
 
 import '../../domain/entities/entities.dart';
+import '../widgets/audio/audio.dart';
 import '../widgets/video/video.dart';
 
 class PruebaView extends StatefulWidget {
@@ -26,16 +27,10 @@ class _PruebaViewState extends State<PruebaView> {
         child: Column(
           children: [
             Text(time),
-            const SizedBox(height: 20),
-            Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 1)),
+            HtmlAudioContainer(
+              src: src,
               width: 400,
-              height: 60,
-              child: HtmlAudio(
-                src: src,
-                onChangeAudioTime: _onChangeAudioTime,
-              ),
+              onChangeAudioTime: _onChangeAudioTime,
             ),
             ElevatedButton(
               onPressed: () {
@@ -124,31 +119,5 @@ class _PruebaViewState extends State<PruebaView> {
     while (GooglePicker.callGetIsPickerOpen()) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
-  }
-}
-
-class HtmlAudio extends StatelessWidget {
-  final void Function(String currentTime) onChangeAudioTime;
-  final String src;
-
-  HtmlAudio({super.key, required this.src, required this.onChangeAudioTime}) {
-    ui.platformViewRegistry.registerViewFactory('audio-$src', (int viewId) {
-      AudioElement audioElement = AudioElement()
-        ..addEventListener(
-            'timeupdate',
-            (event) => onChangeAudioTime(
-                (event.target as AudioElement).currentTime.toString()))
-        ..controls = true
-        ..children.addAll([SourceElement()..src = src]);
-      audioElement.style.width = '100%';
-      audioElement.style.height = '100%';
-
-      return audioElement;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return HtmlElementView(viewType: 'audio-$src');
   }
 }
