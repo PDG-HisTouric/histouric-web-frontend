@@ -27,8 +27,8 @@ class RoundedHtmlImage extends StatelessWidget {
         child: FittedBox(
           fit: BoxFit.cover,
           child: SizedBox(
-            height: 853,
-            width: 1280,
+            height: height,
+            width: width,
             child: HtmlImage(url: imageId, isFromDrive: isFromDrive),
           ),
         ),

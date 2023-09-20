@@ -2,9 +2,12 @@ let tokenClient;
 let accessToken = null;
 let pickerInited = false;
 let gisInited = false;
-let selectedFilesInfo = [];
+let selectedImagesInfo;
+let selectedVideosInfo;
+let selectedAudioId;
 let isPickerOpen = false;
 let isThereAnError = false;
+let globalMediaType;
 
 /**
 * Callback after api.js is loaded.
@@ -37,13 +40,14 @@ function gisLoaded(scopes, clientId) {
 /**
 *  Sign in the user upon button click.
 */
-function handleAuthClick(apiKey, appId) {
+function loginAndOpenPicker(apiKey, appId, mediaType) {
   tokenClient.callback = async (response) => {
     if (response.error !== undefined) {
       isThereAnError = true;
       throw (response);
     }
     accessToken = response.access_token;
+    globalMediaType = mediaType;
     await createPicker(apiKey, appId);
     isPickerOpen = true;
   };
@@ -73,11 +77,29 @@ function handleSignOutClick() {
 */
 function createPicker(apiKey, appId) {
   const docsView = new google.picker.DocsView(google.picker.ViewId.DOCS);
-  docsView.setMimeTypes('image/png,image/jpeg,image/jpg');
+  var feature;
+  switch (globalMediaType) {
+    case 'image':
+        docsView.setMimeTypes('image/png,image/jpeg,image/jpg');
+        feature = google.picker.Feature.MULTISELECT_ENABLED;
+        break;
+    case 'video':
+        docsView.setMimeTypes('video/mp4,video/webm');
+        feature = google.picker.Feature.MULTISELECT_ENABLED;
+        break;
+    case 'audio':
+        docsView.setMimeTypes('audio/mpeg,audio/wav,audio/mp3');
+        feature = google.picker.Feature.MULTISELECT_DISABLED;
+        break;
+    default:
+        docsView.setMimeTypes('image/png,image/jpeg,image/jpg,audio/mpeg,audio/wav,audio/mp3,video/mp4,video/webm');
+        feature = google.picker.Feature.MULTISELECT_ENABLED;
+        break;
+  }
   docsView.setOwnedByMe(true);
   const picker = new google.picker.PickerBuilder()
     .enableFeature(google.picker.Feature.NAV_HIDDEN)
-    .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+    .enableFeature(feature)
     .setDeveloperKey(apiKey)
     .setAppId(appId)
     .setOAuthToken(accessToken)
@@ -97,27 +119,53 @@ async function pickerCallback(data) {
     let text = `Picker response: \n${JSON.stringify(data, null, 2)}\n`;
     const documents = data[google.picker.Response.DOCUMENTS];
     await shareDocumentsToReadonlyForEveryone(documents);
-    await getInfoOfImages(documents);
+    switch (globalMediaType) {
+        case 'image':
+            await getInfoOfImages(documents);
+            break;
+        case 'video':
+            await getInfoOfVideos(documents);
+            break;
+        case 'audio':
+            selectedAudioId = documents[0][google.picker.Document.ID];
+            break;
+    }
     isPickerOpen = false;
   }
 }
 
 async function getInfoOfImages(documents) {
-  selectedFilesInfo = [];
+  selectedImagesInfo = [];
   for (let i = 0; i < documents.length; i++) {
     let imageInfo = [];
     const fileId = documents[i][google.picker.Document.ID];
     imageInfo.push(fileId);
-    const res = await gapi.client.drive.files.get({
-      'fileId': fileId,
-      'fields': '*',
-    });
-    const width = res.result.imageMediaMetadata.width;
-    const height = res.result.imageMediaMetadata.height;
-    imageInfo.push(width);
-    imageInfo.push(height);
-    selectedFilesInfo.push(imageInfo);
+    const fileInfo = await getInfoOfDriveFileById(fileId);
+    imageInfo.push(fileInfo.imageMediaMetadata.width);
+    imageInfo.push(fileInfo.imageMediaMetadata.height);
+    selectedImagesInfo.push(imageInfo);
   }
+}
+
+async function getInfoOfVideos(documents) {
+  selectedVideosInfo = [];
+  for (let i = 0; i < documents.length; i++) {
+    let videoInfo = [];
+    const fileId = documents[i][google.picker.Document.ID];
+    videoInfo.push(fileId);
+    const fileInfo = await getInfoOfDriveFileById(fileId);
+    videoInfo.push(fileInfo.videoMediaMetadata.width);
+    videoInfo.push(fileInfo.videoMediaMetadata.height);
+    selectedVideosInfo.push(videoInfo);
+  }
+}
+
+async function getInfoOfDriveFileById(fileId) {
+    const res = await gapi.client.drive.files.get({
+        'fileId': fileId,
+        'fields': '*',
+    });
+    return res.result;
 }
 
 async function shareDocumentsToReadonlyForEveryone(documents) {
@@ -138,8 +186,16 @@ async function createPermissionToEverybodyCanRead(fileId) {
 
 }
 
-function getSelectedFilesInfo() {
-  return selectedFilesInfo;
+function getSelectedImagesInfo() {
+  return selectedImagesInfo;
+}
+
+function getSelectedAudioId() {
+  return selectedAudioId;
+}
+
+function getSelectedVideosInfo() {
+  return selectedVideosInfo;
 }
 
 function getIsPickerOpen() {

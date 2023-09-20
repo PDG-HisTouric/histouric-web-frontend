@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/screens/screens.dart';
-import 'package:histouric_web/presentation/views/bics_view.dart';
 import 'package:histouric_web/presentation/views/views.dart';
 
 import 'package:url_strategy/url_strategy.dart';
@@ -19,8 +16,8 @@ void main() {
   setPathUrlStrategy();
   FluroRouterWrapper.configureRoutes();
   runApp(const MainApp());
-  JSHelper.callGapiLoaded();
-  JSHelper.callGisLoaded(
+  GooglePicker.callGapiLoaded();
+  GooglePicker.callGisLoaded(
     clientId: Environment.pickerApiClientId,
     scopes: Environment.pickerApiScopes,
   );
