@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:histouric_web/config/constants/constants.dart';
 import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
-import 'dart:ui_web' as ui;
-import 'package:universal_html/html.dart';
 
 import '../../domain/entities/entities.dart';
 import '../widgets/audio/audio.dart';
