@@ -14,7 +14,7 @@ class RoundedHtmlImage extends StatelessWidget {
       required this.imageId,
       required this.width,
       required this.height,
-      required this.borderRadius,
+      this.borderRadius = 20,
       required this.isFromDrive});
 
   @override

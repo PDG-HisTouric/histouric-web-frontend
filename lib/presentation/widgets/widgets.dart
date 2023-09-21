@@ -18,3 +18,4 @@ export 'sidebar/text_separator.dart';
 export 'image/html_image.dart';
 export 'image/rounded_html_image.dart';
 export 'image/image_carousel.dart';
+export 'image/html_image_from_uint8list.dart';

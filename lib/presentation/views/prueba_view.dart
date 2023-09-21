@@ -1,10 +1,15 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:histouric_web/config/constants/constants.dart';
 import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
 
+import '../../config/plugins/plugins.dart';
 import '../../domain/entities/entities.dart';
 import '../widgets/audio/audio.dart';
 import '../widgets/video/video.dart';
+import '../widgets/widgets.dart';
 
 class PruebaView extends StatefulWidget {
   const PruebaView({super.key});
@@ -17,6 +22,9 @@ class _PruebaViewState extends State<PruebaView> {
   String time = '';
   String src = '';
   List<HistouricVideoInfo> videosInfo = [];
+  AbstractFilePicker filePicker = FilePickerImpl();
+  Uint8List uint8List = Uint8List(0);
+  String extension = '';
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +65,23 @@ class _PruebaViewState extends State<PruebaView> {
                   )
                   .toList(),
             ),
+            HtmlImageFromUint8List(uint8List: uint8List, extension: extension),
+            ElevatedButton(
+                onPressed: () async {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['jpg', 'png', 'jpeg'],
+                    allowMultiple: true,
+                  );
+                  if (result != null) {
+                    setState(() {
+                      uint8List = result.files.first.bytes!;
+                      extension = result.files.first.extension!;
+                    });
+                  }
+                },
+                child: const Text('Abrir file picker')),
           ],
         ),
       ),
