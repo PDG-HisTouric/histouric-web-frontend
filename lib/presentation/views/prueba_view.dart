@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:histouric_web/config/constants/constants.dart';
 import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
@@ -8,7 +7,6 @@ import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
 import '../../config/plugins/plugins.dart';
 import '../../domain/entities/entities.dart';
 import '../widgets/audio/audio.dart';
-import '../widgets/video/video.dart';
 import '../widgets/widgets.dart';
 
 class PruebaView extends StatefulWidget {
@@ -25,6 +23,10 @@ class _PruebaViewState extends State<PruebaView> {
   AbstractFilePicker filePicker = FilePickerImpl();
   List<Uint8List> images = [];
   List<String> imagesExtensions = [];
+  List<Uint8List> videos = [];
+  List<String> videosExtensions = [];
+  Uint8List? audio;
+  String? audioExtension;
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +77,53 @@ class _PruebaViewState extends State<PruebaView> {
               ],
             ),
             ElevatedButton(
-                onPressed: () async {
-                  final result = await filePicker.selectImages();
+              onPressed: () async {
+                final result = await filePicker.selectImages();
+                setState(() {
+                  images = result.$1;
+                  imagesExtensions = result.$2;
+                });
+              },
+              child: const Text('Abrir file picker de imágenes'),
+            ),
+            Wrap(
+              children: [
+                for (int i = 0; i < videos.length; i++)
+                  HtmlVideoFromUint8List(
+                    uint8List: videos[i],
+                    extension: videosExtensions[i],
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () {
+                filePicker.selectVideos().then((result) {
                   setState(() {
-                    images = result.$1;
-                    imagesExtensions = result.$2;
+                    videos = result.$1;
+                    videosExtensions = result.$2;
                   });
-                },
-                child: const Text('Abrir file picker de imágenes')),
+                });
+              },
+              child: const Text('Abrir file picker de videos'),
+            ),
+            if (audio != null)
+              HtmlAudioFromUint8List(
+                uint8List: audio!,
+                extension: audioExtension!,
+                width: 400,
+                onChangeAudioTime: _onChangeAudioTime,
+              ),
+            ElevatedButton(
+              onPressed: () {
+                filePicker.selectAudio().then((result) {
+                  setState(() {
+                    audio = result.$1;
+                    audioExtension = result.$2;
+                  });
+                });
+              },
+              child: const Text('Abrir file picker de audio'),
+            ),
           ],
         ),
       ),
