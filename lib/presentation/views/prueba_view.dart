@@ -23,8 +23,8 @@ class _PruebaViewState extends State<PruebaView> {
   String src = '';
   List<HistouricVideoInfo> videosInfo = [];
   AbstractFilePicker filePicker = FilePickerImpl();
-  Uint8List uint8List = Uint8List(0);
-  String extension = '';
+  List<Uint8List> images = [];
+  List<String> imagesExtensions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -65,23 +65,24 @@ class _PruebaViewState extends State<PruebaView> {
                   )
                   .toList(),
             ),
-            HtmlImageFromUint8List(uint8List: uint8List, extension: extension),
+            Wrap(
+              children: [
+                for (int i = 0; i < images.length; i++)
+                  HtmlImageFromUint8List(
+                    uint8List: images[i],
+                    extension: imagesExtensions[i],
+                  ),
+              ],
+            ),
             ElevatedButton(
                 onPressed: () async {
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['jpg', 'png', 'jpeg'],
-                    allowMultiple: true,
-                  );
-                  if (result != null) {
-                    setState(() {
-                      uint8List = result.files.first.bytes!;
-                      extension = result.files.first.extension!;
-                    });
-                  }
+                  final result = await filePicker.selectImages();
+                  setState(() {
+                    images = result.$1;
+                    imagesExtensions = result.$2;
+                  });
                 },
-                child: const Text('Abrir file picker')),
+                child: const Text('Abrir file picker de imágenes')),
           ],
         ),
       ),
