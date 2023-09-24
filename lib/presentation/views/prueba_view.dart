@@ -2,8 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:histouric_web/config/constants/constants.dart';
+import 'package:histouric_web/config/plugins/external_repositories/external_repositories.dart';
 import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
 
+import '../../config/helpers/snackbars.dart';
 import '../../config/plugins/plugins.dart';
 import '../../domain/entities/entities.dart';
 import '../widgets/audio/audio.dart';
@@ -27,6 +29,7 @@ class _PruebaViewState extends State<PruebaView> {
   List<String> videosExtensions = [];
   Uint8List? audio;
   String? audioExtension;
+  List<String> imagesFromFirebase = [];
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +88,40 @@ class _PruebaViewState extends State<PruebaView> {
                 });
               },
               child: const Text('Abrir file picker de imágenes'),
+            ),
+            Wrap(
+              children: [
+                for (int i = 0; i < imagesFromFirebase.length; i++)
+                  RoundedHtmlImage(
+                    imageId: imagesFromFirebase[i],
+                    isFromDrive: false,
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final ExternalRepository firebaseRepository =
+                    FirebaseRepository();
+                for (int i = 0; i < images.length; i++) {
+                  firebaseRepository
+                      .uploadImage(
+                    'image$i.${imagesExtensions[i]}',
+                    images[i],
+                  )
+                      .then((url) {
+                    if (url != null) {
+                      SnackBars.showInfoSnackBar(
+                        context,
+                        'Imagen $i subida a Firebase',
+                      );
+                    }
+                    setState(() {
+                      if (url != null) imagesFromFirebase.add(url);
+                    });
+                  });
+                }
+              },
+              child: const Text('Subir imágenes a Firebase'),
             ),
             Wrap(
               children: [
