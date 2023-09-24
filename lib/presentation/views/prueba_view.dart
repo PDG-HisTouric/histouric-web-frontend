@@ -25,10 +25,13 @@ class _PruebaViewState extends State<PruebaView> {
   AbstractFilePicker filePicker = FilePickerImpl();
   List<Uint8List> images = [];
   List<String> imagesExtensions = [];
+  List<String> imagesNames = [];
   List<Uint8List> videos = [];
   List<String> videosExtensions = [];
+  List<String> videosNames = [];
   Uint8List? audio;
   String? audioExtension;
+  String? audioName;
   List<String> imagesFromFirebase = [];
   List<String> videosFromFirebase = [];
   List<String> audiosFromFirebase = [];
@@ -87,6 +90,7 @@ class _PruebaViewState extends State<PruebaView> {
                 setState(() {
                   images = result.$1;
                   imagesExtensions = result.$2;
+                  imagesNames = result.$3;
                 });
               },
               child: const Text('Abrir file picker de imágenes'),
@@ -107,7 +111,7 @@ class _PruebaViewState extends State<PruebaView> {
                 for (int i = 0; i < images.length; i++) {
                   firebaseRepository
                       .uploadImage(
-                    'image$i.${imagesExtensions[i]}',
+                    imagesNames[i],
                     images[i],
                   )
                       .then((url) {
@@ -140,6 +144,7 @@ class _PruebaViewState extends State<PruebaView> {
                   setState(() {
                     videos = result.$1;
                     videosExtensions = result.$2;
+                    videosNames = result.$3;
                   });
                 });
               },
@@ -160,7 +165,7 @@ class _PruebaViewState extends State<PruebaView> {
                 for (int i = 0; i < videos.length; i++) {
                   firebaseRepository
                       .uploadVideo(
-                    'video$i.${videosExtensions[i]}',
+                    videosNames[i],
                     videos[i],
                   )
                       .then((url) {
@@ -191,6 +196,7 @@ class _PruebaViewState extends State<PruebaView> {
                   setState(() {
                     audio = result.$1;
                     audioExtension = result.$2;
+                    audioName = result.$3;
                   });
                 });
               },
@@ -212,7 +218,7 @@ class _PruebaViewState extends State<PruebaView> {
                     FirebaseRepository();
                 firebaseRepository
                     .uploadAudio(
-                  'audio${audioExtension!}',
+                  audioName!,
                   audio!,
                 )
                     .then((url) {

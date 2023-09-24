@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/screens/screens.dart';
 import 'package:histouric_web/presentation/views/prueba_view.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:histouric_web/presentation/views/views.dart';
 import 'firebase_options.dart';
 
 import 'package:url_strategy/url_strategy.dart';
@@ -62,8 +64,7 @@ class _MaterialAppWithFluro extends StatelessWidget {
       initialRoute: FluroRouterWrapper.rootRoute,
       onGenerateRoute: FluroRouterWrapper.router.generator,
       navigatorKey: NavigationService.navigatorKey,
-      // home: const AuthScreen(child: LoginView()),
-      home: const PruebaView(),
+      home: const AuthScreen(child: LoginView()),
     );
   }
 }
