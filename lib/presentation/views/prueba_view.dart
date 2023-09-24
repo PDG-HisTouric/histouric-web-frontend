@@ -1,10 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:histouric_web/config/constants/constants.dart';
+import 'package:histouric_web/config/plugins/external_repositories/external_repositories.dart';
 import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
 
+import '../../config/helpers/snackbars.dart';
+import '../../config/plugins/plugins.dart';
 import '../../domain/entities/entities.dart';
 import '../widgets/audio/audio.dart';
-import '../widgets/video/video.dart';
+import '../widgets/widgets.dart';
 
 class PruebaView extends StatefulWidget {
   const PruebaView({super.key});
@@ -17,6 +22,19 @@ class _PruebaViewState extends State<PruebaView> {
   String time = '';
   String src = '';
   List<HistouricVideoInfo> videosInfo = [];
+  AbstractFilePicker filePicker = FilePickerImpl();
+  List<Uint8List> images = [];
+  List<String> imagesExtensions = [];
+  List<String> imagesNames = [];
+  List<Uint8List> videos = [];
+  List<String> videosExtensions = [];
+  List<String> videosNames = [];
+  Uint8List? audio;
+  String? audioExtension;
+  String? audioName;
+  List<String> imagesFromFirebase = [];
+  List<String> videosFromFirebase = [];
+  List<String> audiosFromFirebase = [];
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +74,166 @@ class _PruebaViewState extends State<PruebaView> {
                     ),
                   )
                   .toList(),
+            ),
+            Wrap(
+              children: [
+                for (int i = 0; i < images.length; i++)
+                  HtmlImageFromUint8List(
+                    uint8List: images[i],
+                    extension: imagesExtensions[i],
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await filePicker.selectImages();
+                setState(() {
+                  images = result.$1;
+                  imagesExtensions = result.$2;
+                  imagesNames = result.$3;
+                });
+              },
+              child: const Text('Abrir file picker de imágenes'),
+            ),
+            Wrap(
+              children: [
+                for (int i = 0; i < imagesFromFirebase.length; i++)
+                  RoundedHtmlImage(
+                    imageId: imagesFromFirebase[i],
+                    isFromDrive: false,
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final ExternalRepository firebaseRepository =
+                    FirebaseRepository();
+                for (int i = 0; i < images.length; i++) {
+                  firebaseRepository
+                      .uploadImage(
+                    imagesNames[i],
+                    images[i],
+                  )
+                      .then((url) {
+                    if (url != null) {
+                      SnackBars.showInfoSnackBar(
+                        context,
+                        'Imagen $i subida a Firebase',
+                      );
+                    }
+                    setState(() {
+                      if (url != null) imagesFromFirebase.add(url);
+                    });
+                  });
+                }
+              },
+              child: const Text('Subir imágenes a Firebase'),
+            ),
+            Wrap(
+              children: [
+                for (int i = 0; i < videos.length; i++)
+                  HtmlVideoFromUint8List(
+                    uint8List: videos[i],
+                    extension: videosExtensions[i],
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () {
+                filePicker.selectVideos().then((result) {
+                  setState(() {
+                    videos = result.$1;
+                    videosExtensions = result.$2;
+                    videosNames = result.$3;
+                  });
+                });
+              },
+              child: const Text('Abrir file picker de videos'),
+            ),
+            Wrap(
+              children: [
+                for (int i = 0; i < videosFromFirebase.length; i++)
+                  HtmlVideoContainer(
+                    url: videosFromFirebase[i],
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final ExternalRepository firebaseRepository =
+                    FirebaseRepository();
+                for (int i = 0; i < videos.length; i++) {
+                  firebaseRepository
+                      .uploadVideo(
+                    videosNames[i],
+                    videos[i],
+                  )
+                      .then((url) {
+                    if (url != null) {
+                      SnackBars.showInfoSnackBar(
+                        context,
+                        'Video $i subido a Firebase',
+                      );
+                    }
+                    setState(() {
+                      if (url != null) videosFromFirebase.add(url);
+                    });
+                  });
+                }
+              },
+              child: const Text('Subir videos a Firebase'),
+            ),
+            if (audio != null)
+              HtmlAudioFromUint8List(
+                uint8List: audio!,
+                extension: audioExtension!,
+                width: 400,
+                onChangeAudioTime: _onChangeAudioTime,
+              ),
+            ElevatedButton(
+              onPressed: () {
+                filePicker.selectAudio().then((result) {
+                  setState(() {
+                    audio = result.$1;
+                    audioExtension = result.$2;
+                    audioName = result.$3;
+                  });
+                });
+              },
+              child: const Text('Abrir file picker de audio'),
+            ),
+            Wrap(
+              children: [
+                for (int i = 0; i < audiosFromFirebase.length; i++)
+                  HtmlAudioContainer(
+                    src: audiosFromFirebase[i],
+                    width: 400,
+                    onChangeAudioTime: _onChangeAudioTime,
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final ExternalRepository firebaseRepository =
+                    FirebaseRepository();
+                firebaseRepository
+                    .uploadAudio(
+                  audioName!,
+                  audio!,
+                )
+                    .then((url) {
+                  if (url != null) {
+                    SnackBars.showInfoSnackBar(
+                      context,
+                      'Audio subido a Firebase',
+                    );
+                  }
+                  setState(() {
+                    if (url != null) audiosFromFirebase.add(url);
+                  });
+                });
+              },
+              child: const Text('Subir audio a Firebase'),
             ),
           ],
         ),

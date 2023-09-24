@@ -22,9 +22,11 @@ dependencies:
   pointer_interceptor: ^0.9.3+6
   card_swiper: ^3.0.1
   dots_indicator: ^3.0.0
-  audioplayers: ^5.1.0
   animate_do: ^3.1.2
   flutter_polyline_points: ^2.0.0
+  file_picker: ^5.5.0
+  firebase_core: ^2.16.0
+  firebase_storage: ^11.2.7
 
 dev_dependencies:
   flutter_test:

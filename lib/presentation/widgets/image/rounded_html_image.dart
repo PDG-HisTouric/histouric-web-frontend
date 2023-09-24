@@ -12,9 +12,9 @@ class RoundedHtmlImage extends StatelessWidget {
   const RoundedHtmlImage(
       {super.key,
       required this.imageId,
-      required this.width,
-      required this.height,
-      required this.borderRadius,
+      this.width = 300,
+      this.height = 300,
+      this.borderRadius = 20,
       required this.isFromDrive});
 
   @override

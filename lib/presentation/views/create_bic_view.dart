@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/config/config.dart';
 
 import '../../config/constants/constants.dart';
 import '../../domain/entities/entities.dart';
@@ -152,11 +153,11 @@ class _Form extends StatelessWidget {
                         context.read<BicBloc>().toggleBICCreation().then(
                             (value) =>
                                 context.read<BicBloc>().onClosePressed());
-                        _showSnackBar(
+                        SnackBars.showInfoSnackBar(
                             context, '¡El BIC se ha creado correctamente!');
                       } else {
                         context.read<BicBloc>().onClosePressed();
-                        _showSnackBar(
+                        SnackBars.showInfoSnackBar(
                             context, '¡Ha ocurrido un error al crear el BIC!');
                       }
                     });
@@ -211,13 +212,5 @@ class _Form extends StatelessWidget {
     while (GooglePicker.callGetIsPickerOpen()) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
   }
 }

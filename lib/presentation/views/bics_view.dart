@@ -5,6 +5,7 @@ import 'package:histouric_web/infrastructure/repositories/bic_repository_impl.da
 import 'package:histouric_web/presentation/presentation.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
+import '../../config/helpers/helpers.dart';
 import '../../infrastructure/datasources/datasources.dart';
 import '../blocs/blocs.dart';
 
@@ -206,7 +207,7 @@ class _BIcsViewState extends State<_BIcsView> {
           isTheFirstMarker = true;
         });
         if (isCreatingBIC) {
-          _showSnackBar(context, 'Toca el mapa para crear un BIC');
+          SnackBars.showInfoSnackBar(context, 'Toca el mapa para crear un BIC');
         }
       },
     );
@@ -220,13 +221,5 @@ class _BIcsViewState extends State<_BIcsView> {
       longitude = latLng.longitude;
       latitude = latLng.latitude;
     });
-  }
-
-  _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
   }
 }

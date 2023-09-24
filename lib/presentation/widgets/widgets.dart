@@ -15,6 +15,5 @@ export 'sidebar/sidebar.dart';
 export 'sidebar/sidemenu_title.dart';
 export 'background/star_painter.dart';
 export 'sidebar/text_separator.dart';
-export 'image/html_image.dart';
-export 'image/rounded_html_image.dart';
-export 'image/image_carousel.dart';
+export 'image/image.dart';
+export 'video/video.dart';
