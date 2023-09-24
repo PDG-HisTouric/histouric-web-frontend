@@ -21,7 +21,7 @@ class FilePickerImpl implements AbstractFilePicker {
   Future<(Uint8List?, String?)> selectAudio() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['mp3, mpeg, wav'],
+      allowedExtensions: ['mp3', 'mpeg', 'wav'],
       allowMultiple: false,
     );
     return (result?.files.first.bytes, result?.files.first.extension);
@@ -31,7 +31,7 @@ class FilePickerImpl implements AbstractFilePicker {
   Future<(List<Uint8List>, List<String>)> selectVideos() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['mp4, webm'],
+      allowedExtensions: ['mp4', 'webm'],
       allowMultiple: true,
     );
 

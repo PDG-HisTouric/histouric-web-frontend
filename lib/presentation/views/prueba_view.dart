@@ -30,6 +30,8 @@ class _PruebaViewState extends State<PruebaView> {
   Uint8List? audio;
   String? audioExtension;
   List<String> imagesFromFirebase = [];
+  List<String> videosFromFirebase = [];
+  List<String> audiosFromFirebase = [];
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +145,39 @@ class _PruebaViewState extends State<PruebaView> {
               },
               child: const Text('Abrir file picker de videos'),
             ),
+            Wrap(
+              children: [
+                for (int i = 0; i < videosFromFirebase.length; i++)
+                  HtmlVideoContainer(
+                    url: videosFromFirebase[i],
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final ExternalRepository firebaseRepository =
+                    FirebaseRepository();
+                for (int i = 0; i < videos.length; i++) {
+                  firebaseRepository
+                      .uploadVideo(
+                    'video$i.${videosExtensions[i]}',
+                    videos[i],
+                  )
+                      .then((url) {
+                    if (url != null) {
+                      SnackBars.showInfoSnackBar(
+                        context,
+                        'Video $i subido a Firebase',
+                      );
+                    }
+                    setState(() {
+                      if (url != null) videosFromFirebase.add(url);
+                    });
+                  });
+                }
+              },
+              child: const Text('Subir videos a Firebase'),
+            ),
             if (audio != null)
               HtmlAudioFromUint8List(
                 uint8List: audio!,
@@ -160,6 +195,39 @@ class _PruebaViewState extends State<PruebaView> {
                 });
               },
               child: const Text('Abrir file picker de audio'),
+            ),
+            Wrap(
+              children: [
+                for (int i = 0; i < audiosFromFirebase.length; i++)
+                  HtmlAudioContainer(
+                    src: audiosFromFirebase[i],
+                    width: 400,
+                    onChangeAudioTime: _onChangeAudioTime,
+                  ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final ExternalRepository firebaseRepository =
+                    FirebaseRepository();
+                firebaseRepository
+                    .uploadAudio(
+                  'audio${audioExtension!}',
+                  audio!,
+                )
+                    .then((url) {
+                  if (url != null) {
+                    SnackBars.showInfoSnackBar(
+                      context,
+                      'Audio subido a Firebase',
+                    );
+                  }
+                  setState(() {
+                    if (url != null) audiosFromFirebase.add(url);
+                  });
+                });
+              },
+              child: const Text('Subir audio a Firebase'),
             ),
           ],
         ),
