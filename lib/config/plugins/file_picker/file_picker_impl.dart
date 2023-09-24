@@ -15,7 +15,7 @@ class FilePickerImpl implements AbstractFilePicker {
     return (
       result?.files.map((file) => file.bytes!).toList() ?? [],
       result?.files.map((file) => file.extension!).toList() ?? [],
-      result?.files.map((file) => file.name!).toList() ?? []
+      result?.files.map((file) => file.name).toList() ?? []
     );
   }
 
