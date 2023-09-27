@@ -98,10 +98,7 @@ class _PruebaViewState extends State<PruebaView> {
             Wrap(
               children: [
                 for (int i = 0; i < imagesFromFirebase.length; i++)
-                  RoundedHtmlImage(
-                    imageId: imagesFromFirebase[i],
-                    isFromDrive: false,
-                  ),
+                  RoundedHtmlImage(imageId: imagesFromFirebase[i]),
               ],
             ),
             ElevatedButton(

@@ -97,10 +97,7 @@ class _ImageEntryState extends State<ImageEntry> {
                                   extension: imagesExtensions[0],
                                 ),
                               )
-                            : RoundedHtmlImage(
-                                imageId: imagesInfo[0].id,
-                                isFromDrive: true,
-                              )),
+                            : RoundedHtmlImage(imageId: imagesInfo[0].url)),
                   ),
                 ),
               ),

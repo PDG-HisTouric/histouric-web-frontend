@@ -28,7 +28,6 @@ class HtmlImageFromUint8List extends StatelessWidget {
       imageId: dataUrl,
       width: width,
       height: height,
-      isFromDrive: false,
     );
   }
 }

@@ -39,11 +39,10 @@ class _ImageCarouselState extends State<ImageCarousel> {
             children: widget.imagesInfo
                 .map(
                   (imageInfo) => RoundedHtmlImage(
-                    imageId: imageInfo.id,
+                    imageId: imageInfo.url,
                     width: imageInfo.width,
                     height: imageInfo.height,
                     borderRadius: 20,
-                    isFromDrive: imageInfo.isFromDrive,
                   ),
                 )
                 .toList(),
