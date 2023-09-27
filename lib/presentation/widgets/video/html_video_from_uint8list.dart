@@ -1,7 +1,9 @@
-import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:histouric_web/presentation/widgets/video/html_video_container.dart';
+
+import 'html_video_container.dart';
 
 class HtmlVideoFromUint8List extends StatelessWidget {
   final Uint8List uint8List;
@@ -22,10 +24,6 @@ class HtmlVideoFromUint8List extends StatelessWidget {
     final base64String = base64Encode(uint8List);
     final dataUrl = 'data:video/$extension;base64,$base64String';
 
-    return HtmlVideoContainer(
-      url: dataUrl,
-      width: width,
-      height: height,
-    );
+    return HtmlVideoContainer(url: dataUrl, width: width, height: height);
   }
 }

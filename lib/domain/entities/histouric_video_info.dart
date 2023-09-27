@@ -11,8 +11,7 @@ class HistouricVideoInfo {
 
   factory HistouricVideoInfo.fromListOfGooglePicker(List<dynamic> list) {
     return HistouricVideoInfo(
-      url:
-          'https://drive.google.com/uc?export=download&id=${list[0].toString()}',
+      url: 'https://drive.google.com/uc?export=view&id=${list[0].toString()}',
       width: double.parse(list[1].toString()),
       height: double.parse(list[2].toString()),
     );

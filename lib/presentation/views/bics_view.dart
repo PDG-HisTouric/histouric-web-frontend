@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:histouric_web/infrastructure/repositories/bic_repository_impl.dart';
-import 'package:histouric_web/presentation/presentation.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
-import '../../config/helpers/helpers.dart';
-import '../../infrastructure/datasources/datasources.dart';
+import '../../config/config.dart';
+import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
+import 'create_bic_view.dart';
 
 class BicsView extends StatelessWidget {
   const BicsView({super.key});
@@ -16,8 +15,9 @@ class BicsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => MapBloc(
-          token: context.read<AuthBloc>().state.token!,
-          bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl())),
+        token: context.read<AuthBloc>().state.token!,
+        bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
+      ),
       child: const _BIcsView(),
     );
   }
@@ -68,7 +68,7 @@ class _BIcsViewState extends State<_BIcsView> {
           onTap: (latLng) async {
             if (isCreatingBIC) {
               await context.read<MapBloc>().changeMarkerIdForBICCreation().then(
-                (value) {
+                (_) {
                   String newMarkerId =
                       context.read<MapBloc>().state.markerFroBICCreationId;
                   String name = 'Continuar aquí';
@@ -111,48 +111,39 @@ class _BIcsViewState extends State<_BIcsView> {
             child: Container(
               child: isCreatingBIC
                   ? ElevatedButton(
-                      onPressed: () {
-                        toggleBICCreation();
-                      },
+                      onPressed: toggleBICCreation,
                       child: const Text('Cancelar'),
                     )
                   : ElevatedButton(
-                      onPressed: () {
-                        toggleBICCreation();
-                      },
+                      onPressed: toggleBICCreation,
                       child: const Text('Crear Bien de Interés Cultural'),
                     ),
             ),
           ),
         ),
-
-        // Fondo gris transparente cuando la card está abierta
         if (isCardOpen)
           GestureDetector(
-            onTap: toggleCard, // Cierra la card al tocar el fondo
+            onTap: toggleCard,
             child: PointerInterceptor(
               child: Container(
-                color: Colors.black.withOpacity(0.5), // Color gris transparente
+                color: Colors.black.withOpacity(0.5),
               ),
             ),
           ),
         AnimatedPositioned(
           top: isCardOpen ? 100 : -500,
-          // Posición inicial y final de la card
           left: 0,
           right: 0,
           duration: const Duration(milliseconds: 300),
-          // Duración de la animación
           curve: Curves.easeInOut,
-          // Curva de la animación
           child: Center(
             child: SizedBox(
-              width: MediaQuery.of(context).size.width < maxWidth
-                  ? MediaQuery.of(context).size.width
-                  : maxWidth, // Ancho máximo de 300 o el ancho de la pantalla
-              height: MediaQuery.of(context).size.height < maxHeight
-                  ? MediaQuery.of(context).size.height
-                  : maxHeight, // Alto máximo de 300 o el alto de la pantalla
+              width: MediaQuery.sizeOf(context).width < maxWidth
+                  ? MediaQuery.sizeOf(context).width
+                  : maxWidth,
+              height: MediaQuery.sizeOf(context).height < maxHeight
+                  ? MediaQuery.sizeOf(context).height
+                  : maxHeight,
               child: Card(
                 elevation: 5.0,
                 child: SingleChildScrollView(

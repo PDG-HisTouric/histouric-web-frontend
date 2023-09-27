@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:histouric_web/domain/entities/bic.dart';
-import 'package:histouric_web/infrastructure/infrastructure.dart';
-import 'package:histouric_web/infrastructure/mappers/bic_mapper.dart';
 
-import '../../config/constants/constants.dart';
-import '../../domain/datasources/datasources.dart';
+import '../../config/config.dart';
+import '../../domain/domain.dart';
+import '../mappers/mappers.dart';
+import '../models/models.dart';
 
 class BICDatasourceImpl implements BICDatasource {
   final Dio dio = Dio(

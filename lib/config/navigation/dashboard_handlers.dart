@@ -59,4 +59,8 @@ class DashboardHandlers {
   static Handler createRoute = Handler(handlerFunc: (context, parameters) {
     return const DashboardScreen(child: CreateRouteView());
   });
+
+  static Handler createHistory = Handler(handlerFunc: (context, parameters) {
+    return const DashboardScreen(child: CreateHistoryView());
+  });
 }

@@ -13,9 +13,7 @@ class MapState {
     required this.markerFroBICCreationId,
   });
 
-  Set<Marker> get markersSet {
-    return Set.from(markers);
-  }
+  Set<Marker> get markersSet => Set.from(markers);
 
   MapState copyWith({
     List<Marker>? markers,

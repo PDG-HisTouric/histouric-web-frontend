@@ -1,6 +1,4 @@
-import '../../domain/datasources/datasources.dart';
-import '../../domain/entities/entities.dart';
-import '../../domain/repositories/repositories.dart';
+import '../../domain/domain.dart';
 
 class BICRepositoryImpl implements BICRepository {
   final BICDatasource bicDatasource;

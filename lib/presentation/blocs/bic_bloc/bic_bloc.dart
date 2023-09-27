@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:histouric_web/domain/domain.dart';
 
-import 'package:histouric_web/infrastructure/inputs/inputs.dart';
+import '../../../domain/domain.dart';
+import '../../../infrastructure/infrastructure.dart';
 
 part 'bic_event.dart';
 part 'bic_state.dart';

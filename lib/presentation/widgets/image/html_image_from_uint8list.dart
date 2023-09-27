@@ -1,8 +1,9 @@
-import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:histouric_web/presentation/presentation.dart';
-import 'package:universal_html/html.dart' as html;
+
+import 'rounded_html_image.dart';
 
 class HtmlImageFromUint8List extends StatelessWidget {
   final Uint8List uint8List;

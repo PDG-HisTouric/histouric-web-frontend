@@ -18,11 +18,7 @@ class HtmlVideoContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: HtmlVideo(src: url),
-      ),
+      child: SizedBox(width: width, height: height, child: HtmlVideo(src: url)),
     );
   }
 }

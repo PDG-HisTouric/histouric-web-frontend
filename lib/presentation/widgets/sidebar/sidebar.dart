@@ -112,7 +112,15 @@ class _ResearcherOptions extends StatelessWidget {
           icon: Icons.map_outlined,
           onPressed: () {
             context.read<SidemenuBloc>().closeMenu();
-            NavigationService.navigateTo(FluroRouterWrapper.bicsScreen);
+            NavigationService.replaceTo(FluroRouterWrapper.bicsScreen);
+          },
+        ),
+        MenuItem(
+          text: 'Historias',
+          icon: Icons.history_edu_outlined,
+          onPressed: () {
+            context.read<SidemenuBloc>().closeMenu();
+            NavigationService.replaceTo(FluroRouterWrapper.createHistory);
           },
         ),
       ],

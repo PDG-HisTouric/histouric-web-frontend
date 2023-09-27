@@ -5,9 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../config/constants/constants.dart';
-import '../../../domain/entities/entities.dart';
-import '../../../domain/repositories/repositories.dart';
+import '../../../config/config.dart';
+import '../../../domain/domain.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';

@@ -21,10 +21,7 @@ class HtmlAudioContainer extends StatelessWidget {
       child: SizedBox(
         width: width,
         height: 60,
-        child: HtmlAudio(
-          src: src,
-          onChangeAudioTime: onChangeAudioTime,
-        ),
+        child: HtmlAudio(src: src, onChangeAudioTime: onChangeAudioTime),
       ),
     );
   }
