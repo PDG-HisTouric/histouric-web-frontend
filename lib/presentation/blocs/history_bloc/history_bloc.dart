@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -12,19 +13,41 @@ part 'history_state.dart';
 
 class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   final String owner;
-  HistoryBloc({required this.owner}) : super(HistoryState(owner: owner)) {
-    on<HistoryAudioUrlChanged>(_onAudioUrlChanged);
+  HistoryBloc({required this.owner})
+      : super(HistoryState(
+            owner: owner,
+            audioState: AudioState(src: '', isAudioFromFilePicker: false))) {
+    on<HistoryAudioStateChanged>(_onHistoryAudioStateChanged);
     on<HistoryImageAdded>(_onHistoryImageAdded);
     on<HistoryImageRemoved>(_onHistoryImageRemoved);
   }
 
-  void _onAudioUrlChanged(
-      HistoryAudioUrlChanged event, Emitter<HistoryState> emit) {
-    emit(state.copyWith(audioUrl: event.audioUrl));
+  void _onHistoryAudioStateChanged(
+      HistoryAudioStateChanged event, Emitter<HistoryState> emit) {
+    final newAudioState = state.audioState.copyWith(
+      src: event.src,
+      audio: event.audio,
+      audioName: event.audioName,
+      audioExtension: event.audioExtension,
+      isAudioFromFilePicker: event.isAudioFromFilePicker,
+    );
+    emit(state.copyWith(audioState: newAudioState));
   }
 
-  void changeAudioUrl(String audioUrl) {
-    add(HistoryAudioUrlChanged(audioUrl: audioUrl));
+  void changeAudioState({
+    String? src,
+    Uint8List? audio,
+    String? audioName,
+    String? audioExtension,
+    bool? isAudioFromFilePicker,
+  }) {
+    add(HistoryAudioStateChanged(
+      src: src,
+      audio: audio,
+      audioName: audioName,
+      audioExtension: audioExtension,
+      isAudioFromFilePicker: isAudioFromFilePicker,
+    ));
   }
 
   void _onHistoryImageAdded(

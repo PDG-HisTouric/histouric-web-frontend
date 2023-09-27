@@ -2,10 +2,20 @@ part of 'history_bloc.dart';
 
 abstract class HistoryEvent {}
 
-class HistoryAudioUrlChanged extends HistoryEvent {
-  final String audioUrl;
+class HistoryAudioStateChanged extends HistoryEvent {
+  final String? src;
+  final Uint8List? audio;
+  final String? audioName;
+  final String? audioExtension;
+  final bool? isAudioFromFilePicker;
 
-  HistoryAudioUrlChanged({required this.audioUrl});
+  HistoryAudioStateChanged({
+    this.src,
+    this.audio,
+    this.audioName,
+    this.audioExtension,
+    this.isAudioFromFilePicker,
+  });
 }
 
 class HistoryImageAdded extends HistoryEvent {

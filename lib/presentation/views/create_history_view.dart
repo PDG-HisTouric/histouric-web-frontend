@@ -36,7 +36,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
   int _currentStep = 0;
 
   final List<Step> _steps = [
-    const Step(
+    Step(
       title: Text("Cargar Audio"),
       content: LoadAudio(),
     ),
