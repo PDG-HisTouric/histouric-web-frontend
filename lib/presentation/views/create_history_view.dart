@@ -38,7 +38,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
   final List<Step> _steps = [
     const Step(
       title: Text("Cargar Audio"),
-      content: _LoadAudio(),
+      content: LoadAudio(),
     ),
     const Step(
       title: Text("Cargar Imágenes"),
@@ -130,105 +130,6 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
           );
         },
       ),
-    );
-  }
-}
-
-class _LoadAudio extends StatefulWidget {
-  const _LoadAudio();
-
-  @override
-  State<_LoadAudio> createState() => _LoadAudioState();
-}
-
-class _LoadAudioState extends State<_LoadAudio> {
-  String src = '';
-  String time = '';
-  Uint8List? audio;
-  String? audioName;
-  String? audioExtension;
-  String selectedAudioPath = "";
-  bool isAudioFromFilePicker = false;
-  AbstractFilePicker filePicker = FilePickerImpl();
-
-  Future<void> pickAudioFromExplorer() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.audio);
-    if (result != null) {
-      setState(() {
-        selectedAudioPath = result.files.single.path!;
-      });
-    }
-  }
-
-  void _loadAudioFromDrive() {
-    GooglePicker.callFilePicker(
-      apiKey: Environment.pickerApiKey,
-      appId: Environment.pickerApiAppId,
-      mediaType: MediaType.audio,
-    );
-    GooglePicker.waitUntilThePickerIsOpen().then((value) {
-      GooglePicker.waitUntilThePickerIsClosed().then((value) {
-        if (!GooglePicker.callGetIsThereAnError()) {
-          final audioId = GooglePicker.callGetSelectedAudioId();
-          setState(() {
-            isAudioFromFilePicker = false;
-            src = 'https://drive.google.com/uc?export=view&id=$audioId';
-          });
-        }
-      });
-    });
-  }
-
-  void _onChangeAudioTime(String currentTime) {
-    setState(() {
-      time = currentTime;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (!isAudioFromFilePicker)
-          HtmlAudioContainer(
-            src: src,
-            width: 400,
-            onChangeAudioTime: _onChangeAudioTime,
-          ),
-        if (isAudioFromFilePicker)
-          HtmlAudioFromUint8List(
-            uint8List: audio!,
-            extension: audioExtension!,
-            width: 400,
-            onChangeAudioTime: _onChangeAudioTime,
-          ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton.icon(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                filePicker.selectAudio().then((result) {
-                  setState(() {
-                    isAudioFromFilePicker = true;
-                    audio = result.$1;
-                    audioExtension = result.$2;
-                    audioName = result.$3;
-                  });
-                });
-              },
-              label: const Text("From File Explorer"),
-            ),
-            const SizedBox(width: 10),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.add),
-              onPressed: _loadAudioFromDrive,
-              label: const Text("From Google Drive"),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
