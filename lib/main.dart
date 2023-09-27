@@ -1,17 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/screens/screens.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:histouric_web/presentation/views/views.dart';
-import 'firebase_options.dart';
-
 import 'package:url_strategy/url_strategy.dart';
 
 import 'config/config.dart';
-import 'config/constants/constants.dart';
+import 'firebase_options.dart';
 import 'infrastructure/infrastructure.dart';
 import 'presentation/blocs/blocs.dart';
-import 'presentation/js_bridge/js_bridge.dart';
+import 'presentation/presentation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

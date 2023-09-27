@@ -1,10 +1,8 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:histouric_web/domain/domain.dart';
 
+import '../../../domain/domain.dart';
 import 'rounded_html_image.dart';
-
-import '../../../domain/entities/entities.dart';
 
 class ImageCarousel extends StatefulWidget {
   final List<HistouricImageInfo> imagesInfo;
@@ -52,15 +50,16 @@ class _ImageCarouselState extends State<ImageCarousel> {
           ),
         ),
         DotsIndicator(
-            dotsCount: widget.imagesInfo.length,
-            position: _currentImage,
-            onTap: (position) {
-              _pageController.animateToPage(
-                position,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.ease,
-              );
-            }),
+          dotsCount: widget.imagesInfo.length,
+          position: _currentImage,
+          onTap: (position) {
+            _pageController.animateToPage(
+              position,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.ease,
+            );
+          },
+        ),
       ],
     );
   }

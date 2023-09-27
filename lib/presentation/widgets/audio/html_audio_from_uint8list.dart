@@ -1,7 +1,9 @@
-import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:histouric_web/presentation/widgets/audio/audio.dart';
+
+import 'html_audio_container.dart';
 
 class HtmlAudioFromUint8List extends StatelessWidget {
   final Uint8List uint8List;

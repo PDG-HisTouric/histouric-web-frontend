@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:universal_html/html.dart';
 import 'dart:ui_web' as ui;
 
+import 'package:flutter/material.dart';
+import 'package:universal_html/html.dart';
+
 class HtmlAudio extends StatelessWidget {
-  final void Function(String currentTime) onChangeAudioTime;
   final String src;
+  final void Function(String currentTime) onChangeAudioTime;
 
   HtmlAudio({super.key, required this.src, required this.onChangeAudioTime}) {
     ui.platformViewRegistry.registerViewFactory('audio-$src', (int viewId) {

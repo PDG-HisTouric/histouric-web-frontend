@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/config/config.dart';
 
-import '../../config/constants/constants.dart';
-import '../../domain/entities/entities.dart';
-import '../../infrastructure/datasources/datasources.dart';
-import '../../infrastructure/repositories/repositories.dart';
+import '../../config/config.dart';
+import '../../domain/domain.dart';
+import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
 import '../js_bridge/js_bridge.dart';
 import '../widgets/widgets.dart';
@@ -58,20 +56,17 @@ class _CreateBICView extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('Crear Bien de Interés Cultural',
-                  style: TextStyle(fontSize: 20)),
+              const Text(
+                'Crear Bien de Interés Cultural',
+                style: TextStyle(fontSize: 20),
+              ),
               const Spacer(),
               CloseButton(
                 onPressed: context.read<BicBloc>().onClosePressed,
               )
             ],
           ),
-          const FittedBox(
-            child: SizedBox(
-              width: 600,
-              child: _Form(),
-            ),
-          )
+          const FittedBox(child: SizedBox(width: 600, child: _Form()))
         ],
       ),
     );
@@ -154,11 +149,15 @@ class _Form extends StatelessWidget {
                             (value) =>
                                 context.read<BicBloc>().onClosePressed());
                         SnackBars.showInfoSnackBar(
-                            context, '¡El BIC se ha creado correctamente!');
+                          context,
+                          '¡El BIC se ha creado correctamente!',
+                        );
                       } else {
                         context.read<BicBloc>().onClosePressed();
                         SnackBars.showInfoSnackBar(
-                            context, '¡Ha ocurrido un error al crear el BIC!');
+                          context,
+                          '¡Ha ocurrido un error al crear el BIC!',
+                        );
                       }
                     });
                   },
@@ -170,8 +169,10 @@ class _Form extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),
-                  child: const Text('Cancelar',
-                      style: TextStyle(color: Colors.black)),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.black),
+                  ),
                 )
               ],
             ),
@@ -182,8 +183,8 @@ class _Form extends StatelessWidget {
   }
 
   void _loadImagesFromDrive(
-      void Function(HistouricImageInfo)
-          functionToLoadTheImageInTheBlock) async {
+    void Function(HistouricImageInfo) functionToLoadTheImageInTheBlock,
+  ) async {
     GooglePicker.callFilePicker(
       apiKey: Environment.pickerApiKey,
       appId: Environment.pickerApiAppId,

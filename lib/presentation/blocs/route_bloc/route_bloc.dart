@@ -4,8 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../domain/entities/entities.dart';
-import '../../../domain/repositories/repositories.dart';
+import '../../../domain/domain.dart';
 
 part 'route_event.dart';
 part 'route_state.dart';

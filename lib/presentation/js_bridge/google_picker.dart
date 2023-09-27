@@ -1,6 +1,4 @@
-import 'package:histouric_web/domain/domain.dart';
-import 'package:histouric_web/domain/entities/histouric_image_info.dart';
-
+import '../../domain/domain.dart';
 import 'js_functions_google_picker.dart';
 
 enum MediaType { audio, image, video }

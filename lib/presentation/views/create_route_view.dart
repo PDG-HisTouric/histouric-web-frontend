@@ -2,12 +2,11 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:histouric_web/presentation/presentation.dart';
 
-import '../../domain/entities/entities.dart';
-import '../../infrastructure/datasources/datasources.dart';
-import '../../infrastructure/repositories/repositories.dart';
+import '../../domain/domain.dart';
+import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
+import '../widgets/widgets.dart';
 
 class CreateRouteView extends StatelessWidget {
   const CreateRouteView({super.key});
@@ -97,7 +96,8 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                         ? FadeIn(
                             child: changeBICsOrder
                                 ? const Center(
-                                    child: CircularProgressIndicator())
+                                    child: CircularProgressIndicator(),
+                                  )
                                 : ReorderableListView(
                                     buildDefaultDragHandles: false,
                                     onReorder: (oldIndex, newIndex) async {
@@ -144,7 +144,8 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                                     if (routeBlocState.bicsForSearch.isEmpty)
                                       const ListTile(
                                         title: Text(
-                                            "No se encontraron resultados"),
+                                          "No se encontraron resultados",
+                                        ),
                                       ),
                                     for (final bic
                                         in routeBlocState.bicsForSearch)
@@ -195,9 +196,7 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
             ),
           ),
         ),
-        const Expanded(
-          child: _GoogleMap(),
-        ),
+        const Expanded(child: _GoogleMap()),
       ],
     );
   }

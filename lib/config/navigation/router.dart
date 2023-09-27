@@ -19,6 +19,7 @@ class FluroRouterWrapper {
   static String createUser = "/dashboard/users/create";
   static String bicsScreen = "/dashboard/map";
   static String createRoute = "/dashboard/routes/create";
+  static String createHistory = "/dashboard/histories/create";
 
   static void configureRoutes() {
     //Auth routes
@@ -79,6 +80,13 @@ class FluroRouterWrapper {
     router.define(
       createRoute,
       handler: DashboardHandlers.createRoute,
+      transitionType: TransitionType.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+
+    router.define(
+      createHistory,
+      handler: DashboardHandlers.createHistory,
       transitionType: TransitionType.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     );
