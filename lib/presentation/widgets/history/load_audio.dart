@@ -15,11 +15,9 @@ class LoadAudio extends StatefulWidget {
 
 class _LoadAudioState extends State<LoadAudio> {
   String src = '';
-  String time = '';
   Uint8List? audio;
   String? audioName;
   String? audioExtension;
-  String selectedAudioPath = "";
   bool isAudioFromFilePicker = false;
   AbstractFilePicker filePicker = FilePickerImpl();
 
@@ -32,19 +30,12 @@ class _LoadAudioState extends State<LoadAudio> {
     GooglePicker.waitUntilThePickerIsOpen().then((value) {
       GooglePicker.waitUntilThePickerIsClosed().then((value) {
         if (!GooglePicker.callGetIsThereAnError()) {
-          final audioId = GooglePicker.callGetSelectedAudioId();
           setState(() {
             isAudioFromFilePicker = false;
-            src = 'https://drive.google.com/uc?export=view&id=$audioId';
+            src = GooglePicker.callGetSelectedAudioUrl();
           });
         }
       });
-    });
-  }
-
-  void _onChangeAudioTime(String currentTime) {
-    setState(() {
-      time = currentTime;
     });
   }
 
@@ -56,14 +47,14 @@ class _LoadAudioState extends State<LoadAudio> {
           HtmlAudioContainer(
             src: src,
             width: 400,
-            onChangeAudioTime: _onChangeAudioTime,
+            onChangeAudioTime: (currentTime) {},
           ),
         if (isAudioFromFilePicker)
           HtmlAudioFromUint8List(
             uint8List: audio!,
             extension: audioExtension!,
             width: 400,
-            onChangeAudioTime: _onChangeAudioTime,
+            onChangeAudioTime: (currentTime) {},
           ),
         const SizedBox(height: 10),
         Row(

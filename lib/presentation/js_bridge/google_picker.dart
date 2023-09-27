@@ -27,8 +27,8 @@ class GooglePicker {
     return getIsPickerOpen();
   }
 
-  static String callGetSelectedAudioId() {
-    return getSelectedAudioId();
+  static String callGetSelectedAudioUrl() {
+    return getSelectedAudioUrl();
   }
 
   static List<HistouricImageInfo> getInfoOfSelectedImages() {
