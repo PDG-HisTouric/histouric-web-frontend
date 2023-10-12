@@ -1,30 +1,20 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../config/config.dart';
 import '../../../domain/entities/entities.dart';
+import '../../blocs/blocs.dart';
 import '../../js_bridge/js_bridge.dart';
 import '../image/image.dart';
 
-class ImageEntry extends StatefulWidget {
-  const ImageEntry({super.key});
+class ImageEntry extends StatelessWidget {
+  final String id;
 
-  @override
-  State<ImageEntry> createState() => _ImageEntryState();
-}
+  ImageEntry({super.key, required this.id});
 
-class _ImageEntryState extends State<ImageEntry> {
-  String minute = '';
-  bool imageChosen = false;
-  List<Uint8List> images = [];
-  List<String> imagesNames = [];
-  List<String> imagesExtensions = [];
-  bool isImageFromFilePicker = false;
-  List<HistouricImageInfo> imagesInfo = [];
-  AbstractFilePicker filePicker = FilePickerImpl();
+  final AbstractFilePicker filePicker = FilePickerImpl();
 
-  void _loadImagesFromDrive() async {
+  void _loadImagesFromDrive(BuildContext context) async {
     GooglePicker.callFilePicker(
       apiKey: Environment.pickerApiKey,
       appId: Environment.pickerApiAppId,
@@ -34,12 +24,21 @@ class _ImageEntryState extends State<ImageEntry> {
       GooglePicker.waitUntilThePickerIsClosed().then((value) {
         if (!GooglePicker.callGetIsThereAnError()) {
           final selectedImagesInfo = GooglePicker.getInfoOfSelectedImages();
+          List<HistouricImageInfo> imagesInfo = [
+            ...context.read<HistoryBloc>().getImageEntryStateById(id).imagesInfo
+          ];
+          int initialSize = imagesInfo.length;
           for (var imageInfo in selectedImagesInfo) {
-            setState(() {
-              imageChosen = true;
-              imagesInfo.add(imageInfo);
-              isImageFromFilePicker = false;
-            });
+            imagesInfo.add(imageInfo);
+          }
+          int finalSize = imagesInfo.length;
+          if (initialSize < finalSize) {
+            context.read<HistoryBloc>().changeImageEntryState(
+                  id: id,
+                  imagesInfo: imagesInfo,
+                  imageChosen: true,
+                  isImageFromFilePicker: false,
+                );
           }
         }
       });
@@ -49,6 +48,11 @@ class _ImageEntryState extends State<ImageEntry> {
   @override
   Widget build(BuildContext context) {
     final cardWidth = MediaQuery.of(context).size.width * 0.35;
+    ImageEntryState imageEntryState = context
+        .watch<HistoryBloc>()
+        .state
+        .imageEntryStates
+        .firstWhere((element) => element.id == id);
 
     return Card(
       child: Padding(
@@ -60,29 +64,36 @@ class _ImageEntryState extends State<ImageEntry> {
               Expanded(
                 flex: 4,
                 child: Container(
-                  color: imageChosen ? Colors.transparent : Colors.white,
+                  color: imageEntryState.imageChosen
+                      ? Colors.transparent
+                      : Colors.white,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: !imageChosen
+                    child: !imageEntryState.imageChosen
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
-                                onPressed: _loadImagesFromDrive,
+                                onPressed: () => _loadImagesFromDrive(context),
                                 child: const Text('Desde Google Drive'),
                               ),
                               const SizedBox(height: 10),
                               ElevatedButton(
-                                onPressed: () async {
-                                  final result =
-                                      await filePicker.selectImages();
-                                  setState(() {
-                                    images = result.$1;
-                                    imagesExtensions = result.$2;
-                                    imagesNames = result.$3;
-                                    isImageFromFilePicker = true;
-
-                                    if (images.isNotEmpty) imageChosen = true;
+                                onPressed: () {
+                                  filePicker.selectImages().then((result) {
+                                    final images = result.$1;
+                                    if (images.isNotEmpty) {
+                                      context
+                                          .read<HistoryBloc>()
+                                          .changeImageEntryState(
+                                            id: id,
+                                            images: images,
+                                            imageChosen: true,
+                                            isImageFromFilePicker: true,
+                                            imagesExtensions: result.$2,
+                                            imagesNames: result.$3,
+                                          );
+                                    }
                                   });
                                 },
                                 child:
@@ -90,14 +101,16 @@ class _ImageEntryState extends State<ImageEntry> {
                               ),
                             ],
                           )
-                        : (isImageFromFilePicker
+                        : (imageEntryState.isImageFromFilePicker
                             ? Center(
                                 child: HtmlImageFromUint8List(
-                                  uint8List: images[0],
-                                  extension: imagesExtensions[0],
+                                  uint8List: imageEntryState.images[0],
+                                  extension:
+                                      imageEntryState.imagesExtensions[0],
                                 ),
                               )
-                            : RoundedHtmlImage(imageId: imagesInfo[0].url)),
+                            : RoundedHtmlImage(
+                                imageId: imageEntryState.imagesInfo[0].url)),
                   ),
                 ),
               ),
@@ -107,12 +120,15 @@ class _ImageEntryState extends State<ImageEntry> {
                 child: SizedBox(
                   width: 150,
                   child: TextFormField(
+                    controller: imageEntryState.minuteController,
                     decoration: const InputDecoration(
                       labelText: "Minuto del audio",
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
-                      minute = value;
+                      context
+                          .read<HistoryBloc>()
+                          .changeMinuteOfImageEntryState(id, value);
                     },
                   ),
                 ),
@@ -120,7 +136,7 @@ class _ImageEntryState extends State<ImageEntry> {
               IconButton(
                 icon: const Icon(Icons.delete),
                 onPressed: () {
-                  //_removeImageEntry(index);
+                  context.read<HistoryBloc>().removeImageEntryState(id);
                 },
               ),
             ],

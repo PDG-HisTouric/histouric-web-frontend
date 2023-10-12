@@ -10,16 +10,6 @@ import '../audio/audio.dart';
 
 class LoadAudio extends StatelessWidget {
   LoadAudio({super.key});
-  // final String src = '';
-  //
-  // final Uint8List? audio = null;
-  //
-  // final String? audioName = null;
-  //
-  // final String? audioExtension = null;
-  //
-  // final bool isAudioFromFilePicker = false;
-
   AbstractFilePicker filePicker = FilePickerImpl();
 
   void _loadAudioFromDrive(BuildContext context) {
@@ -36,10 +26,6 @@ class LoadAudio extends StatelessWidget {
                 isAudioFromFilePicker: false,
                 src: src,
               );
-          // setState(() {
-          //   isAudioFromFilePicker = false;
-          //   src = GooglePicker.callGetSelectedAudioUrl();
-          // });
         }
       });
     });
@@ -77,12 +63,6 @@ class LoadAudio extends StatelessWidget {
                         audioExtension: result.$2,
                         audioName: result.$3,
                       );
-                  // setState(() {
-                  //   isAudioFromFilePicker = true;
-                  //   audio = result.$1;
-                  //   audioExtension = result.$2;
-                  //   audioName = result.$3;
-                  // });
                 });
               },
               label: const Text("From File Explorer"),

@@ -40,7 +40,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
       title: Text("Cargar Audio"),
       content: LoadAudio(),
     ),
-    const Step(
+    Step(
       title: Text("Cargar Imágenes"),
       content: LoadImages(),
     ),

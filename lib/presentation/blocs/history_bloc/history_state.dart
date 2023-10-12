@@ -5,9 +5,9 @@ class HistoryState {
   final String? title;
   final AudioState audioState;
   final String owner;
+  final List<ImageEntryState> imageEntryStates;
   final List<HistoryVideo>? historyVideos;
   final List<HistoryText>? historyTexts;
-  final List<HistoryImage>? historyImages;
 
   HistoryState({
     this.historyId,
@@ -16,7 +16,7 @@ class HistoryState {
     required this.owner,
     this.historyVideos,
     this.historyTexts,
-    this.historyImages,
+    this.imageEntryStates = const [],
   });
 
   HistoryState copyWith({
@@ -26,7 +26,7 @@ class HistoryState {
     String? owner,
     List<HistoryVideo>? historyVideos,
     List<HistoryText>? historyTexts,
-    List<HistoryImage>? historyImages,
+    List<ImageEntryState>? imageEntryStates,
   }) {
     return HistoryState(
       historyId: historyId ?? this.historyId,
@@ -35,7 +35,7 @@ class HistoryState {
       owner: owner ?? this.owner,
       historyVideos: historyVideos ?? this.historyVideos,
       historyTexts: historyTexts ?? this.historyTexts,
-      historyImages: historyImages ?? this.historyImages,
+      imageEntryStates: imageEntryStates ?? this.imageEntryStates,
     );
   }
 }
@@ -70,5 +70,65 @@ class AudioState {
       isAudioFromFilePicker:
           isAudioFromFilePicker ?? this.isAudioFromFilePicker,
     );
+  }
+}
+
+class ImageEntryState {
+  final String id;
+  final String minute;
+  final bool imageChosen;
+  final List<Uint8List> images;
+  final List<String> imagesNames;
+  final List<String> imagesExtensions;
+  final bool isImageFromFilePicker;
+  final List<HistouricImageInfo> imagesInfo;
+  late final TextEditingController minuteController;
+
+  ImageEntryState({
+    required this.id,
+    this.minute = '',
+    this.imageChosen = false,
+    this.images = const [],
+    this.imagesNames = const [],
+    this.imagesExtensions = const [],
+    this.isImageFromFilePicker = false,
+    this.imagesInfo = const [],
+  });
+
+  ImageEntryState copyWith({
+    String? minute,
+    bool? imageChosen,
+    List<Uint8List>? images,
+    List<String>? imagesNames,
+    List<String>? imagesExtensions,
+    bool? isImageFromFilePicker,
+    List<HistouricImageInfo>? imagesInfo,
+  }) {
+    return ImageEntryState(
+      id: id,
+      minute: minute ?? this.minute,
+      imageChosen: imageChosen ?? this.imageChosen,
+      images: images ?? this.images,
+      imagesNames: imagesNames ?? this.imagesNames,
+      imagesExtensions: imagesExtensions ?? this.imagesExtensions,
+      isImageFromFilePicker:
+          isImageFromFilePicker ?? this.isImageFromFilePicker,
+      imagesInfo: imagesInfo ?? this.imagesInfo,
+    )..minuteController = minuteController;
+  }
+
+  ImageEntryState configureControllers({
+    String? minuteText,
+  }) {
+    return ImageEntryState(
+      id: id,
+      minute: minute,
+      imageChosen: imageChosen,
+      images: images,
+      imagesNames: imagesNames,
+      imagesExtensions: imagesExtensions,
+      isImageFromFilePicker: isImageFromFilePicker,
+      imagesInfo: imagesInfo,
+    )..minuteController = TextEditingController(text: minuteText ?? minute);
   }
 }

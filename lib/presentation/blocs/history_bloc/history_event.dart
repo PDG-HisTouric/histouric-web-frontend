@@ -18,30 +18,20 @@ class HistoryAudioStateChanged extends HistoryEvent {
   });
 }
 
-class HistoryImageAdded extends HistoryEvent {
-  final HistoryImage historyImage;
-
-  HistoryImageAdded({required this.historyImage});
+class AddImageButtonPressed extends HistoryEvent {
+  AddImageButtonPressed();
 }
 
-class HistoryImageRemoved extends HistoryEvent {
-  final String historyImageId;
+class ImageEntryStateChanged extends HistoryEvent {
+  final ImageEntryState imageEntryState;
 
-  HistoryImageRemoved({required this.historyImageId});
+  ImageEntryStateChanged({required this.imageEntryState});
 }
 
-class ImageUriChanged extends HistoryEvent {
-  final String imageUri;
+class RemoveImageEntryButtonPressed extends HistoryEvent {
   final String id;
 
-  ImageUriChanged({required this.imageUri, required this.id});
-}
-
-class ImageStartTimeChanged extends HistoryEvent {
-  final int startTime;
-  final String id;
-
-  ImageStartTimeChanged({required this.startTime, required this.id});
+  RemoveImageEntryButtonPressed({required this.id});
 }
 
 class HistoryVideoAdded extends HistoryEvent {
