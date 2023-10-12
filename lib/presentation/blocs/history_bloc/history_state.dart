@@ -6,8 +6,8 @@ class HistoryState {
   final AudioState audioState;
   final String owner;
   final List<ImageEntryState> imageEntryStates;
+  final List<TextSegmentState> textSegmentStates;
   final List<HistoryVideo>? historyVideos;
-  final List<HistoryText>? historyTexts;
 
   HistoryState({
     this.historyId,
@@ -15,8 +15,8 @@ class HistoryState {
     required this.audioState,
     required this.owner,
     this.historyVideos,
-    this.historyTexts,
     this.imageEntryStates = const [],
+    this.textSegmentStates = const [],
   });
 
   HistoryState copyWith({
@@ -25,7 +25,7 @@ class HistoryState {
     AudioState? audioState,
     String? owner,
     List<HistoryVideo>? historyVideos,
-    List<HistoryText>? historyTexts,
+    List<TextSegmentState>? textSegmentStates,
     List<ImageEntryState>? imageEntryStates,
   }) {
     return HistoryState(
@@ -34,7 +34,7 @@ class HistoryState {
       audioState: audioState ?? this.audioState,
       owner: owner ?? this.owner,
       historyVideos: historyVideos ?? this.historyVideos,
-      historyTexts: historyTexts ?? this.historyTexts,
+      textSegmentStates: textSegmentStates ?? this.textSegmentStates,
       imageEntryStates: imageEntryStates ?? this.imageEntryStates,
     );
   }
@@ -130,5 +130,45 @@ class ImageEntryState {
       isImageFromFilePicker: isImageFromFilePicker,
       imagesInfo: imagesInfo,
     )..minuteController = TextEditingController(text: minuteText ?? minute);
+  }
+}
+
+class TextSegmentState {
+  final String id;
+  final String text;
+  final String minute;
+  late final TextEditingController textController;
+  late final TextEditingController minuteController;
+
+  TextSegmentState({
+    required this.id,
+    this.text = '',
+    this.minute = '',
+  });
+
+  TextSegmentState copyWith({
+    String? text,
+    String? minute,
+  }) {
+    return TextSegmentState(
+      id: id,
+      text: text ?? this.text,
+      minute: minute ?? this.minute,
+    )
+      ..textController = textController
+      ..minuteController = minuteController;
+  }
+
+  TextSegmentState configureControllers({
+    String? text,
+    String? minute,
+  }) {
+    return TextSegmentState(
+      id: id,
+      text: text ?? this.text,
+      minute: minute ?? this.minute,
+    )
+      ..textController = TextEditingController(text: text ?? this.text)
+      ..minuteController = TextEditingController(text: minute ?? this.minute);
   }
 }

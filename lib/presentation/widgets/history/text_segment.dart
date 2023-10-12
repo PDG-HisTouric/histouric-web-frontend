@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TextSegment extends StatefulWidget {
-  const TextSegment({super.key});
+import '../../blocs/blocs.dart';
 
-  @override
-  State<TextSegment> createState() => _TextSegmentState();
-}
+class TextSegment extends StatelessWidget {
+  final String id;
 
-class _TextSegmentState extends State<TextSegment> {
-  String text = '';
-  String minute = '';
+  const TextSegment({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
+    TextSegmentState textSegmentState =
+        context.watch<HistoryBloc>().getTextSegmentStateById(id);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Card(
@@ -29,32 +28,33 @@ class _TextSegmentState extends State<TextSegment> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: TextField(
+                    controller: textSegmentState.textController,
                     decoration: const InputDecoration(
                       labelText: "Text",
                       border: InputBorder.none,
                     ),
                     maxLines: null,
-                    onChanged: (value) {
-                      minute = value;
-                    },
+                    onChanged: (value) => context
+                        .read<HistoryBloc>()
+                        .changeMinuteOfTextSegmentState(id, value),
                   ),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: TextFormField(
+                  controller: textSegmentState.minuteController,
                   decoration: const InputDecoration(labelText: "Minute"),
                   keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    text = value;
-                  },
+                  onChanged: (value) => context
+                      .read<HistoryBloc>()
+                      .changeTextOfTextSegmentState(id, value),
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
-                onPressed: () {
-                  //_removeTextSegmentEntry(index);
-                },
+                onPressed: () =>
+                    context.read<HistoryBloc>().removeTextSegment(id),
               ),
             ],
           ),

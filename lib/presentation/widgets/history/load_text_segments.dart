@@ -1,40 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 import 'text_segment.dart';
 
-class LoadTextSegments extends StatefulWidget {
+class LoadTextSegments extends StatelessWidget {
   const LoadTextSegments({super.key});
 
   @override
-  State<LoadTextSegments> createState() => _LoadTextSegmentsState();
-}
-
-class _LoadTextSegmentsState extends State<LoadTextSegments> {
-  List<TextSegment> textSegments = [];
-
-  void _addTextSegmentEntry() {
-    setState(() {
-      textSegments.add(const TextSegment());
-    });
-  }
-
-  void _removeTextSegmentEntry(int index) {
-    setState(() {
-      textSegments.removeAt(index);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    List<TextSegmentState> textSegments =
+        context.watch<HistoryBloc>().state.textSegmentStates;
     return SingleChildScrollView(
       child: Column(
         children: [
           for (int index = 0; index < textSegments.length; index++)
-            const TextSegment(),
+            TextSegment(id: textSegments[index].id),
           const SizedBox(height: 10),
           FilledButton.icon(
             icon: const Icon(Icons.add),
-            onPressed: _addTextSegmentEntry,
+            onPressed: context.read<HistoryBloc>().addTextSegment,
             label: const Text("Add Text Segment"),
           ),
         ],

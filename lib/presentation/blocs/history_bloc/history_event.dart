@@ -34,6 +34,22 @@ class RemoveImageEntryButtonPressed extends HistoryEvent {
   RemoveImageEntryButtonPressed({required this.id});
 }
 
+class AddTextSegmentButtonPressed extends HistoryEvent {
+  AddTextSegmentButtonPressed();
+}
+
+class TextSegmentStateChanged extends HistoryEvent {
+  final TextSegmentState textSegmentState;
+
+  TextSegmentStateChanged({required this.textSegmentState});
+}
+
+class RemoveTextEntryButtonPressed extends HistoryEvent {
+  final String id;
+
+  RemoveTextEntryButtonPressed({required this.id});
+}
+
 class HistoryVideoAdded extends HistoryEvent {
   final HistoryVideo video;
 

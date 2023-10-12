@@ -19,6 +19,9 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     on<AddImageButtonPressed>(_onAddImageButtonPressed);
     on<RemoveImageEntryButtonPressed>(_onRemoveImageEntryButtonPressed);
     on<ImageEntryStateChanged>(_onImageEntryStateChanged);
+    on<AddTextSegmentButtonPressed>(_onAddTextSegmentButtonPressed);
+    on<TextSegmentStateChanged>(_onTextSegmentStateChanged);
+    on<RemoveTextEntryButtonPressed>(_onRemoveTextEntryButtonPressed);
   }
 
   void _onHistoryAudioStateChanged(
@@ -120,5 +123,61 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 
   ImageEntryState getImageEntryStateById(String id) {
     return state.imageEntryStates.firstWhere((element) => element.id == id);
+  }
+
+  void _onAddTextSegmentButtonPressed(
+      AddTextSegmentButtonPressed event, Emitter<HistoryState> emit) {
+    const uuid = Uuid();
+    final newTextSegmentState =
+        TextSegmentState(id: uuid.v4()).configureControllers();
+    final newTextSegmentStates = [
+      ...state.textSegmentStates,
+      newTextSegmentState
+    ];
+    emit(state.copyWith(textSegmentStates: newTextSegmentStates));
+  }
+
+  void addTextSegment() {
+    add(AddTextSegmentButtonPressed());
+  }
+
+  void _onTextSegmentStateChanged(
+      TextSegmentStateChanged event, Emitter<HistoryState> emit) {
+    final newTextSegmentStates = state.textSegmentStates
+        .map((element) => element.id == event.textSegmentState.id
+            ? event.textSegmentState
+            : element)
+        .toList();
+    emit(state.copyWith(textSegmentStates: newTextSegmentStates));
+  }
+
+  void changeMinuteOfTextSegmentState(String id, String minute) {
+    final TextSegmentState newTextSegmentState = state.textSegmentStates
+        .firstWhere((element) => element.id == id)
+        .copyWith(minute: minute);
+    add(TextSegmentStateChanged(textSegmentState: newTextSegmentState));
+  }
+
+  void changeTextOfTextSegmentState(String id, String text) {
+    final TextSegmentState newTextSegmentState = state.textSegmentStates
+        .firstWhere((element) => element.id == id)
+        .copyWith(text: text);
+    add(TextSegmentStateChanged(textSegmentState: newTextSegmentState));
+  }
+
+  TextSegmentState getTextSegmentStateById(String id) {
+    return state.textSegmentStates.firstWhere((element) => element.id == id);
+  }
+
+  void _onRemoveTextEntryButtonPressed(
+      RemoveTextEntryButtonPressed event, Emitter<HistoryState> emit) {
+    final newTextSegmentStates = state.textSegmentStates
+        .where((element) => element.id != event.id)
+        .toList();
+    emit(state.copyWith(textSegmentStates: newTextSegmentStates));
+  }
+
+  void removeTextSegment(String id) {
+    add(RemoveTextEntryButtonPressed(id: id));
   }
 }
