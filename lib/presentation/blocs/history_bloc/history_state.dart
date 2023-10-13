@@ -7,16 +7,16 @@ class HistoryState {
   final String owner;
   final List<ImageEntryState> imageEntryStates;
   final List<TextSegmentState> textSegmentStates;
-  final List<HistoryVideo>? historyVideos;
+  final List<VideoEntry> videoEntries;
 
   HistoryState({
     this.historyId,
     this.title,
     required this.audioState,
     required this.owner,
-    this.historyVideos,
     this.imageEntryStates = const [],
     this.textSegmentStates = const [],
+    this.videoEntries = const [],
   });
 
   HistoryState copyWith({
@@ -24,7 +24,7 @@ class HistoryState {
     String? title,
     AudioState? audioState,
     String? owner,
-    List<HistoryVideo>? historyVideos,
+    List<VideoEntry>? videoEntries,
     List<TextSegmentState>? textSegmentStates,
     List<ImageEntryState>? imageEntryStates,
   }) {
@@ -33,7 +33,7 @@ class HistoryState {
       title: title ?? this.title,
       audioState: audioState ?? this.audioState,
       owner: owner ?? this.owner,
-      historyVideos: historyVideos ?? this.historyVideos,
+      videoEntries: videoEntries ?? this.videoEntries,
       textSegmentStates: textSegmentStates ?? this.textSegmentStates,
       imageEntryStates: imageEntryStates ?? this.imageEntryStates,
     );

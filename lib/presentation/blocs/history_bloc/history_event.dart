@@ -50,47 +50,27 @@ class RemoveTextEntryButtonPressed extends HistoryEvent {
   RemoveTextEntryButtonPressed({required this.id});
 }
 
-class HistoryVideoAdded extends HistoryEvent {
-  final HistoryVideo video;
+class VideoFromFilePickerAdded extends HistoryEvent {
+  final Uint8List video;
+  final String extension;
 
-  HistoryVideoAdded({required this.video});
+  VideoFromFilePickerAdded({required this.video, required this.extension});
 }
 
-class HistoryVideoRemoved extends HistoryEvent {
-  final HistoryVideo video;
+class VideoFromUrlAdded extends HistoryEvent {
+  final String url;
+  final double width;
+  final double height;
 
-  HistoryVideoRemoved({required this.video});
+  VideoFromUrlAdded({
+    required this.url,
+    required this.width,
+    required this.height,
+  });
 }
 
-class VideoUrlChanged extends HistoryEvent {
-  final String videoUrl;
+class RemoveVideoEntryButtonPressed extends HistoryEvent {
   final String id;
 
-  VideoUrlChanged({required this.videoUrl, required this.id});
-}
-
-class HistoryTextAdded extends HistoryEvent {
-  final HistoryText text;
-
-  HistoryTextAdded({required this.text});
-}
-
-class HistoryTextRemoved extends HistoryEvent {
-  final HistoryText text;
-
-  HistoryTextRemoved({required this.text});
-}
-
-class TextContentChanged extends HistoryEvent {
-  final String content;
-  final String id;
-
-  TextContentChanged({required this.content, required this.id});
-}
-
-class TextStartTimeChanged extends HistoryEvent {
-  final int startTime;
-  final String id;
-
-  TextStartTimeChanged({required this.startTime, required this.id});
+  RemoveVideoEntryButtonPressed({required this.id});
 }

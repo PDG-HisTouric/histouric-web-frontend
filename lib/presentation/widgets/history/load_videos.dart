@@ -1,29 +1,16 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../config/config.dart';
-import '../../../domain/entities/entities.dart';
+import '../../blocs/blocs.dart';
 import '../../js_bridge/js_bridge.dart';
-import '../video/video.dart';
+import 'video_entry.dart';
 
-class LoadVideos extends StatefulWidget {
-  const LoadVideos({super.key});
+class LoadVideos extends StatelessWidget {
+  LoadVideos({super.key});
+  final AbstractFilePicker filePicker = FilePickerImpl();
 
-  @override
-  State<LoadVideos> createState() => _LoadVideosState();
-}
-
-class _LoadVideosState extends State<LoadVideos> {
-  List<Uint8List> videos = [];
-  List<String> videosNames = [];
-  List<String> selectedVideos = [];
-  List<String> videosExtensions = [];
-  bool isVideoFromFilePicker = false;
-  List<HistouricVideoInfo> videosInfo = [];
-  AbstractFilePicker filePicker = FilePickerImpl();
-
-  void _loadVideoFromDrive() {
+  void _loadVideoFromDrive(BuildContext context) {
     GooglePicker.callFilePicker(
       apiKey: Environment.pickerApiKey,
       appId: Environment.pickerApiAppId,
@@ -33,10 +20,14 @@ class _LoadVideosState extends State<LoadVideos> {
     GooglePicker.waitUntilThePickerIsOpen().then((value) {
       GooglePicker.waitUntilThePickerIsClosed().then((value) {
         if (!GooglePicker.callGetIsThereAnError()) {
-          setState(() {
-            isVideoFromFilePicker = false;
-            videosInfo = GooglePicker.getInfoOfSelectedVideos();
-          });
+          final videosInfo = GooglePicker.getInfoOfSelectedVideos();
+          for (var videoInfo in videosInfo) {
+            context.read<HistoryBloc>().addVideoFromUrl(
+                  url: videoInfo.url,
+                  width: videoInfo.width,
+                  height: videoInfo.height,
+                );
+          }
         }
       });
     });
@@ -44,26 +35,14 @@ class _LoadVideosState extends State<LoadVideos> {
 
   @override
   Widget build(BuildContext context) {
+    List<VideoEntry> videoEntries =
+        context.watch<HistoryBloc>().state.videoEntries;
+
     return Column(
       children: [
-        if (isVideoFromFilePicker)
-          Wrap(
-            children: [
-              for (int i = 0; i < videos.length; i++)
-                HtmlVideoFromUint8List(
-                  uint8List: videos[i],
-                  extension: videosExtensions[i],
-                ),
-            ],
-          ),
-        if (!isVideoFromFilePicker)
-          Wrap(
-            children: videosInfo
-                .map(
-                  (videoInfo) => HtmlVideoContainer(url: videoInfo.url),
-                )
-                .toList(),
-          ),
+        Wrap(
+          children: videoEntries,
+        ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -72,12 +51,11 @@ class _LoadVideosState extends State<LoadVideos> {
               icon: const Icon(Icons.add),
               onPressed: () {
                 filePicker.selectVideos().then((result) {
-                  setState(() {
-                    videos = result.$1;
-                    videosExtensions = result.$2;
-                    videosNames = result.$3;
-                    isVideoFromFilePicker = true;
-                  });
+                  for (int i = 0; i < result.$1.length; i++) {
+                    context
+                        .read<HistoryBloc>()
+                        .addVideoFromFilePicker(result.$1[i], result.$2[i]);
+                  }
                 });
               },
               label: const Text("From File Explorer"),
@@ -85,7 +63,7 @@ class _LoadVideosState extends State<LoadVideos> {
             const SizedBox(width: 10),
             ElevatedButton.icon(
               icon: const Icon(Icons.add),
-              onPressed: _loadVideoFromDrive,
+              onPressed: () => _loadVideoFromDrive(context),
               label: const Text("From Google Drive"),
             ),
           ],

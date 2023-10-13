@@ -4,3 +4,4 @@ export 'load_videos.dart';
 export 'load_text_segments.dart';
 export 'load_images.dart';
 export 'load_audio.dart';
+export 'video_entry.dart';

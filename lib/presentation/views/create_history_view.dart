@@ -18,8 +18,7 @@ class CreateHistoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          // owner: context.read<AuthBloc>().state.id!
-          HistoryBloc(owner: 'ownerId'),
+          HistoryBloc(owner: context.read<AuthBloc>().state.id!),
       child: const _CreateHistoryView(),
     );
   }
@@ -44,11 +43,11 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
       title: Text("Cargar Imágenes"),
       content: LoadImages(),
     ),
-    Step(
+    const Step(
       title: Text("Cargar Segmentos de Texto"),
       content: LoadTextSegments(),
     ),
-    const Step(
+    Step(
       title: Text("Cargar Videos (Opcional)"),
       content: LoadVideos(),
       isActive: false,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../domain/entities/entities.dart';
+import '../../widgets/history/history_widgets.dart';
 
 part 'history_event.dart';
 part 'history_state.dart';
@@ -22,6 +23,9 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     on<AddTextSegmentButtonPressed>(_onAddTextSegmentButtonPressed);
     on<TextSegmentStateChanged>(_onTextSegmentStateChanged);
     on<RemoveTextEntryButtonPressed>(_onRemoveTextEntryButtonPressed);
+    on<VideoFromFilePickerAdded>(_onVideoFromFilePickerAdded);
+    on<VideoFromUrlAdded>(_onVideoFromUrlAdded);
+    on<RemoveVideoEntryButtonPressed>(_onRemoveVideoEntryButtonPressed);
   }
 
   void _onHistoryAudioStateChanged(
@@ -179,5 +183,55 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 
   void removeTextSegment(String id) {
     add(RemoveTextEntryButtonPressed(id: id));
+  }
+
+  void _onVideoFromFilePickerAdded(
+      VideoFromFilePickerAdded event, Emitter<HistoryState> emit) {
+    const uuid = Uuid();
+    final historyVideoEntry = VideoEntry(
+      id: uuid.v4(),
+      video: event.video,
+      extension: event.extension,
+      isVideoFromFilePicker: true,
+    );
+    final newVideoEntries = [...state.videoEntries, historyVideoEntry];
+    emit(state.copyWith(videoEntries: newVideoEntries));
+  }
+
+  void addVideoFromFilePicker(Uint8List video, String extension) {
+    add(VideoFromFilePickerAdded(video: video, extension: extension));
+  }
+
+  void _onVideoFromUrlAdded(
+      VideoFromUrlAdded event, Emitter<HistoryState> emit) {
+    const uuid = Uuid();
+    final historyVideoEntry = VideoEntry(
+      id: uuid.v4(),
+      url: event.url,
+      width: event.width,
+      height: event.height,
+      isVideoFromFilePicker: false,
+    );
+    final newVideoEntries = [...state.videoEntries, historyVideoEntry];
+    emit(state.copyWith(videoEntries: newVideoEntries));
+  }
+
+  void addVideoFromUrl({
+    required String url,
+    required double width,
+    required double height,
+  }) {
+    add(VideoFromUrlAdded(url: url, width: width, height: height));
+  }
+
+  void _onRemoveVideoEntryButtonPressed(
+      RemoveVideoEntryButtonPressed event, Emitter<HistoryState> emit) {
+    final newVideoEntries =
+        state.videoEntries.where((element) => element.id != event.id).toList();
+    emit(state.copyWith(videoEntries: newVideoEntries));
+  }
+
+  void removeVideoEntry(String id) {
+    add(RemoveVideoEntryButtonPressed(id: id));
   }
 }
