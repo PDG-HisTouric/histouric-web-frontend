@@ -1,13 +1,23 @@
+import 'history_image.dart';
+import 'history_text.dart';
+import 'history_video.dart';
+
 class BICHistory {
-  final String historyId;
+  final String? historyId;
   final String title;
-  final String description;
-  final String image;
+  final String audioUrl;
+  final String owner;
+  final List<HistoryVideo>? videos;
+  final List<HistoryText> texts;
+  final List<HistoryImage>? images;
 
   BICHistory({
-    required this.historyId,
+    this.historyId,
     required this.title,
-    required this.description,
-    required this.image,
+    required this.audioUrl,
+    required this.owner,
+    this.videos,
+    required this.texts,
+    this.images,
   });
 }

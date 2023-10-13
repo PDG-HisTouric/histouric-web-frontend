@@ -98,10 +98,7 @@ class _PruebaViewState extends State<PruebaView> {
             Wrap(
               children: [
                 for (int i = 0; i < imagesFromFirebase.length; i++)
-                  RoundedHtmlImage(
-                    imageId: imagesFromFirebase[i],
-                    isFromDrive: false,
-                  ),
+                  RoundedHtmlImage(imageId: imagesFromFirebase[i]),
               ],
             ),
             ElevatedButton(
@@ -257,9 +254,8 @@ class _PruebaViewState extends State<PruebaView> {
     _waitUntilThePickerIsOpen().then((value) {
       _waitUntilThePickerIsClosed().then((value) {
         if (!GooglePicker.callGetIsThereAnError()) {
-          final audioId = GooglePicker.callGetSelectedAudioId();
           setState(() {
-            src = 'https://drive.google.com/uc?export=download&id=$audioId';
+            src = GooglePicker.callGetSelectedAudioUrl();
           });
         }
       });

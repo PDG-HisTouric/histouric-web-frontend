@@ -6,3 +6,6 @@ export 'bic.dart';
 export 'bic_history.dart';
 export 'histouric_image_info.dart';
 export 'histouric_video_info.dart';
+export 'history_image.dart';
+export 'history_text.dart';
+export 'history_video.dart';

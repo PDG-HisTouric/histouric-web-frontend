@@ -7,3 +7,4 @@ export 'route_bloc/route_bloc.dart';
 export 'sidemenu_bloc/sidemenu_bloc.dart';
 export 'sign_up_bloc/sign_up_bloc.dart';
 export 'users_table_bloc/users_table_bloc.dart';
+export 'history_bloc/history_bloc.dart';

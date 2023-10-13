@@ -19,7 +19,7 @@ external bool getIsPickerOpen();
 external List<List<dynamic>> getSelectedImagesInfo();
 
 @JS()
-external String getSelectedAudioId();
+external String getSelectedAudioUrl();
 
 @JS()
 external List<List<dynamic>> getSelectedVideosInfo();

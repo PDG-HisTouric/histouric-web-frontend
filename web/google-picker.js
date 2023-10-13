@@ -4,7 +4,7 @@ let pickerInited = false;
 let gisInited = false;
 let selectedImagesInfo;
 let selectedVideosInfo;
-let selectedAudioId;
+let selectedAudioUrl;
 let isPickerOpen = false;
 let isThereAnError = false;
 let globalMediaType;
@@ -127,7 +127,7 @@ async function pickerCallback(data) {
             await getInfoOfVideos(documents);
             break;
         case 'audio':
-            selectedAudioId = documents[0][google.picker.Document.ID];
+            selectedAudioUrl = 'https://drive.google.com/uc?export=view&id='+documents[0][google.picker.Document.ID];
             break;
     }
     isPickerOpen = false;
@@ -139,7 +139,7 @@ async function getInfoOfImages(documents) {
   for (let i = 0; i < documents.length; i++) {
     let imageInfo = [];
     const fileId = documents[i][google.picker.Document.ID];
-    imageInfo.push(fileId);
+    imageInfo.push('https://drive.google.com/uc?export=view&id='+fileId);
     const fileInfo = await getInfoOfDriveFileById(fileId);
     imageInfo.push(fileInfo.imageMediaMetadata.width);
     imageInfo.push(fileInfo.imageMediaMetadata.height);
@@ -190,8 +190,8 @@ function getSelectedImagesInfo() {
   return selectedImagesInfo;
 }
 
-function getSelectedAudioId() {
-  return selectedAudioId;
+function getSelectedAudioUrl() {
+  return selectedAudioUrl;
 }
 
 function getSelectedVideosInfo() {

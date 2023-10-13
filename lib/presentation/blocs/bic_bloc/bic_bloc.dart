@@ -80,7 +80,7 @@ class BicBloc extends Bloc<BicEvent, BicState> {
           longitude: longitude,
           nicknames: [],
           histories: [],
-          imagesUris: state.driveImagesInfo.map((e) => e.id).toList(),
+          imagesUris: state.driveImagesInfo.map((e) => e.url).toList(),
         ),
       );
       emit(state.copyWith(status: SubmissionStatus.submissionSuccess));

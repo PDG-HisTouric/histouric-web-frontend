@@ -7,7 +7,6 @@ class RoundedHtmlImage extends StatelessWidget {
   final double width;
   final double height;
   final double borderRadius;
-  final bool isFromDrive;
 
   const RoundedHtmlImage({
     super.key,
@@ -15,7 +14,6 @@ class RoundedHtmlImage extends StatelessWidget {
     this.width = 300,
     this.height = 300,
     this.borderRadius = 20,
-    required this.isFromDrive,
   });
 
   @override
@@ -26,11 +24,11 @@ class RoundedHtmlImage extends StatelessWidget {
         width: width,
         height: height,
         child: FittedBox(
-          fit: BoxFit.cover,
+          fit: BoxFit.none,
           child: SizedBox(
             height: height,
             width: width,
-            child: HtmlImage(url: imageId, isFromDrive: isFromDrive),
+            child: HtmlImage(url: imageId),
           ),
         ),
       ),
