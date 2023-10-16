@@ -1,15 +1,8 @@
-import 'dart:typed_data';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
-import '../../config/config.dart';
-import '../../domain/domain.dart';
-import '../js_bridge/js_bridge.dart';
 import '../widgets/history/history_widgets.dart';
-import '../widgets/widgets.dart';
 
 class CreateHistoryView extends StatelessWidget {
   const CreateHistoryView({super.key});
@@ -18,7 +11,8 @@ class CreateHistoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          HistoryBloc(owner: context.read<AuthBloc>().state.id!),
+          // HistoryBloc(owner: context.read<AuthBloc>().state.id!),
+          HistoryBloc(owner: ''),
       child: const _CreateHistoryView(),
     );
   }

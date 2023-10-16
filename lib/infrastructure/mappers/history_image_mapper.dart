@@ -1,0 +1,40 @@
+import 'package:dio/dio.dart';
+
+import '../../domain/entities/entities.dart';
+import '../models/models.dart';
+
+class HistoryImageMapper {
+  static Map<String, dynamic> fromHistoryImageCreationToMap(
+      HistoryImageCreation historyImageCreation) {
+    if (historyImageCreation.needsUrlGen) {
+      final multiPartFile = MultipartFile.fromBytes(
+        historyImageCreation.imageFile!,
+        filename: historyImageCreation.imageName!,
+      );
+      return {
+        'imageUri': null,
+        'imageFile': multiPartFile,
+        'startTime': historyImageCreation.startTime,
+        'needsUrlGen': historyImageCreation.needsUrlGen,
+      };
+    } else {
+      return {
+        'imageUri': historyImageCreation.imageUri!,
+        'imageFile': null,
+        'startTime': historyImageCreation.startTime,
+        'needsUrlGen': historyImageCreation.needsUrlGen,
+      };
+    }
+  }
+
+  static HistoryImage fromHistoryImageResponseToHistoryImage(
+      HistoryImageResponse historyImageResponse) {
+    return HistoryImage(
+      id: historyImageResponse.id,
+      imageUri: historyImageResponse.imageUri,
+      startTime: historyImageResponse.startTime,
+      needsUrlGen: historyImageResponse.needsUrlGen,
+      historyId: historyImageResponse.historyId,
+    );
+  }
+}
