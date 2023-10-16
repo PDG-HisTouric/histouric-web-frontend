@@ -2,7 +2,7 @@ part of 'history_bloc.dart';
 
 class HistoryState {
   final String? historyId;
-  final String? title;
+  final String title;
   final AudioState audioState;
   final String owner;
   final List<ImageEntryState> imageEntryStates;
@@ -11,7 +11,7 @@ class HistoryState {
 
   HistoryState({
     this.historyId,
-    this.title,
+    this.title = '',
     required this.audioState,
     required this.owner,
     this.imageEntryStates = const [],
@@ -48,11 +48,11 @@ class AudioState {
   final bool isAudioFromFilePicker;
 
   AudioState({
-    required this.src,
+    this.src = '',
     this.audio,
     this.audioName,
     this.audioExtension,
-    required this.isAudioFromFilePicker,
+    this.isAudioFromFilePicker = false,
   });
 
   AudioState copyWith({
@@ -131,6 +131,16 @@ class ImageEntryState {
       imagesInfo: imagesInfo,
     )..minuteController = TextEditingController(text: minuteText ?? minute);
   }
+
+  int getSeconds() {
+    if (minute.isNotEmpty) {
+      List<String> parts = minute.split(':');
+      int minutes = int.parse(parts[0]);
+      int seconds = int.parse(parts[1]);
+      return minutes * 60 + seconds;
+    }
+    return 0;
+  }
 }
 
 class TextSegmentState {
@@ -170,5 +180,15 @@ class TextSegmentState {
     )
       ..textController = TextEditingController(text: text ?? this.text)
       ..minuteController = TextEditingController(text: minute ?? this.minute);
+  }
+
+  int getSeconds() {
+    if (minute.isNotEmpty) {
+      List<String> parts = minute.split(':');
+      int minutes = int.parse(parts[0]);
+      int seconds = int.parse(parts[1]);
+      return minutes * 60 + seconds;
+    }
+    return 0;
   }
 }

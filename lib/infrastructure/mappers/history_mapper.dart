@@ -7,27 +7,34 @@ import 'history_text_mapper.dart';
 import 'history_video_mapper.dart';
 
 class HistoryMapper {
-  static Map<String, dynamic> fromHistoryCreatioToMap(
+  static Map<String, dynamic> fromHistoryCreationToMap(
       HistoryCreation historyCreation) {
+    List<Map<String, dynamic>> texts = [];
+    for (int i = 0; i < historyCreation.texts.length; i++) {
+      var text = historyCreation.texts[i];
+      texts.add(HistoryTextMapper.fromTextCreationToMap(text));
+    }
+
+    List<Map<String, dynamic>> images = [];
+    for (int i = 0; i < historyCreation.images.length; i++) {
+      var image = historyCreation.images[i];
+      images.add(HistoryImageMapper.fromHistoryImageCreationToMap(image));
+    }
+
+    List<Map<String, dynamic>> videos = [];
+    for (int i = 0; i < historyCreation.videos.length; i++) {
+      var video = historyCreation.videos[i];
+      videos.add(HistoryVideoMapper.fromVideoCreationToMap(video));
+    }
     return {
-      'title': historyCreation.title,
+      'title': "titulo de prueba", //TODO: QUITAR
+      // 'title': historyCreation.title,
       'audio': HistoryAudioMapper.fromAudioCreationToMap(historyCreation.audio),
-      'owner': historyCreation.owner,
-      'videos': historyCreation.videos
-          ?.map((video) => {
-                HistoryVideoMapper.fromVideoCreationToMap(video),
-              })
-          .toList(),
-      'texts': historyCreation.texts
-          .map((text) => {
-                HistoryTextMapper.fromTextCreationToMap(text),
-              })
-          .toList(),
-      'images': historyCreation.images
-          ?.map((image) => {
-                HistoryImageMapper.fromHistoryImageCreationToMap(image),
-              })
-          .toList(),
+      'owner': '105e7d19-1368-46f5-8224-5d4a7338f331', //TODO: QUITAR
+      // 'owner': historyCreation.owner,
+      'videos': videos,
+      'texts': texts,
+      'images': images,
     };
   }
 

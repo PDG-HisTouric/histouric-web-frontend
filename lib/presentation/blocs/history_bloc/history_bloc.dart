@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../domain/entities/entities.dart';
+import '../../../domain/repositories/repositories.dart';
+import '../../../infrastructure/models/models.dart';
 import '../../widgets/history/history_widgets.dart';
 
 part 'history_event.dart';
@@ -12,10 +14,14 @@ part 'history_state.dart';
 
 class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   final String owner;
-  HistoryBloc({required this.owner})
-      : super(HistoryState(
+  final HistoryRepository historyRepository;
+  HistoryBloc({required this.owner, required this.historyRepository})
+      : super(
+          HistoryState(
             owner: owner,
-            audioState: AudioState(src: '', isAudioFromFilePicker: false))) {
+            audioState: AudioState(audio: Uint8List(0)),
+          ),
+        ) {
     on<HistoryAudioStateChanged>(_onHistoryAudioStateChanged);
     on<AddImageButtonPressed>(_onAddImageButtonPressed);
     on<RemoveImageEntryButtonPressed>(_onRemoveImageEntryButtonPressed);
@@ -193,13 +199,15 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       video: event.video,
       extension: event.extension,
       isVideoFromFilePicker: true,
+      name: event.name,
     );
     final newVideoEntries = [...state.videoEntries, historyVideoEntry];
     emit(state.copyWith(videoEntries: newVideoEntries));
   }
 
-  void addVideoFromFilePicker(Uint8List video, String extension) {
-    add(VideoFromFilePickerAdded(video: video, extension: extension));
+  void addVideoFromFilePicker(Uint8List video, String extension, String name) {
+    add(VideoFromFilePickerAdded(
+        video: video, extension: extension, name: name));
   }
 
   void _onVideoFromUrlAdded(
@@ -233,5 +241,75 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 
   void removeVideoEntry(String id) {
     add(RemoveVideoEntryButtonPressed(id: id));
+  }
+
+  void createHistory() {
+    final AudioCreation audio;
+    final temp = state.audioState.audio!;
+    if (state.audioState.isAudioFromFilePicker) {
+      audio = AudioCreation(
+        audioFile: state.audioState.audio!,
+        audioName: state.audioState.audioName!,
+        needsUrlGen: true,
+      );
+    } else {
+      audio = AudioCreation(
+        needsUrlGen: false,
+        audioUri: state.audioState.src,
+      );
+    }
+
+    final List<TextCreation> texts = state.textSegmentStates
+        .map((textSegment) => TextCreation(
+              content: textSegment.text,
+              startTime: textSegment.getSeconds(),
+            ))
+        .toList();
+
+    final List<HistoryImageCreation> images =
+        state.imageEntryStates.map((imageEntry) {
+      if (imageEntry.isImageFromFilePicker) {
+        return HistoryImageCreation(
+          imageFile: imageEntry.images.first,
+          imageName: imageEntry.imagesNames.first,
+          needsUrlGen: true,
+          startTime: imageEntry.getSeconds(),
+        );
+      } else {
+        return HistoryImageCreation(
+          needsUrlGen: false,
+          imageUri: imageEntry.imagesInfo.first.url,
+          startTime: imageEntry.getSeconds(),
+        );
+      }
+    }).toList();
+
+    final List<VideoCreation> videos = state.videoEntries.map((videoEntry) {
+      if (videoEntry.isVideoFromFilePicker) {
+        return VideoCreation(
+          videoFile: videoEntry.video!,
+          videoName: videoEntry.name!,
+          needsUrlGen: true,
+        );
+      } else {
+        return VideoCreation(
+          needsUrlGen: false,
+          videoUri: videoEntry.url,
+        );
+      }
+    }).toList();
+
+    final HistoryCreation historyCreation = HistoryCreation(
+      title: state.title,
+      audio: audio,
+      owner: owner,
+      texts: texts,
+      images: images,
+      videos: videos,
+    );
+
+    historyRepository.createHistory(historyCreation).then((value) {
+      print(value);
+    });
   }
 }

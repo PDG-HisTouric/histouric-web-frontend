@@ -12,4 +12,18 @@ class VideoCreation {
     this.videoName,
     required this.needsUrlGen,
   });
+
+  VideoCreation copyWith({
+    String? videoUri,
+    Uint8List? videoFile,
+    String? videoName,
+    bool? needsUrlGen,
+  }) {
+    return VideoCreation(
+      videoUri: videoUri ?? this.videoUri,
+      videoFile: videoFile ?? this.videoFile,
+      videoName: videoName ?? this.videoName,
+      needsUrlGen: needsUrlGen ?? this.needsUrlGen,
+    );
+  }
 }

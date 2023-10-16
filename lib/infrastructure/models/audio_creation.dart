@@ -12,4 +12,18 @@ class AudioCreation {
     this.audioName,
     required this.needsUrlGen,
   });
+
+  AudioCreation copyWith({
+    String? audioUri,
+    Uint8List? audioFile,
+    String? audioName,
+    bool? needsUrlGen,
+  }) {
+    return AudioCreation(
+      audioUri: audioUri ?? this.audioUri,
+      audioFile: audioFile ?? this.audioFile,
+      audioName: audioName ?? this.audioName,
+      needsUrlGen: needsUrlGen ?? this.needsUrlGen,
+    );
+  }
 }

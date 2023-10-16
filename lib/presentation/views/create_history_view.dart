@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
+import '../../infrastructure/datasources/datasources.dart';
+import '../../infrastructure/repositories/repositories.dart';
 import '../widgets/history/history_widgets.dart';
 
 class CreateHistoryView extends StatelessWidget {
@@ -12,7 +14,14 @@ class CreateHistoryView extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           // HistoryBloc(owner: context.read<AuthBloc>().state.id!),
-          HistoryBloc(owner: ''),
+          HistoryBloc(
+              owner: '',
+              historyRepository: HistoryRepositoryImpl(
+                historyDatasource: HistoryDatasourceImpl(
+                    firebaseStorageRepository: FirebaseStorageRepositoryImpl(
+                  firebaseStorageDataSource: FirebaseStorageDatasourceImpl(),
+                )),
+              )),
       child: const _CreateHistoryView(),
     );
   }
@@ -30,11 +39,11 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
 
   final List<Step> _steps = [
     Step(
-      title: Text("Cargar Audio"),
+      title: const Text("Cargar Audio"),
       content: LoadAudio(),
     ),
     Step(
-      title: Text("Cargar Imágenes"),
+      title: const Text("Cargar Imágenes"),
       content: LoadImages(),
     ),
     const Step(
@@ -42,7 +51,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
       content: LoadTextSegments(),
     ),
     Step(
-      title: Text("Cargar Videos (Opcional)"),
+      title: const Text("Cargar Videos (Opcional)"),
       content: LoadVideos(),
       isActive: false,
     ),
@@ -115,7 +124,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
                 if (_currentStep == _steps.length - 1)
                   FilledButton.icon(
                     icon: const Icon(Icons.check),
-                    onPressed: controlsDetails.onStepContinue,
+                    onPressed: context.read<HistoryBloc>().createHistory,
                     label: const Text("Finish"),
                   ),
               ],

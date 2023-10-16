@@ -36,7 +36,7 @@ class TextSegment extends StatelessWidget {
                     maxLines: null,
                     onChanged: (value) => context
                         .read<HistoryBloc>()
-                        .changeMinuteOfTextSegmentState(id, value),
+                        .changeTextOfTextSegmentState(id, value),
                   ),
                 ),
               ),
@@ -48,7 +48,7 @@ class TextSegment extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   onChanged: (value) => context
                       .read<HistoryBloc>()
-                      .changeTextOfTextSegmentState(id, value),
+                      .changeMinuteOfTextSegmentState(id, value),
                 ),
               ),
               IconButton(

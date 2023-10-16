@@ -14,4 +14,20 @@ class HistoryImageCreation {
     required this.startTime,
     required this.needsUrlGen,
   });
+
+  HistoryImageCreation copyWith({
+    String? imageUri,
+    Uint8List? imageFile,
+    String? imageName,
+    int? startTime,
+    bool? needsUrlGen,
+  }) {
+    return HistoryImageCreation(
+      imageUri: imageUri ?? this.imageUri,
+      imageFile: imageFile ?? this.imageFile,
+      imageName: imageName ?? this.imageName,
+      startTime: startTime ?? this.startTime,
+      needsUrlGen: needsUrlGen ?? this.needsUrlGen,
+    );
+  }
 }

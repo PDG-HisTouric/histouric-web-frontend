@@ -52,9 +52,8 @@ class LoadVideos extends StatelessWidget {
               onPressed: () {
                 filePicker.selectVideos().then((result) {
                   for (int i = 0; i < result.$1.length; i++) {
-                    context
-                        .read<HistoryBloc>()
-                        .addVideoFromFilePicker(result.$1[i], result.$2[i]);
+                    context.read<HistoryBloc>().addVideoFromFilePicker(
+                        result.$1[i], result.$2[i], result.$3[i]);
                   }
                 });
               },
