@@ -16,8 +16,8 @@ class LoadImages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<ImageEntryState> imageEntries =
-        context.watch<HistoryBloc>().state.imageEntryStates;
+    final imageEntries = context.select(
+        (HistoryBloc historyBloc) => historyBloc.state.imageEntryStates);
 
     return SingleChildScrollView(
       child: Column(

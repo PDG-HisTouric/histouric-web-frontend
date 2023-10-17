@@ -30,7 +30,7 @@ class HistoryMapper {
       'title': "titulo de prueba", //TODO: QUITAR
       // 'title': historyCreation.title,
       'audio': HistoryAudioMapper.fromAudioCreationToMap(historyCreation.audio),
-      'owner': '105e7d19-1368-46f5-8224-5d4a7338f331', //TODO: QUITAR
+      'owner': 'b4342a24-1fec-4004-ba18-13a3e4a00edb', //TODO: QUITAR
       // 'owner': historyCreation.owner,
       'videos': videos,
       'texts': texts,

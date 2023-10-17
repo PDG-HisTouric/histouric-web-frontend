@@ -10,8 +10,10 @@ class TextSegment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextSegmentState textSegmentState =
-        context.watch<HistoryBloc>().getTextSegmentStateById(id);
+    final textSegments = context.select(
+        (HistoryBloc historyBloc) => historyBloc.state.textSegmentStates);
+    final textSegmentState =
+        textSegments.firstWhere((element) => element.id == id);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Card(

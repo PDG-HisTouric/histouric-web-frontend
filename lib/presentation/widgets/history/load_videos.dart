@@ -35,9 +35,8 @@ class LoadVideos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<VideoEntry> videoEntries =
-        context.watch<HistoryBloc>().state.videoEntries;
-
+    final videoEntries = context
+        .select((HistoryBloc historyBloc) => historyBloc.state.videoEntries);
     return Column(
       children: [
         Wrap(

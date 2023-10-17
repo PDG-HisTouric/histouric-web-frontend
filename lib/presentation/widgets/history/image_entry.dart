@@ -48,11 +48,10 @@ class ImageEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardWidth = MediaQuery.of(context).size.width * 0.35;
-    ImageEntryState imageEntryState = context
-        .watch<HistoryBloc>()
-        .state
-        .imageEntryStates
-        .firstWhere((element) => element.id == id);
+    final imageEntries = context.select(
+        (HistoryBloc historyBloc) => historyBloc.state.imageEntryStates);
+    final imageEntryState =
+        imageEntries.firstWhere((element) => element.id == id);
 
     return Card(
       child: Padding(

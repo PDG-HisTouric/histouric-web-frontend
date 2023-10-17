@@ -8,7 +8,7 @@ import '../audio/audio.dart';
 
 class LoadAudio extends StatelessWidget {
   LoadAudio({super.key});
-  AbstractFilePicker filePicker = FilePickerImpl();
+  final AbstractFilePicker filePicker = FilePickerImpl();
 
   void _loadAudioFromDrive(BuildContext context) {
     GooglePicker.callFilePicker(
@@ -31,7 +31,8 @@ class LoadAudio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AudioState audioState = context.watch<HistoryBloc>().state.audioState;
+    final audioState = context
+        .select((HistoryBloc historyBloc) => historyBloc.state.audioState);
     return Column(
       children: [
         if (!audioState.isAudioFromFilePicker)
