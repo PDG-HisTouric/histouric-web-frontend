@@ -29,6 +29,20 @@ class LoadAudio extends StatelessWidget {
     });
   }
 
+  void _loadAudioFromFilePicker(BuildContext context) {
+    filePicker.selectAudio().then((result) {
+      final audio = result.$1;
+      if (audio != null) {
+        context.read<HistoryBloc>().changeAudioState(
+              isAudioFromFilePicker: true,
+              audio: result.$1,
+              audioExtension: result.$2,
+              audioName: result.$3,
+            );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final audioState = context
@@ -54,17 +68,8 @@ class LoadAudio extends StatelessWidget {
           children: [
             ElevatedButton.icon(
               icon: const Icon(Icons.add),
-              onPressed: () {
-                filePicker.selectAudio().then((result) {
-                  context.read<HistoryBloc>().changeAudioState(
-                        isAudioFromFilePicker: true,
-                        audio: result.$1,
-                        audioExtension: result.$2,
-                        audioName: result.$3,
-                      );
-                });
-              },
-              label: const Text("From File Explorer"),
+              onPressed: () => _loadAudioFromFilePicker(context),
+              label: const Text("Desde el explorador de archivos"),
             ),
             const SizedBox(width: 10),
             ElevatedButton.icon(
@@ -72,7 +77,7 @@ class LoadAudio extends StatelessWidget {
               onPressed: () {
                 _loadAudioFromDrive(context);
               },
-              label: const Text("From Google Drive"),
+              label: const Text("Desde Google Drive"),
             ),
           ],
         ),

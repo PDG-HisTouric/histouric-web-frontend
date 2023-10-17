@@ -45,6 +45,22 @@ class ImageEntry extends StatelessWidget {
     });
   }
 
+  void _loadImagesFromFilePicker(BuildContext context) {
+    filePicker.selectImages().then((result) {
+      final images = result.$1;
+      if (images.isNotEmpty) {
+        context.read<HistoryBloc>().changeImageEntryState(
+              id: id,
+              images: images,
+              imageChosen: true,
+              isImageFromFilePicker: true,
+              imagesExtensions: result.$2,
+              imagesNames: result.$3,
+            );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final cardWidth = MediaQuery.of(context).size.width * 0.35;
@@ -78,23 +94,8 @@ class ImageEntry extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               ElevatedButton(
-                                onPressed: () {
-                                  filePicker.selectImages().then((result) {
-                                    final images = result.$1;
-                                    if (images.isNotEmpty) {
-                                      context
-                                          .read<HistoryBloc>()
-                                          .changeImageEntryState(
-                                            id: id,
-                                            images: images,
-                                            imageChosen: true,
-                                            isImageFromFilePicker: true,
-                                            imagesExtensions: result.$2,
-                                            imagesNames: result.$3,
-                                          );
-                                    }
-                                  });
-                                },
+                                onPressed: () =>
+                                    _loadImagesFromFilePicker(context),
                                 child:
                                     const Text('Desde explorador de archivos'),
                               ),

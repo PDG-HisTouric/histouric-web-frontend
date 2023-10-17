@@ -76,3 +76,15 @@ class RemoveVideoEntryButtonPressed extends HistoryEvent {
 
   RemoveVideoEntryButtonPressed({required this.id});
 }
+
+class HistoryStatusChanged extends HistoryEvent {
+  final HistoryStatus historyStatus;
+
+  HistoryStatusChanged({required this.historyStatus});
+}
+
+class HistoryNameChanged extends HistoryEvent {
+  final String name;
+
+  HistoryNameChanged({required this.name});
+}

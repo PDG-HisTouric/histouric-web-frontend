@@ -27,11 +27,9 @@ class HistoryMapper {
       videos.add(HistoryVideoMapper.fromVideoCreationToMap(video));
     }
     return {
-      'title': "titulo de prueba", //TODO: QUITAR
-      // 'title': historyCreation.title,
+      'title': historyCreation.title,
       'audio': HistoryAudioMapper.fromAudioCreationToMap(historyCreation.audio),
-      'owner': 'b4342a24-1fec-4004-ba18-13a3e4a00edb', //TODO: QUITAR
-      // 'owner': historyCreation.owner,
+      'owner': historyCreation.owner,
       'videos': videos,
       'texts': texts,
       'images': images,

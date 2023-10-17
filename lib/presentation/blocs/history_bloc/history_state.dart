@@ -1,5 +1,7 @@
 part of 'history_bloc.dart';
 
+enum HistoryStatus { initial, loading, loaded, error }
+
 class HistoryState {
   final String? historyId;
   final String title;
@@ -8,6 +10,7 @@ class HistoryState {
   final List<ImageEntryState> imageEntryStates;
   final List<TextSegmentState> textSegmentStates;
   final List<VideoEntry> videoEntries;
+  final HistoryStatus historyStatus;
 
   HistoryState({
     this.historyId,
@@ -17,6 +20,7 @@ class HistoryState {
     this.imageEntryStates = const [],
     this.textSegmentStates = const [],
     this.videoEntries = const [],
+    this.historyStatus = HistoryStatus.initial,
   });
 
   HistoryState copyWith({
@@ -27,6 +31,7 @@ class HistoryState {
     List<VideoEntry>? videoEntries,
     List<TextSegmentState>? textSegmentStates,
     List<ImageEntryState>? imageEntryStates,
+    HistoryStatus? historyStatus,
   }) {
     return HistoryState(
       historyId: historyId ?? this.historyId,
@@ -36,6 +41,7 @@ class HistoryState {
       videoEntries: videoEntries ?? this.videoEntries,
       textSegmentStates: textSegmentStates ?? this.textSegmentStates,
       imageEntryStates: imageEntryStates ?? this.imageEntryStates,
+      historyStatus: historyStatus ?? this.historyStatus,
     );
   }
 }

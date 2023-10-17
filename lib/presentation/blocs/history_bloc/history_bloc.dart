@@ -15,9 +15,13 @@ part 'history_state.dart';
 
 class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   final String owner;
+  final String token;
   final HistoryRepository historyRepository;
-  HistoryBloc({required this.owner, required this.historyRepository})
-      : super(
+  HistoryBloc({
+    required this.owner,
+    required this.historyRepository,
+    required this.token,
+  }) : super(
           HistoryState(
             owner: owner,
             audioState: AudioState(audio: Uint8List(0)),
@@ -33,6 +37,9 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     on<VideoFromFilePickerAdded>(_onVideoFromFilePickerAdded);
     on<VideoFromUrlAdded>(_onVideoFromUrlAdded);
     on<RemoveVideoEntryButtonPressed>(_onRemoveVideoEntryButtonPressed);
+    on<HistoryStatusChanged>(_onHistoryStatusChanged);
+    on<HistoryNameChanged>(_onHistoryNameChanged);
+    historyRepository.configureToken(token);
   }
 
   void _onHistoryAudioStateChanged(
@@ -245,6 +252,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   }
 
   void createHistory() {
+    changeHistoryStatus(HistoryStatus.loading);
     final AudioCreation audio;
     final temp = state.audioState.audio!;
     if (state.audioState.isAudioFromFilePicker) {
@@ -310,7 +318,27 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     );
 
     historyRepository.createHistory(historyCreation).then((value) {
-      print(value);
+      changeHistoryStatus(HistoryStatus.loaded);
+    }).onError((error, stackTrace) {
+      changeHistoryStatus(HistoryStatus.error);
     });
+  }
+
+  void _onHistoryStatusChanged(
+      HistoryStatusChanged event, Emitter<HistoryState> emit) {
+    emit(state.copyWith(historyStatus: event.historyStatus));
+  }
+
+  void changeHistoryStatus(HistoryStatus historyStatus) {
+    add(HistoryStatusChanged(historyStatus: historyStatus));
+  }
+
+  void _onHistoryNameChanged(
+      HistoryNameChanged event, Emitter<HistoryState> emit) {
+    emit(state.copyWith(title: event.name));
+  }
+
+  void changeHistoryName(String name) {
+    add(HistoryNameChanged(name: name));
   }
 }
