@@ -9,8 +9,9 @@ class LoadTextSegments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<TextSegmentState> textSegments =
-        context.watch<HistoryBloc>().state.textSegmentStates;
+    final textSegments = context.select(
+        (HistoryBloc historyBloc) => historyBloc.state.textSegmentStates);
+
     return SingleChildScrollView(
       child: Column(
         children: [

@@ -1,11 +1,13 @@
 class HistoryVideo {
-  final String? id;
-  final String videoUrl;
-  final String? historyId;
+  final String id;
+  final String videoUri;
+  final bool needsUrlGen;
+  final String historyId;
 
   HistoryVideo({
-    this.id,
-    required this.videoUrl,
-    this.historyId,
+    required this.id,
+    required this.videoUri,
+    required this.needsUrlGen,
+    required this.historyId,
   });
 }

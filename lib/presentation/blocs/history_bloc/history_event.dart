@@ -53,8 +53,10 @@ class RemoveTextEntryButtonPressed extends HistoryEvent {
 class VideoFromFilePickerAdded extends HistoryEvent {
   final Uint8List video;
   final String extension;
+  final String name;
 
-  VideoFromFilePickerAdded({required this.video, required this.extension});
+  VideoFromFilePickerAdded(
+      {required this.video, required this.extension, required this.name});
 }
 
 class VideoFromUrlAdded extends HistoryEvent {
@@ -73,4 +75,16 @@ class RemoveVideoEntryButtonPressed extends HistoryEvent {
   final String id;
 
   RemoveVideoEntryButtonPressed({required this.id});
+}
+
+class HistoryStatusChanged extends HistoryEvent {
+  final HistoryStatus historyStatus;
+
+  HistoryStatusChanged({required this.historyStatus});
+}
+
+class HistoryNameChanged extends HistoryEvent {
+  final String name;
+
+  HistoryNameChanged({required this.name});
 }

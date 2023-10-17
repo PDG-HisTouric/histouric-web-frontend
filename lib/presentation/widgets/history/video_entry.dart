@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -29,6 +30,13 @@ class VideoEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HashMap<String, dynamic> videoEntryState = HashMap();
+    videoEntryState["id"] = id;
+
+    // Clonar el HashMap
+    HashMap<String, dynamic> clonedVideoEntryState =
+        HashMap.from(videoEntryState);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
