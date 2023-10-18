@@ -11,6 +11,7 @@ export 'form/divider_with_message.dart';
 export 'form/first_custom_text_form_field.dart';
 export 'form/search_input.dart';
 export 'form/second_custom_text_form_field.dart';
+export 'history/neu_box.dart';
 export 'image/html_image_from_uint8list.dart';
 export 'image/image.dart';
 export 'image/rounded_html_image.dart';

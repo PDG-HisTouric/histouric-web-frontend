@@ -28,6 +28,7 @@ dependencies:
   firebase_core: ^2.16.0
   firebase_storage: ^11.2.7
   uuid: ^4.1.0
+  audioplayers: ^5.2.0
 
 dev_dependencies:
   flutter_test:
@@ -36,3 +37,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/audios/

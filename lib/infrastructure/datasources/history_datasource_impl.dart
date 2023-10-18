@@ -5,7 +5,9 @@ import 'package:histouric_web/infrastructure/infrastructure.dart';
 import '../../config/constants/environment.dart';
 
 class HistoryDatasourceImpl implements HistoryDatasource {
-  final FirebaseStorageRepository firebaseStorageRepository;
+  final FirebaseStorageRepository? firebaseStorageRepository;
+
+  HistoryDatasourceImpl({this.firebaseStorageRepository});
 
   final Dio dio = Dio(
     BaseOptions(
@@ -14,12 +16,10 @@ class HistoryDatasourceImpl implements HistoryDatasource {
     ),
   );
 
-  HistoryDatasourceImpl({required this.firebaseStorageRepository});
-
   @override
   void configureToken(String token) {
     dio.options.headers = {'Authorization': 'Bearer $token'};
-    firebaseStorageRepository.configureToken(token);
+    firebaseStorageRepository!.configureToken(token);
   }
 
   @override
@@ -57,7 +57,7 @@ class HistoryDatasourceImpl implements HistoryDatasource {
 
     List<String> newImagesUris = [];
     if (imagesToUpload.isNotEmpty) {
-      newImagesUris = await firebaseStorageRepository.uploadImages(
+      newImagesUris = await firebaseStorageRepository!.uploadImages(
         imagesToUpload.map((e) => e.imageFile!).toList(),
         imagesToUpload.map((e) => e.imageName!).toList(),
       );
@@ -65,7 +65,7 @@ class HistoryDatasourceImpl implements HistoryDatasource {
 
     List<String> newVideosUris = [];
     if (videosToUpload.isNotEmpty) {
-      newVideosUris = await firebaseStorageRepository.uploadVideos(
+      newVideosUris = await firebaseStorageRepository!.uploadVideos(
         videosToUpload.map((e) => e.videoFile!).toList(),
         videosToUpload.map((e) => e.videoName!).toList(),
       );
@@ -73,7 +73,7 @@ class HistoryDatasourceImpl implements HistoryDatasource {
 
     List<String> newAudiosUris = [];
     if (audiosToUpload.isNotEmpty) {
-      newAudiosUris = await firebaseStorageRepository.uploadAudios(
+      newAudiosUris = await firebaseStorageRepository!.uploadAudios(
         audiosToUpload.map((e) => e.audioFile!).toList(),
         audiosToUpload.map((e) => e.audioName!).toList(),
       );
@@ -103,5 +103,12 @@ class HistoryDatasourceImpl implements HistoryDatasource {
       videos: newVideos,
       audio: newAudio,
     );
+  }
+
+  @override
+  Future<History> getHistoryById(String historyId) {
+    return dio.get('/$historyId').then((value) =>
+        HistoryMapper.fromHistoryResponseToHistory(
+            HistoryResponse.fromJson(value.data)));
   }
 }

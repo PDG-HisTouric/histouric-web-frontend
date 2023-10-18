@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/views/history_view.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'config/config.dart';
@@ -59,7 +60,8 @@ class _MaterialAppWithFluro extends StatelessWidget {
       initialRoute: FluroRouterWrapper.rootRoute,
       onGenerateRoute: FluroRouterWrapper.router.generator,
       navigatorKey: NavigationService.navigatorKey,
-      home: const AuthScreen(child: LoginView()),
+      home:
+          const HistoryView(historyId: '9b39ccf6-b17b-41dd-9038-39946761cbc9'),
     );
   }
 }
