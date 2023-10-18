@@ -19,6 +19,8 @@ class BicBloc extends Bloc<BicEvent, BicState> {
   final void Function() onClosePressed;
   final void Function() goToTheBeginningOfTheForm;
   final Future<void> Function() toggleBICCreation;
+  final void Function() closeAddHistoriesToBIC;
+  final void Function() openAddHistoriesToBIC;
 
   BicBloc({
     required this.bicRepository,
@@ -29,6 +31,8 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     required this.onClosePressed,
     required this.goToTheBeginningOfTheForm,
     required this.toggleBICCreation,
+    required this.closeAddHistoriesToBIC,
+    required this.openAddHistoriesToBIC,
   }) : super(BicState()) {
     on<BicNameChanged>(_onNameChanged);
     on<BicDescriptionChanged>(_onDescriptionChanged);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/presentation.dart';
 
 import '../../config/config.dart';
 import '../../domain/domain.dart';
@@ -12,6 +13,8 @@ class CreateBICView extends StatelessWidget {
   final void Function() onClosePressed;
   final void Function() goToTheBeginningOfTheForm;
   final void Function() minimizeInfoWindow;
+  final void Function() closeAddHistoriesToBIC;
+  final void Function() openAddHistoriesToBIC;
   final Future<void> Function() toggleBICCreation;
   final double latitude;
   final double longitude;
@@ -24,6 +27,8 @@ class CreateBICView extends StatelessWidget {
     required this.longitude,
     required this.minimizeInfoWindow,
     required this.toggleBICCreation,
+    required this.closeAddHistoriesToBIC,
+    required this.openAddHistoriesToBIC,
   });
 
   @override
@@ -37,17 +42,25 @@ class CreateBICView extends StatelessWidget {
         toggleBICCreation: toggleBICCreation,
         latitude: latitude,
         longitude: longitude,
+        closeAddHistoriesToBIC: closeAddHistoriesToBIC,
+        openAddHistoriesToBIC: openAddHistoriesToBIC,
         bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
-        token: context.read<AuthBloc>().state.token!,
+        // token: context.read<AuthBloc>().state.token!,
+        token: '', //TODO: QUITAR
       ),
       child: const _CreateBICView(),
     );
   }
 }
 
-class _CreateBICView extends StatelessWidget {
+class _CreateBICView extends StatefulWidget {
   const _CreateBICView();
 
+  @override
+  State<_CreateBICView> createState() => _CreateBICViewState();
+}
+
+class _CreateBICViewState extends State<_CreateBICView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -66,16 +79,21 @@ class _CreateBICView extends StatelessWidget {
               )
             ],
           ),
-          const FittedBox(child: SizedBox(width: 600, child: _Form()))
+          const FittedBox(child: SizedBox(width: 600, child: _Form())),
         ],
       ),
     );
   }
 }
 
-class _Form extends StatelessWidget {
+class _Form extends StatefulWidget {
   const _Form();
 
+  @override
+  State<_Form> createState() => _FormState();
+}
+
+class _FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final formState = context.watch<BicBloc>().state;
@@ -128,39 +146,14 @@ class _Form extends StatelessWidget {
             child: const Text('Agregar fotos desde Google Drive'),
           ),
           const SizedBox(height: 16.0),
+          const _AddHistories(),
+          const SizedBox(height: 16.0),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Wrap(
               children: [
                 ElevatedButton(
-                  onPressed: () async {
-                    if (!context.read<BicBloc>().isStateValid()) {
-                      context.read<BicBloc>().goToTheBeginningOfTheForm();
-                      return;
-                    }
-                    context.read<BicBloc>().submit().then((value) {
-                      SubmissionStatus submissionStatus =
-                          context.read<BicBloc>().state.status;
-                      if (submissionStatus ==
-                          SubmissionStatus.submissionSuccess) {
-                        context.read<MapBloc>().loadBICsFromBICRepository();
-                        context.read<BicBloc>().minimizeInfoWindow();
-                        context.read<BicBloc>().toggleBICCreation().then(
-                            (value) =>
-                                context.read<BicBloc>().onClosePressed());
-                        SnackBars.showInfoSnackBar(
-                          context,
-                          '¡El BIC se ha creado correctamente!',
-                        );
-                      } else {
-                        context.read<BicBloc>().onClosePressed();
-                        SnackBars.showInfoSnackBar(
-                          context,
-                          '¡Ha ocurrido un error al crear el BIC!',
-                        );
-                      }
-                    });
-                  },
+                  onPressed: () => _createHistory(context),
                   child: const Text('Crear'),
                 ),
                 const SizedBox(width: 16.0),
@@ -180,6 +173,34 @@ class _Form extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _createHistory(BuildContext context) {
+    if (!context.read<BicBloc>().isStateValid()) {
+      context.read<BicBloc>().goToTheBeginningOfTheForm();
+      return;
+    }
+    context.read<BicBloc>().submit().then((value) {
+      SubmissionStatus submissionStatus = context.read<BicBloc>().state.status;
+      if (submissionStatus == SubmissionStatus.submissionSuccess) {
+        context.read<MapBloc>().loadBICsFromBICRepository();
+        context.read<BicBloc>().minimizeInfoWindow();
+        context
+            .read<BicBloc>()
+            .toggleBICCreation()
+            .then((value) => context.read<BicBloc>().onClosePressed());
+        SnackBars.showInfoSnackBar(
+          context,
+          '¡El BIC se ha creado correctamente!',
+        );
+      } else {
+        context.read<BicBloc>().onClosePressed();
+        SnackBars.showInfoSnackBar(
+          context,
+          '¡Ha ocurrido un error al crear el BIC!',
+        );
+      }
+    });
   }
 
   void _loadImagesFromDrive(
@@ -213,5 +234,26 @@ class _Form extends StatelessWidget {
     while (GooglePicker.callGetIsPickerOpen()) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
+  }
+}
+
+class _AddHistories extends StatelessWidget {
+  const _AddHistories();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          'No hay historias añadidas',
+          style: TextStyle(color: Colors.black),
+        ),
+        const SizedBox(height: 16.0),
+        ElevatedButton(
+          onPressed: context.read<BicBloc>().openAddHistoriesToBIC,
+          child: const Text('Añadir historias'),
+        ),
+      ],
+    );
   }
 }

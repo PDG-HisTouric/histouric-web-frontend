@@ -7,6 +7,7 @@ import '../../config/config.dart';
 import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
 import 'create_bic_view.dart';
+import 'search_and_select_histories_view.dart';
 
 class BicsView extends StatelessWidget {
   const BicsView({super.key});
@@ -15,7 +16,8 @@ class BicsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => MapBloc(
-        token: context.read<AuthBloc>().state.token!,
+        // token: context.read<AuthBloc>().state.token!,
+        token: '', //TODO: QUITAR
         bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
       ),
       child: const _BIcsView(),
@@ -37,13 +39,9 @@ class _BIcsViewState extends State<_BIcsView> {
   double latitude = 0;
   double longitude = 0;
 
-  final ScrollController _scrollController = ScrollController();
-
   @override
   Widget build(BuildContext context) {
     final mapBlocState = context.watch<MapBloc>().state;
-    double maxWidth = 650;
-    double maxHeight = 500;
 
     return Stack(
       children: [
@@ -121,64 +119,22 @@ class _BIcsViewState extends State<_BIcsView> {
             ),
           ),
         ),
-        if (isCardOpen)
-          GestureDetector(
-            onTap: toggleCard,
-            child: PointerInterceptor(
-              child: Container(
-                color: Colors.black.withOpacity(0.5),
-              ),
-            ),
-          ),
-        AnimatedPositioned(
-          top: isCardOpen ? 100 : -500,
-          left: 0,
-          right: 0,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          child: Center(
-            child: SizedBox(
-              width: MediaQuery.sizeOf(context).width < maxWidth
-                  ? MediaQuery.sizeOf(context).width
-                  : maxWidth,
-              height: MediaQuery.sizeOf(context).height < maxHeight
-                  ? MediaQuery.sizeOf(context).height
-                  : maxHeight,
-              child: Card(
-                elevation: 5.0,
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CreateBICView(
-                      latitude: latitude,
-                      longitude: longitude,
-                      onClosePressed: toggleCard,
-                      goToTheBeginningOfTheForm: _goToTheBeginningOfTheForm,
-                      minimizeInfoWindow: _minimizeInfoWindow,
-                      toggleBICCreation: toggleBICCreation,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+        _CreateBicView(
+          onClosePressed: _onClosePressed,
+          toggleBICCreation: toggleBICCreation,
+          latitude: latitude,
+          longitude: longitude,
+          toggleCard: toggleCard,
+          isCardOpen: isCardOpen,
+        )
       ],
     );
   }
 
-  void _goToTheBeginningOfTheForm() {
-    _scrollController.animateTo(
-      0.0,
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 300),
-    );
-  }
-
-  void _minimizeInfoWindow() {
-    context.read<MapBloc>().state.controller?.hideMarkerInfoWindow(
-        MarkerId(context.read<MapBloc>().state.markerFroBICCreationId));
+  void _onClosePressed() {
+    setState(() {
+      isCardOpen = false;
+    });
   }
 
   void toggleCard() {
@@ -212,5 +168,143 @@ class _BIcsViewState extends State<_BIcsView> {
       longitude = latLng.longitude;
       latitude = latLng.latitude;
     });
+  }
+}
+
+class _CreateBicView extends StatefulWidget {
+  final void Function() onClosePressed;
+  final void Function() toggleCard;
+  final Future<void> Function() toggleBICCreation;
+  final double latitude;
+  final double longitude;
+  final bool isCardOpen;
+
+  _CreateBicView({
+    super.key,
+    required this.onClosePressed,
+    required this.toggleBICCreation,
+    required this.latitude,
+    required this.longitude,
+    required this.toggleCard,
+    required this.isCardOpen,
+  });
+
+  @override
+  State<_CreateBicView> createState() => _CreateBicViewState();
+}
+
+class _CreateBicViewState extends State<_CreateBicView> {
+  final ScrollController _scrollController = ScrollController();
+  bool isAddHistoriesOpen = false;
+
+  void _openAddHistoriesToBIC() {
+    setState(() {
+      isAddHistoriesOpen = true;
+    });
+  }
+
+  void _closeAddHistoriesToBIC() {
+    setState(() {
+      isAddHistoriesOpen = false;
+    });
+  }
+
+  void _goToTheBeginningOfTheForm() {
+    _scrollController.animateTo(
+      0.0,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  void _minimizeInfoWindow() {
+    context.read<MapBloc>().state.controller?.hideMarkerInfoWindow(
+        MarkerId(context.read<MapBloc>().state.markerFroBICCreationId));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double maxWidth = 650;
+    double maxHeight = 500;
+
+    return BlocProvider(
+      key: Key('${widget.latitude}${widget.longitude}'),
+      create: (context) => BicBloc(
+        goToTheBeginningOfTheForm: _goToTheBeginningOfTheForm,
+        onClosePressed: widget.onClosePressed,
+        minimizeInfoWindow: _minimizeInfoWindow,
+        toggleBICCreation: widget.toggleBICCreation,
+        latitude: widget.latitude,
+        longitude: widget.longitude,
+        closeAddHistoriesToBIC: _closeAddHistoriesToBIC,
+        openAddHistoriesToBIC: _openAddHistoriesToBIC,
+        bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
+        // token: context.read<AuthBloc>().state.token!,
+        token: '', //TODO: QUITAR
+      ),
+      child: Stack(
+        children: [
+          if (widget.isCardOpen)
+            GestureDetector(
+              onTap: widget.toggleCard,
+              child: PointerInterceptor(
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ),
+            ),
+          AnimatedPositioned(
+            top: widget.isCardOpen ? 100 : -500,
+            left: 0,
+            right: 0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: Center(
+              child: SizedBox(
+                width: MediaQuery.sizeOf(context).width < maxWidth
+                    ? MediaQuery.sizeOf(context).width
+                    : maxWidth,
+                height: MediaQuery.sizeOf(context).height < maxHeight
+                    ? MediaQuery.sizeOf(context).height
+                    : maxHeight,
+                child: Card(
+                  elevation: 5.0,
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CreateBICView(
+                        openAddHistoriesToBIC: _openAddHistoriesToBIC,
+                        closeAddHistoriesToBIC: _closeAddHistoriesToBIC,
+                        latitude: widget.latitude,
+                        longitude: widget.longitude,
+                        onClosePressed: widget.toggleCard,
+                        goToTheBeginningOfTheForm: _goToTheBeginningOfTheForm,
+                        minimizeInfoWindow: _minimizeInfoWindow,
+                        toggleBICCreation: widget.toggleBICCreation,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (isAddHistoriesOpen)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              color: Colors.black.withOpacity(0.5),
+            ),
+          AnimatedPositioned(
+            top: isAddHistoriesOpen ? 100 : -500,
+            left: 0,
+            right: 0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: const SearchAndSelectHistoriesView(),
+          ),
+        ],
+      ),
+    );
   }
 }

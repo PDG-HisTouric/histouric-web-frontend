@@ -17,4 +17,9 @@ class HistoryRepositoryImpl implements HistoryRepository {
   Future<History> createHistory(HistoryCreation historyCreation) {
     return historyDatasource.createHistory(historyCreation);
   }
+
+  @override
+  Future<List<History>> getHistoriesByTitle(String title) {
+    return historyDatasource.getHistoriesByTitle(title);
+  }
 }
