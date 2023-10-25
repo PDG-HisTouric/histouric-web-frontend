@@ -3,7 +3,7 @@ import 'history_image.dart';
 import 'history_text.dart';
 import 'history_video.dart';
 
-class History {
+class Story {
   final String id;
   final String title;
   final HistoryAudio audio;
@@ -12,7 +12,7 @@ class History {
   final List<HistoryText> texts;
   final List<HistoryImage>? images;
 
-  History({
+  Story({
     required this.id,
     required this.title,
     required this.audio,

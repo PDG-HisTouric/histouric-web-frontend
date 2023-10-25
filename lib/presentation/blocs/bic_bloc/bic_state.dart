@@ -12,11 +12,12 @@ final class BicState {
   final BICDescription bicDescription;
   final bool exists;
   final List<HistouricImageInfo> driveImagesInfo;
-  final List<History> selectedHistories;
+  final List<Story> selectedHistories;
   final String titleForSearchQuery;
-  final List<History> historiesAfterSearch;
+  final List<Story> historiesAfterSearch;
   final bool isValid;
   final SubmissionStatus status;
+  final TextEditingController historyTitleController;
 
   BicState({
     this.bicName = const BICName.pure(),
@@ -28,6 +29,7 @@ final class BicState {
     this.historiesAfterSearch = const [],
     this.isValid = false,
     this.status = SubmissionStatus.notYetSubmitted,
+    required this.historyTitleController,
   });
 
   BicState copyWith({
@@ -35,11 +37,12 @@ final class BicState {
     BICDescription? bicDescription,
     bool? exists,
     List<HistouricImageInfo>? driveImagesInfo,
-    List<History>? selectedHistories,
+    List<Story>? selectedHistories,
     String? titleForSearchQuery,
-    List<History>? historiesAfterSearch,
+    List<Story>? historiesAfterSearch,
     bool? isValid,
     SubmissionStatus? status,
+    TextEditingController? historyTitleController,
   }) {
     return BicState(
       bicName: bicName ?? this.bicName,
@@ -51,6 +54,8 @@ final class BicState {
       historiesAfterSearch: historiesAfterSearch ?? this.historiesAfterSearch,
       isValid: isValid ?? this.isValid,
       status: status ?? this.status,
+      historyTitleController:
+          historyTitleController ?? this.historyTitleController,
     );
   }
 }

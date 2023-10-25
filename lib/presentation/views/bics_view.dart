@@ -230,6 +230,9 @@ class _CreateBicViewState extends State<_CreateBicView> {
     return BlocProvider(
       key: Key('${widget.latitude}${widget.longitude}'),
       create: (context) => BicBloc(
+        historyRepository: HistoryRepositoryImpl(
+          historyDatasource: HistoryDatasourceImpl(),
+        ),
         goToTheBeginningOfTheForm: _goToTheBeginningOfTheForm,
         onClosePressed: widget.onClosePressed,
         minimizeInfoWindow: _minimizeInfoWindow,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
@@ -11,6 +12,7 @@ part 'bic_state.dart';
 
 class BicBloc extends Bloc<BicEvent, BicState> {
   final BICRepository bicRepository;
+  final HistoryRepository historyRepository;
   final String token;
   final double latitude;
   final double longitude;
@@ -19,11 +21,12 @@ class BicBloc extends Bloc<BicEvent, BicState> {
   final void Function() onClosePressed;
   final void Function() goToTheBeginningOfTheForm;
   final Future<void> Function() toggleBICCreation;
-  final void Function() closeAddHistoriesToBIC;
+  late final void Function() _closeAddHistoriesToBIC;
   final void Function() openAddHistoriesToBIC;
 
   BicBloc({
     required this.bicRepository,
+    required this.historyRepository,
     required this.token,
     required this.latitude,
     required this.longitude,
@@ -31,16 +34,21 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     required this.onClosePressed,
     required this.goToTheBeginningOfTheForm,
     required this.toggleBICCreation,
-    required this.closeAddHistoriesToBIC,
+    required void Function() closeAddHistoriesToBIC,
     required this.openAddHistoriesToBIC,
-  }) : super(BicState()) {
+  }) : super(BicState(historyTitleController: TextEditingController())) {
     on<BicNameChanged>(_onNameChanged);
     on<BicDescriptionChanged>(_onDescriptionChanged);
     on<BicExistsChanged>(_onExistsChanged);
     on<BicSubmitted>(_createBic);
     on<BicTouchedEveryField>(_touchedEveryField);
     on<BicDriveImageInfoAdded>(_driveImageInfoAdded);
+    on<HistoriesAfterSearchChanged>(_onHistoriesAfterSearchChanged);
+    on<TitleForSearchQueryChanged>(_onTitleForSearchQueryChanged);
+    on<HistoryChecked>(_onHistoryChecked);
+    on<HistoriesUnselected>(_onHistoriesUnselected);
     bicRepository.configureToken(token);
+    _closeAddHistoriesToBIC = closeAddHistoriesToBIC;
   }
 
   void _onNameChanged(BicNameChanged event, Emitter<BicState> emit) {
@@ -150,5 +158,79 @@ class BicBloc extends Bloc<BicEvent, BicState> {
 
   void driveImageInfoAdded(HistouricImageInfo driveImageInfo) {
     add(BicDriveImageInfoAdded(driveImageInfo: driveImageInfo));
+  }
+
+  void _onHistoriesAfterSearchChanged(
+      HistoriesAfterSearchChanged event, Emitter<BicState> emit) {
+    emit(state.copyWith(
+      historiesAfterSearch: event.historiesAfterSearch,
+    ));
+  }
+
+  void historiesAfterSearchChanged(List<Story> historiesAfterSearch) {
+    add(HistoriesAfterSearchChanged(
+        historiesAfterSearch: historiesAfterSearch));
+  }
+
+  void _onTitleForSearchQueryChanged(
+      TitleForSearchQueryChanged event, Emitter<BicState> emit) async {
+    if (event.titleForSearchQuery.isNotEmpty) {
+      List<Story> historiesAfterSearch = await historyRepository
+          .getHistoriesByTitle(event.titleForSearchQuery);
+      emit(state.copyWith(historiesAfterSearch: historiesAfterSearch));
+    } else {
+      emit(state.copyWith(historiesAfterSearch: state.selectedHistories));
+    }
+    emit(state.copyWith(titleForSearchQuery: event.titleForSearchQuery));
+  }
+
+  void changeTitleForSearchQuery(String titleForSearchQuery) {
+    add(TitleForSearchQueryChanged(titleForSearchQuery: titleForSearchQuery));
+  }
+
+  void _onHistoryChecked(HistoryChecked event, Emitter<BicState> emit) {
+    List<Story> newSelectedHistories =
+        _getNewSelectedHistories(event.historyId);
+    emit(state.copyWith(
+      selectedHistories: newSelectedHistories,
+    ));
+  }
+
+  void checkHistory(String historyId) {
+    add(HistoryChecked(historyId: historyId));
+  }
+
+  List<Story> _getNewSelectedHistories(String historyId) {
+    List<Story> newSelectedHistories = [...state.selectedHistories];
+    for (int i = 0; i < newSelectedHistories.length; i++) {
+      if (newSelectedHistories[i].id == historyId) {
+        newSelectedHistories.removeAt(i);
+        changeTitleForSearchQuery("");
+        return newSelectedHistories;
+      }
+    }
+    newSelectedHistories.add(state.historiesAfterSearch
+        .firstWhere((element) => element.id == historyId));
+    return newSelectedHistories;
+  }
+
+  void _onHistoriesUnselected(
+      HistoriesUnselected event, Emitter<BicState> emit) {
+    emit(state.copyWith(
+      selectedHistories: [],
+      historyTitleController: TextEditingController(),
+    ));
+  }
+
+  void cancelHistoriesAddition() {
+    add(HistoriesUnselected());
+    changeTitleForSearchQuery("");
+    _closeAddHistoriesToBIC();
+  }
+
+  void closeHistoriesAddition() {
+    add(HistoriesUnselected());
+    changeTitleForSearchQuery("");
+    _closeAddHistoriesToBIC();
   }
 }

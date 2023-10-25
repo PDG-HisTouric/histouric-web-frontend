@@ -61,10 +61,11 @@ class _MaterialAppWithFluro extends StatelessWidget {
       onGenerateRoute: FluroRouterWrapper.router.generator,
       navigatorKey: NavigationService.navigatorKey,
       // home: const AuthScreen(child: LoginView()),
-      home: const BicsView(), //TODO: QUITAR
-      // home: const Scaffold(
-      //   body: SearchAndSelectHistoriesView(),
-      // ),
+      // home: const BicsView(), //TODO: QUITAR
+      home: const Scaffold(
+        body: BicsView(),
+        // body: SearchAndSelectHistoriesView(),
+      ),
     );
   }
 }

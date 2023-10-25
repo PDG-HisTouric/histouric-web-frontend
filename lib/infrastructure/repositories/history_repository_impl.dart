@@ -14,12 +14,12 @@ class HistoryRepositoryImpl implements HistoryRepository {
   }
 
   @override
-  Future<History> createHistory(HistoryCreation historyCreation) {
+  Future<Story> createHistory(HistoryCreation historyCreation) {
     return historyDatasource.createHistory(historyCreation);
   }
 
   @override
-  Future<List<History>> getHistoriesByTitle(String title) {
+  Future<List<Story>> getHistoriesByTitle(String title) {
     return historyDatasource.getHistoriesByTitle(title);
   }
 }

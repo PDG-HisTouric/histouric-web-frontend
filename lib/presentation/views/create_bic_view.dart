@@ -36,6 +36,9 @@ class CreateBICView extends StatelessWidget {
     return BlocProvider(
       key: Key('$latitude$longitude'),
       create: (context) => BicBloc(
+        historyRepository: HistoryRepositoryImpl(
+          historyDatasource: HistoryDatasourceImpl(),
+        ),
         goToTheBeginningOfTheForm: goToTheBeginningOfTheForm,
         onClosePressed: onClosePressed,
         minimizeInfoWindow: minimizeInfoWindow,

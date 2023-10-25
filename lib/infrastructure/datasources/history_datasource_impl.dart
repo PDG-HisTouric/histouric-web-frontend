@@ -23,7 +23,7 @@ class HistoryDatasourceImpl implements HistoryDatasource {
   }
 
   @override
-  Future<History> createHistory(HistoryCreation historyCreation) async {
+  Future<Story> createHistory(HistoryCreation historyCreation) async {
     HistoryCreation historyCreationWithDataSavedInFirebaseStorage =
         await _saveHistoryDataInFirebaseStorage(historyCreation);
     final data = HistoryMapper.fromHistoryCreationToMap(
@@ -106,10 +106,10 @@ class HistoryDatasourceImpl implements HistoryDatasource {
   }
 
   @override
-  Future<List<History>> getHistoriesByTitle(String title) {
+  Future<List<Story>> getHistoriesByTitle(String title) {
     return dio.get('/title/$title').then((value) => value.data
-        .map<History>(
-            (history) => HistoryMapper.fromHistoryResponseToHistory(history))
+        .map<Story>((history) => HistoryMapper.fromHistoryResponseToHistory(
+            HistoryResponse.fromJson(history)))
         .toList());
   }
 }

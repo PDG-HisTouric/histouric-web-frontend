@@ -37,13 +37,17 @@ class TitleForSearchQueryChanged extends BicEvent {
 }
 
 class HistoriesAfterSearchChanged extends BicEvent {
-  final List<History> historiesAfterSearch;
+  final List<Story> historiesAfterSearch;
 
   HistoriesAfterSearchChanged({required this.historiesAfterSearch});
 }
 
-class HistorySelected extends BicEvent {
+class HistoryChecked extends BicEvent {
   final String historyId;
 
-  HistorySelected({required this.historyId});
+  HistoryChecked({required this.historyId});
+}
+
+class HistoriesUnselected extends BicEvent {
+  HistoriesUnselected();
 }
