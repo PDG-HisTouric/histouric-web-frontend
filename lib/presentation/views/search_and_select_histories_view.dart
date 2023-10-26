@@ -68,10 +68,16 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
                   ],
                 ),
                 Expanded(
-                  child: SizedBox(
-                    child: isSearchingHistories
-                        ? const CircularProgressIndicator()
-                        : ListView.builder(
+                  child: isSearchingHistories
+                      ? const Column(
+                          children: [
+                            Spacer(),
+                            CircularProgressIndicator(),
+                            Spacer(),
+                          ],
+                        )
+                      : SizedBox(
+                          child: ListView.builder(
                             itemCount: historiesAfterSearch.length,
                             itemBuilder: (context, index) {
                               return ListTile(
@@ -95,7 +101,7 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
                               );
                             },
                           ),
-                  ),
+                        ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
