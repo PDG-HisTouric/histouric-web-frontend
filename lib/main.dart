@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:histouric_web/presentation/views/bics_view.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'config/config.dart';

@@ -8,60 +8,17 @@ import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
 
 class CreateBICView extends StatelessWidget {
-  final void Function() onClosePressed;
-  final void Function() goToTheBeginningOfTheForm;
-  final void Function() minimizeInfoWindow;
-  final void Function() closeAddHistoriesToBIC;
-  final void Function() openAddHistoriesToBIC;
-  final Future<void> Function() toggleBICCreation;
-  final double latitude;
-  final double longitude;
-
-  const CreateBICView({
-    super.key,
-    required this.onClosePressed,
-    required this.goToTheBeginningOfTheForm,
-    required this.latitude,
-    required this.longitude,
-    required this.minimizeInfoWindow,
-    required this.toggleBICCreation,
-    required this.closeAddHistoriesToBIC,
-    required this.openAddHistoriesToBIC,
-  });
+  const CreateBICView();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      key: Key('$latitude$longitude'),
-      create: (context) => BicBloc(
-        historyRepository: HistoryRepositoryImpl(
-          historyDatasource: HistoryDatasourceImpl(),
-        ),
-        goToTheBeginningOfTheForm: goToTheBeginningOfTheForm,
-        onClosePressed: onClosePressed,
-        minimizeInfoWindow: minimizeInfoWindow,
-        toggleBICCreation: toggleBICCreation,
-        latitude: latitude,
-        longitude: longitude,
-        closeAddHistoriesToBIC: closeAddHistoriesToBIC,
-        openAddHistoriesToBIC: openAddHistoriesToBIC,
-        bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
-        // token: context.read<AuthBloc>().state.token!,
-        token: '', //TODO: QUITAR
-      ),
-      child: const _CreateBICView(),
-    );
+    return const _CreateBICView();
   }
 }
 
-class _CreateBICView extends StatefulWidget {
+class _CreateBICView extends StatelessWidget {
   const _CreateBICView();
 
-  @override
-  State<_CreateBICView> createState() => _CreateBICViewState();
-}
-
-class _CreateBICViewState extends State<_CreateBICView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -270,13 +227,21 @@ class _SelectedHistories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double maxWidth = 600;
+    double maxHeight = 260;
     List<Story> selectedHistories =
         context.select((BicBloc bloc) => bloc.state.selectedHistories);
 
     return SizedBox(
+      height: (selectedHistories.length > 3)
+          ? maxHeight
+          : selectedHistories.length * 80,
+      width: MediaQuery.sizeOf(context).width < maxWidth
+          ? MediaQuery.sizeOf(context).width
+          : maxWidth,
       child: ListView.builder(
         itemCount: selectedHistories.length,
         itemBuilder: (context, index) {
+          //The height of each ListTile is 80
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 3),
             title: BlocProvider(
@@ -330,17 +295,17 @@ class _HistoryCard extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              Checkbox(
-                  checkColor: Colors.white,
-                  value: selected,
-                  onChanged: (value) {
-                    context.read<BicBloc>().checkHistory(historyId);
-                  }),
               Text(historyTitle),
               const Spacer(),
               HtmlAudioOnlyWithPlayButton(
                 key: key,
                 // audioUrl,
+              ),
+              IconButton(
+                onPressed: () {
+                  context.read<BicBloc>().removeHistory(historyId);
+                },
+                icon: const Icon(Icons.delete),
               ),
             ],
           ),

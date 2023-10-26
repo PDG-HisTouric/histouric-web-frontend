@@ -179,8 +179,7 @@ class _CreateBicView extends StatefulWidget {
   final double longitude;
   final bool isCardOpen;
 
-  _CreateBicView({
-    super.key,
+  const _CreateBicView({
     required this.onClosePressed,
     required this.toggleBICCreation,
     required this.latitude,
@@ -274,18 +273,9 @@ class _CreateBicViewState extends State<_CreateBicView> {
                   elevation: 5.0,
                   child: SingleChildScrollView(
                     controller: _scrollController,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CreateBICView(
-                        openAddHistoriesToBIC: _openAddHistoriesToBIC,
-                        closeAddHistoriesToBIC: _closeAddHistoriesToBIC,
-                        latitude: widget.latitude,
-                        longitude: widget.longitude,
-                        onClosePressed: widget.toggleCard,
-                        goToTheBeginningOfTheForm: _goToTheBeginningOfTheForm,
-                        minimizeInfoWindow: _minimizeInfoWindow,
-                        toggleBICCreation: widget.toggleBICCreation,
-                      ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CreateBICView(),
                     ),
                   ),
                 ),

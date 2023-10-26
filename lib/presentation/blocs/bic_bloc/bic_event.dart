@@ -51,3 +51,11 @@ class HistoryChecked extends BicEvent {
 class HistoriesUnselected extends BicEvent {
   HistoriesUnselected();
 }
+
+class AddSelectedHistoriesButtonPressed extends BicEvent {}
+
+class RemoveSelectedHistoryButtonPressed extends BicEvent {
+  final String historyId;
+
+  RemoveSelectedHistoryButtonPressed({required this.historyId});
+}

@@ -109,7 +109,7 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: context.read<BicBloc>().addSelectedHistories,
-                        child: const Text('Agregar historias'),
+                        child: const Text('Agregar historias seleccionadas'),
                       ),
                       const SizedBox(width: 16.0),
                       ElevatedButton(

@@ -72,7 +72,6 @@ class _HtmlAudio extends StatefulWidget {
   final void Function(String currentTime) onChangeAudioTime;
 
   _HtmlAudio({
-    super.key,
     required this.audioUrl,
     required this.onChangeAudioTime,
   }) {

@@ -8,7 +8,6 @@ import 'package:histouric_web/presentation/js_bridge/js_bridge.dart';
 import '../../config/helpers/snackbars.dart';
 import '../../config/plugins/plugins.dart';
 import '../../domain/entities/entities.dart';
-import '../widgets/audio/audio.dart';
 import '../widgets/widgets.dart';
 
 class PruebaView extends StatefulWidget {

@@ -47,6 +47,9 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     on<TitleForSearchQueryChanged>(_onTitleForSearchQueryChanged);
     on<HistoryChecked>(_onHistoryChecked);
     on<HistoriesUnselected>(_onHistoriesUnselected);
+    on<AddSelectedHistoriesButtonPressed>(_onAddSelectedHistoriesButtonPressed);
+    on<RemoveSelectedHistoryButtonPressed>(
+        _onRemoveSelectedHistoryButtonPressed);
     bicRepository.configureToken(token);
     _closeAddHistoriesToBIC = closeAddHistoriesToBIC;
   }
@@ -209,7 +212,6 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     for (int i = 0; i < newSelectedHistories.length; i++) {
       if (newSelectedHistories[i].id == historyId) {
         newSelectedHistories.removeAt(i);
-        changeTitleForSearchQuery("");
         return newSelectedHistories;
       }
     }
@@ -221,24 +223,52 @@ class BicBloc extends Bloc<BicEvent, BicState> {
   void _onHistoriesUnselected(
       HistoriesUnselected event, Emitter<BicState> emit) {
     emit(state.copyWith(
-      selectedHistories: [],
+      historiesAfterSearch: state.selectedHistories,
       historyTitleController: TextEditingController(),
+      titleForSearchQuery: "",
     ));
   }
 
   void cancelHistoriesAddition() {
     add(HistoriesUnselected());
-    changeTitleForSearchQuery("");
     _closeAddHistoriesToBIC();
   }
 
   void closeHistoriesAddition() {
     add(HistoriesUnselected());
-    changeTitleForSearchQuery("");
     _closeAddHistoriesToBIC();
   }
 
   void addSelectedHistories() {
+    add(AddSelectedHistoriesButtonPressed());
     _closeAddHistoriesToBIC();
+  }
+
+  void _onAddSelectedHistoriesButtonPressed(
+      AddSelectedHistoriesButtonPressed event, Emitter<BicState> emit) {
+    emit(state.copyWith(
+      titleForSearchQuery: "",
+      historyTitleController: TextEditingController(),
+      historiesAfterSearch: state.selectedHistories,
+    ));
+  }
+
+  void _onRemoveSelectedHistoryButtonPressed(
+      RemoveSelectedHistoryButtonPressed event, Emitter<BicState> emit) {
+    List<Story> newSelectedHistories = [...state.selectedHistories];
+    for (int i = 0; i < newSelectedHistories.length; i++) {
+      if (newSelectedHistories[i].id == event.historyId) {
+        newSelectedHistories.removeAt(i);
+        break;
+      }
+    }
+    emit(state.copyWith(
+      selectedHistories: newSelectedHistories,
+      historiesAfterSearch: newSelectedHistories,
+    ));
+  }
+
+  void removeHistory(String historyId) {
+    add(RemoveSelectedHistoryButtonPressed(historyId: historyId));
   }
 }

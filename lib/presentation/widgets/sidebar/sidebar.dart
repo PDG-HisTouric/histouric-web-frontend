@@ -129,7 +129,7 @@ class _ResearcherOptions extends StatelessWidget {
 }
 
 class _TourismManagerOptions extends StatelessWidget {
-  const _TourismManagerOptions({super.key});
+  const _TourismManagerOptions();
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 class VideoResponse {
   final String id;
