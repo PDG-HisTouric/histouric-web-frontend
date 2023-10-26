@@ -6,8 +6,6 @@ import '../../config/config.dart';
 import '../../domain/domain.dart';
 import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
-import '../js_bridge/js_bridge.dart';
-import '../widgets/widgets.dart';
 
 class CreateBICView extends StatelessWidget {
   final void Function() onClosePressed;
@@ -245,18 +243,109 @@ class _AddHistories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Story> selectedHistories =
+        context.select((BicBloc bloc) => bloc.state.selectedHistories);
+
     return Column(
       children: [
-        const Text(
-          'No hay historias añadidas',
-          style: TextStyle(color: Colors.black),
-        ),
+        (selectedHistories.isEmpty)
+            ? const Text(
+                'No hay historias añadidas',
+                style: TextStyle(color: Colors.black),
+              )
+            : const _SelectedHistories(),
         const SizedBox(height: 16.0),
         ElevatedButton(
           onPressed: context.read<BicBloc>().openAddHistoriesToBIC,
           child: const Text('Añadir historias'),
         ),
       ],
+    );
+  }
+}
+
+class _SelectedHistories extends StatelessWidget {
+  const _SelectedHistories();
+
+  @override
+  Widget build(BuildContext context) {
+    double maxWidth = 600;
+    List<Story> selectedHistories =
+        context.select((BicBloc bloc) => bloc.state.selectedHistories);
+
+    return SizedBox(
+      child: ListView.builder(
+        itemCount: selectedHistories.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 3),
+            title: BlocProvider(
+              key: Key(selectedHistories[index].id),
+              create: (context) => HtmlAudioOnlyWithPlayButtonBloc(
+                audioUrl: selectedHistories[index].audio.audioUri,
+              ),
+              child: _HistoryCard(
+                historyId: selectedHistories[index].id,
+                maxWidth: maxWidth,
+                historyTitle: selectedHistories[index].title,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _HistoryCard extends StatelessWidget {
+  final double maxWidth;
+  final String historyTitle;
+  final String historyId;
+  const _HistoryCard({
+    required this.maxWidth,
+    required this.historyTitle,
+    required this.historyId,
+  });
+
+  bool _isHistorySelected(String historyId, List<Story> histories) {
+    for (Story history in histories) {
+      if (history.id == historyId) return true;
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Story> selectedHistories =
+        context.select((BicBloc bloc) => bloc.state.selectedHistories);
+    bool selected = _isHistorySelected(historyId, selectedHistories);
+    final key = UniqueKey();
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width < maxWidth
+          ? MediaQuery.sizeOf(context).width
+          : maxWidth,
+      child: Card(
+        elevation: 5.0,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Checkbox(
+                  checkColor: Colors.white,
+                  value: selected,
+                  onChanged: (value) {
+                    context.read<BicBloc>().checkHistory(historyId);
+                  }),
+              Text(historyTitle),
+              const Spacer(),
+              HtmlAudioOnlyWithPlayButton(
+                key: key,
+                // audioUrl,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

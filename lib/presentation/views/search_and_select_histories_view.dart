@@ -108,7 +108,7 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
                   child: Wrap(
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: context.read<BicBloc>().addSelectedHistories,
                         child: const Text('Agregar historias'),
                       ),
                       const SizedBox(width: 16.0),
@@ -135,7 +135,7 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
   }
 }
 
-class _HistoryCard extends StatefulWidget {
+class _HistoryCard extends StatelessWidget {
   final double maxWidth;
   final String historyTitle;
   final String historyId;
@@ -145,11 +145,6 @@ class _HistoryCard extends StatefulWidget {
     required this.historyId,
   });
 
-  @override
-  State<_HistoryCard> createState() => _HistoryCardState();
-}
-
-class _HistoryCardState extends State<_HistoryCard> {
   bool _isHistorySelected(String historyId, List<Story> histories) {
     for (Story history in histories) {
       if (history.id == historyId) return true;
@@ -161,12 +156,12 @@ class _HistoryCardState extends State<_HistoryCard> {
   Widget build(BuildContext context) {
     List<Story> selectedHistories =
         context.select((BicBloc bloc) => bloc.state.selectedHistories);
-    bool selected = _isHistorySelected(widget.historyId, selectedHistories);
+    bool selected = _isHistorySelected(historyId, selectedHistories);
     final key = UniqueKey();
     return SizedBox(
-      width: MediaQuery.sizeOf(context).width < widget.maxWidth
+      width: MediaQuery.sizeOf(context).width < maxWidth
           ? MediaQuery.sizeOf(context).width
-          : widget.maxWidth,
+          : maxWidth,
       child: Card(
         elevation: 5.0,
         child: Padding(
@@ -177,9 +172,9 @@ class _HistoryCardState extends State<_HistoryCard> {
                     checkColor: Colors.white,
                     value: selected,
                     onChanged: (value) {
-                      context.read<BicBloc>().checkHistory(widget.historyId);
+                      context.read<BicBloc>().checkHistory(historyId);
                     }),
-                Text(widget.historyTitle),
+                Text(historyTitle),
                 const Spacer(),
                 HtmlAudioOnlyWithPlayButton(
                   key: key,

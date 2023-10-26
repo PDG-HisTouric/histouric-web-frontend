@@ -237,4 +237,8 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     changeTitleForSearchQuery("");
     _closeAddHistoriesToBIC();
   }
+
+  void addSelectedHistories() {
+    _closeAddHistoriesToBIC();
+  }
 }
