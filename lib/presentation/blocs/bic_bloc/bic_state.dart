@@ -18,6 +18,7 @@ final class BicState {
   final bool isValid;
   final SubmissionStatus status;
   final TextEditingController historyTitleController;
+  final bool isSearchingHistories;
 
   BicState({
     this.bicName = const BICName.pure(),
@@ -30,6 +31,7 @@ final class BicState {
     this.isValid = false,
     this.status = SubmissionStatus.notYetSubmitted,
     required this.historyTitleController,
+    this.isSearchingHistories = false,
   });
 
   BicState copyWith({
@@ -43,6 +45,7 @@ final class BicState {
     bool? isValid,
     SubmissionStatus? status,
     TextEditingController? historyTitleController,
+    bool? isSearchingHistories,
   }) {
     return BicState(
       bicName: bicName ?? this.bicName,
@@ -56,6 +59,7 @@ final class BicState {
       status: status ?? this.status,
       historyTitleController:
           historyTitleController ?? this.historyTitleController,
+      isSearchingHistories: isSearchingHistories ?? this.isSearchingHistories,
     );
   }
 }

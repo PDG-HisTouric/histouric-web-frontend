@@ -17,6 +17,8 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
         context.select((BicBloc bloc) => bloc.state.historiesAfterSearch);
     TextEditingController historyTitleController =
         context.select((BicBloc bloc) => bloc.state.historyTitleController);
+    bool isSearchingHistories =
+        context.select((BicBloc bloc) => bloc.state.isSearchingHistories);
 
     return Center(
       child: SizedBox(
@@ -67,28 +69,32 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
                 ),
                 Expanded(
                   child: SizedBox(
-                    child: ListView.builder(
-                      itemCount: historiesAfterSearch.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 3),
-                          title: BlocProvider(
-                            key: Key(historiesAfterSearch[index].id),
-                            create: (context) =>
-                                HtmlAudioOnlyWithPlayButtonBloc(
-                              audioUrl:
-                                  historiesAfterSearch[index].audio.audioUri,
-                            ),
-                            child: _HistoryCard(
-                              historyId: historiesAfterSearch[index].id,
-                              maxWidth: maxWidth,
-                              historyTitle: historiesAfterSearch[index].title,
-                            ),
+                    child: isSearchingHistories
+                        ? const CircularProgressIndicator()
+                        : ListView.builder(
+                            itemCount: historiesAfterSearch.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 3),
+                                title: BlocProvider(
+                                  key: Key(historiesAfterSearch[index].id),
+                                  create: (context) =>
+                                      HtmlAudioOnlyWithPlayButtonBloc(
+                                    audioUrl: historiesAfterSearch[index]
+                                        .audio
+                                        .audioUri,
+                                  ),
+                                  child: _HistoryCard(
+                                    historyId: historiesAfterSearch[index].id,
+                                    maxWidth: maxWidth,
+                                    historyTitle:
+                                        historiesAfterSearch[index].title,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
                 Padding(

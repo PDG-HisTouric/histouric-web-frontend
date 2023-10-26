@@ -175,9 +175,13 @@ class BicBloc extends Bloc<BicEvent, BicState> {
   void _onTitleForSearchQueryChanged(
       TitleForSearchQueryChanged event, Emitter<BicState> emit) async {
     if (event.titleForSearchQuery.isNotEmpty) {
+      emit(state.copyWith(isSearchingHistories: true));
       List<Story> historiesAfterSearch = await historyRepository
           .getHistoriesByTitle(event.titleForSearchQuery);
-      emit(state.copyWith(historiesAfterSearch: historiesAfterSearch));
+      emit(state.copyWith(
+        historiesAfterSearch: historiesAfterSearch,
+        isSearchingHistories: false,
+      ));
     } else {
       emit(state.copyWith(historiesAfterSearch: state.selectedHistories));
     }
