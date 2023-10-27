@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 class HistoryImageResponse {
   final String id;

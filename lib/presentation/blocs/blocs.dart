@@ -8,3 +8,4 @@ export 'sidemenu_bloc/sidemenu_bloc.dart';
 export 'sign_up_bloc/sign_up_bloc.dart';
 export 'users_table_bloc/users_table_bloc.dart';
 export 'history_bloc/history_bloc.dart';
+export 'html_audio_only_with_play_button_bloc/html_audio_only_with_play_button_bloc.dart';

@@ -29,3 +29,33 @@ class BicDriveImageInfoAdded extends BicEvent {
 class BicSubmitted extends BicEvent {}
 
 class BicTouchedEveryField extends BicEvent {}
+
+class TitleForSearchQueryChanged extends BicEvent {
+  final String titleForSearchQuery;
+
+  TitleForSearchQueryChanged({required this.titleForSearchQuery});
+}
+
+class HistoriesAfterSearchChanged extends BicEvent {
+  final List<Story> historiesAfterSearch;
+
+  HistoriesAfterSearchChanged({required this.historiesAfterSearch});
+}
+
+class HistoryChecked extends BicEvent {
+  final String historyId;
+
+  HistoryChecked({required this.historyId});
+}
+
+class HistoriesUnselected extends BicEvent {
+  HistoriesUnselected();
+}
+
+class AddSelectedHistoriesButtonPressed extends BicEvent {}
+
+class RemoveSelectedHistoryButtonPressed extends BicEvent {
+  final String historyId;
+
+  RemoveSelectedHistoryButtonPressed({required this.historyId});
+}

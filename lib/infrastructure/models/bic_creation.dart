@@ -1,7 +1,4 @@
-import 'story.dart';
-
-class BIC {
-  final String? bicId;
+class BICCreation {
   final String name;
   final double latitude;
   final double longitude;
@@ -9,10 +6,9 @@ class BIC {
   final bool exists;
   final List<String> nicknames;
   final List<String> imagesUris;
-  final List<Story> histories;
+  final List<String> historiesIds;
 
-  BIC({
-    this.bicId,
+  BICCreation({
     required this.name,
     required this.latitude,
     required this.longitude,
@@ -20,6 +16,6 @@ class BIC {
     required this.exists,
     required this.nicknames,
     required this.imagesUris,
-    required this.histories,
+    required this.historiesIds,
   });
 }

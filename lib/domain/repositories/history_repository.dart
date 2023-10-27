@@ -2,6 +2,7 @@ import '../../infrastructure/models/models.dart';
 import '../entities/entities.dart';
 
 abstract class HistoryRepository {
-  Future<History> createHistory(HistoryCreation historyCreation);
+  Future<Story> createHistory(HistoryCreation historyCreation);
+  Future<List<Story>> getHistoriesByTitle(String title);
   void configureToken(String token);
 }

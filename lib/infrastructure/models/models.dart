@@ -12,3 +12,4 @@ export 'text_response.dart';
 export 'token_response.dart';
 export 'video_creation.dart';
 export 'video_response.dart';
+export 'bic_creation.dart';

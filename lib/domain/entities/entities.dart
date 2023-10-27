@@ -1,5 +1,5 @@
 export 'bic.dart';
-export 'history.dart';
+export 'story.dart';
 export 'history_audio.dart';
 export 'history_image.dart';
 export 'history_text.dart';

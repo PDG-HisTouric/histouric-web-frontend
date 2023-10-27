@@ -36,8 +36,8 @@ class HistoryMapper {
     };
   }
 
-  static History fromHistoryResponseToHistory(HistoryResponse historyResponse) {
-    return History(
+  static Story fromHistoryResponseToHistory(HistoryResponse historyResponse) {
+    return Story(
       id: historyResponse.id,
       title: historyResponse.title,
       audio: HistoryAudioMapper.fromAudioResponseToHistoryAudio(

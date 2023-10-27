@@ -1,4 +1,3 @@
-import 'dart:js';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +31,7 @@ class CreateHistoryView extends StatelessWidget {
 }
 
 class _CreateHistoryView extends StatefulWidget {
-  const _CreateHistoryView({super.key});
+  const _CreateHistoryView();
 
   @override
   State<_CreateHistoryView> createState() => _CreateHistoryViewState();
@@ -160,7 +159,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
 }
 
 class _CardWithMessage extends StatelessWidget {
-  const _CardWithMessage({super.key});
+  const _CardWithMessage();
 
   Card _buildLoadingCard() {
     return const Card(
