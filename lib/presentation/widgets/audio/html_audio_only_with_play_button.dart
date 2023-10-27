@@ -8,17 +8,12 @@ import 'package:universal_html/html.dart';
 
 class HtmlAudioOnlyWithPlayButton extends StatelessWidget {
   final void Function(String currentTime)? onChangeAudioTime;
-  const HtmlAudioOnlyWithPlayButton({super.key, this.onChangeAudioTime});
-
-  final double _currentTime = 0;
-
-  void _changeCurrentTime(String currentTime) {
-    // setState(() {
-    //   _currentTime = double.parse(currentTime);
-    // });
-    // _currentTime = double.parse(currentTime);
-    // print("$_currentTime == $_audioDuration");
-  }
+  final String audioId;
+  const HtmlAudioOnlyWithPlayButton({
+    super.key,
+    this.onChangeAudioTime,
+    required this.audioId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +27,7 @@ class HtmlAudioOnlyWithPlayButton extends StatelessWidget {
           width: 0,
           height: 0,
           child: _HtmlAudio(
+            audioId: audioId,
             audioUrl: context.read<HtmlAudioOnlyWithPlayButtonBloc>().audioUrl,
             onChangeAudioTime: (currentTime) {
               context
@@ -45,8 +41,6 @@ class HtmlAudioOnlyWithPlayButton extends StatelessWidget {
         ),
         IconButton(
           onPressed: () {
-            String src =
-                context.read<HtmlAudioOnlyWithPlayButtonBloc>().audioUrl;
             context
                 .read<HtmlAudioOnlyWithPlayButtonBloc>()
                 .initializeAudioDuration();
@@ -54,10 +48,10 @@ class HtmlAudioOnlyWithPlayButton extends StatelessWidget {
               context
                   .read<HtmlAudioOnlyWithPlayButtonBloc>()
                   .clickPauseButton();
-              AudioHelper.callPauseAudioById("audio-$src");
+              AudioHelper.callPauseAudioById(audioId);
             } else {
               context.read<HtmlAudioOnlyWithPlayButtonBloc>().clickPlayButton();
-              AudioHelper.callPlayAudioById("audio-$src");
+              AudioHelper.callPlayAudioById(audioId);
             }
           },
           icon: Icon(audioState.icon),
@@ -69,17 +63,18 @@ class HtmlAudioOnlyWithPlayButton extends StatelessWidget {
 
 class _HtmlAudio extends StatefulWidget {
   final String audioUrl;
+  final String audioId;
   final void Function(String currentTime) onChangeAudioTime;
 
   _HtmlAudio({
     required this.audioUrl,
     required this.onChangeAudioTime,
+    required this.audioId,
   }) {
-    ui.platformViewRegistry.registerViewFactory('audio-$audioUrl',
-        (int viewId) {
+    ui.platformViewRegistry.registerViewFactory(audioId, (int viewId) {
       AudioElement audioElement = AudioElement()
         ..controls = false
-        ..id = 'audio-$audioUrl'
+        ..id = audioId
         ..addEventListener(
             'timeupdate',
             (event) => onChangeAudioTime(
@@ -98,6 +93,6 @@ class _HtmlAudio extends StatefulWidget {
 class _HtmlAudioState extends State<_HtmlAudio> {
   @override
   Widget build(BuildContext context) {
-    return HtmlElementView(viewType: 'audio-${widget.audioUrl}');
+    return HtmlElementView(viewType: widget.audioId);
   }
 }

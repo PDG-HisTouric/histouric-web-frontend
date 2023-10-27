@@ -1,3 +1,5 @@
+import 'package:histouric_web/infrastructure/infrastructure.dart';
+
 import '../../domain/domain.dart';
 
 class BICRepositoryImpl implements BICRepository {
@@ -6,7 +8,7 @@ class BICRepositoryImpl implements BICRepository {
   BICRepositoryImpl({required this.bicDatasource});
 
   @override
-  Future<BIC> createBIC(BIC bic) {
+  Future<BIC> createBIC(BICCreation bic) {
     return bicDatasource.createBIC(bic);
   }
 

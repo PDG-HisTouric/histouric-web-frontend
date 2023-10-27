@@ -84,9 +84,9 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
                                 contentPadding:
                                     const EdgeInsets.symmetric(horizontal: 3),
                                 title: BlocProvider(
-                                  key: Key(historiesAfterSearch[index].id),
                                   create: (context) =>
                                       HtmlAudioOnlyWithPlayButtonBloc(
+                                    idPrefix: "audio-after-search",
                                     audioUrl: historiesAfterSearch[index]
                                         .audio
                                         .audioUri,
@@ -157,7 +157,6 @@ class _HistoryCard extends StatelessWidget {
     List<Story> selectedHistories =
         context.select((BicBloc bloc) => bloc.state.selectedHistories);
     bool selected = _isHistorySelected(historyId, selectedHistories);
-    final key = UniqueKey();
     return SizedBox(
       width: MediaQuery.sizeOf(context).width < maxWidth
           ? MediaQuery.sizeOf(context).width
@@ -177,8 +176,9 @@ class _HistoryCard extends StatelessWidget {
                 Text(historyTitle),
                 const Spacer(),
                 HtmlAudioOnlyWithPlayButton(
-                  key: key,
-                  // audioUrl,
+                  audioId: context
+                      .read<HtmlAudioOnlyWithPlayButtonBloc>()
+                      .getAudioId(),
                 ),
               ],
             )),

@@ -85,19 +85,20 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     while (state.status != SubmissionStatus.submissionInProgress) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
+    List<String> historiesIds =
+        state.selectedHistories.map((e) => e.id).toList();
     try {
-      await bicRepository.createBIC(
-        BIC(
-          name: state.bicName.value,
-          description: state.bicDescription.value,
-          exists: state.exists,
-          latitude: latitude,
-          longitude: longitude,
-          nicknames: [],
-          histories: [],
-          imagesUris: state.driveImagesInfo.map((e) => e.url).toList(),
-        ),
+      BICCreation bic = BICCreation(
+        name: state.bicName.value,
+        description: state.bicDescription.value,
+        exists: state.exists,
+        latitude: latitude,
+        longitude: longitude,
+        nicknames: [],
+        imagesUris: state.driveImagesInfo.map((e) => e.url).toList(),
+        historiesIds: historiesIds,
       );
+      await bicRepository.createBIC(bic);
       emit(state.copyWith(status: SubmissionStatus.submissionSuccess));
       while (state.status != SubmissionStatus.submissionSuccess) {
         await Future.delayed(const Duration(milliseconds: 50));

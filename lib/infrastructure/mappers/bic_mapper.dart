@@ -1,5 +1,6 @@
+import 'package:histouric_web/infrastructure/infrastructure.dart';
+
 import '../../domain/domain.dart';
-import '../models/models.dart';
 
 class BICMapper {
   static BIC fromBICResponse(BICResponse bicResponse) {
@@ -12,11 +13,14 @@ class BICMapper {
       exists: bicResponse.exists,
       nicknames: bicResponse.nicknames,
       imagesUris: bicResponse.imagesUris,
-      histories: [],
+      histories: bicResponse.histories
+          .map((historyResponse) =>
+              HistoryMapper.fromHistoryResponseToHistory(historyResponse))
+          .toList(),
     );
   }
 
-  static Map<String, dynamic> toMap(BIC bic) {
+  static Map<String, dynamic> toMap(BICCreation bic) {
     return {
       'name': bic.name,
       'latitude': bic.latitude,
@@ -25,7 +29,7 @@ class BICMapper {
       'existss': bic.exists,
       'nicknames': bic.nicknames,
       'imagesUris': bic.imagesUris,
-      'histories': bic.histories,
+      'historiesIds': bic.historiesIds,
     };
   }
 }

@@ -4,11 +4,10 @@ import 'package:histouric_web/presentation/presentation.dart';
 
 import '../../config/config.dart';
 import '../../domain/domain.dart';
-import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
 
 class CreateBICView extends StatelessWidget {
-  const CreateBICView();
+  const CreateBICView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -245,8 +244,8 @@ class _SelectedHistories extends StatelessWidget {
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 3),
             title: BlocProvider(
-              key: Key(selectedHistories[index].id),
               create: (context) => HtmlAudioOnlyWithPlayButtonBloc(
+                idPrefix: "selected-audio",
                 audioUrl: selectedHistories[index].audio.audioUri,
               ),
               child: _HistoryCard(
@@ -272,19 +271,8 @@ class _HistoryCard extends StatelessWidget {
     required this.historyId,
   });
 
-  bool _isHistorySelected(String historyId, List<Story> histories) {
-    for (Story history in histories) {
-      if (history.id == historyId) return true;
-    }
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
-    List<Story> selectedHistories =
-        context.select((BicBloc bloc) => bloc.state.selectedHistories);
-    bool selected = _isHistorySelected(historyId, selectedHistories);
-    final key = UniqueKey();
     return SizedBox(
       width: MediaQuery.sizeOf(context).width < maxWidth
           ? MediaQuery.sizeOf(context).width
@@ -298,8 +286,9 @@ class _HistoryCard extends StatelessWidget {
               Text(historyTitle),
               const Spacer(),
               HtmlAudioOnlyWithPlayButton(
-                key: key,
-                // audioUrl,
+                audioId: context
+                    .read<HtmlAudioOnlyWithPlayButtonBloc>()
+                    .getAudioId(),
               ),
               IconButton(
                 onPressed: () {

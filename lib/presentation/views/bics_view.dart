@@ -16,8 +16,7 @@ class BicsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => MapBloc(
-        // token: context.read<AuthBloc>().state.token!,
-        token: '', //TODO: QUITAR
+        token: context.read<AuthBloc>().state.token!,
         bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
       ),
       child: const _BIcsView(),
@@ -241,8 +240,7 @@ class _CreateBicViewState extends State<_CreateBicView> {
         closeAddHistoriesToBIC: _closeAddHistoriesToBIC,
         openAddHistoriesToBIC: _openAddHistoriesToBIC,
         bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
-        // token: context.read<AuthBloc>().state.token!,
-        token: '', //TODO: QUITAR
+        token: context.read<AuthBloc>().state.token!,
       ),
       child: Stack(
         children: [
