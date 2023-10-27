@@ -45,7 +45,6 @@ class HtmlAudioOnlyWithPlayButtonBloc extends Bloc<
   void _onAudioDurationChanged(AudioDurationChanged event,
       Emitter<HtmlAudioOnlyWithPlayButtonState> emit) {
     if (state.audioDuration != 0) return;
-    print("audio duration == ${event.audioDuration}");
     emit(state.copyWith(audioDuration: event.audioDuration));
   }
 
