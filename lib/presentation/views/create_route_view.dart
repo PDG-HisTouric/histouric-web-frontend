@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import '../../domain/domain.dart';
 import '../../infrastructure/infrastructure.dart';
@@ -16,14 +17,16 @@ class CreateRouteView extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider(
         create: (context) => MapBloc(
-          token: context.read<AuthBloc>().state.token!,
+          // token: context.read<AuthBloc>().state.token!, //TODO: PONER
+          token: "", //TODO: QUITAR
           bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
         ),
       ),
       BlocProvider(
         create: (context) => RouteBloc(
           bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
-          token: context.read<AuthBloc>().state.token!,
+          // token: context.read<AuthBloc>().state.token!, //TODO: PONER
+          token: "", //TODO: QUITAR
         ),
       ),
     ], child: const _CreateRouteView());
@@ -44,159 +47,166 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
   @override
   Widget build(BuildContext context) {
     final routeBlocState = context.watch<RouteBloc>().state;
-
-    return Row(
+    return Stack(
       children: [
-        Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 20,
-                offset: Offset(0, 5),
-              ),
-            ],
-          ),
-          child: SizedBox(
-            width: 400,
-            height: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 5),
-                  const Text(
-                    "Crear ruta",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  const SecondCustomTextFormField(
-                    labelText: 'Nombre de la ruta',
-                    minLines: 1,
-                    maxLines: 1,
-                  ),
-                  SecondCustomTextFormField(
-                    controller: routeBlocState.searchController,
-                    minLines: 1,
-                    maxLines: 1,
-                    labelText: 'Buscar bien de interés cultural',
-                    prefixIcon: const Icon(Icons.search),
-                    onChanged: context.read<RouteBloc>().changeSearchTextField,
-                  ),
-                  const SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      "Bienes de interés de la ruta",
-                      style: TextStyle(fontSize: 15),
-                      textAlign: TextAlign.left,
+        const _GoogleMap(),
+        PointerInterceptor(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 20,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              width: 400,
+              height: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    const Text(
+                      "Crear ruta",
+                      style: TextStyle(fontSize: 20),
                     ),
-                  ),
-                  Expanded(
-                    child: routeBlocState.searchTextField.isEmpty
-                        ? FadeIn(
-                            child: changeBICsOrder
-                                ? const Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                : ReorderableListView(
-                                    buildDefaultDragHandles: false,
-                                    onReorder: (oldIndex, newIndex) async {
-                                      setState(() => changeBICsOrder = true);
-                                      context
-                                          .read<RouteBloc>()
-                                          .changeBICsOrder(
-                                            newIndex: newIndex,
-                                            oldIndex: oldIndex,
-                                          )
-                                          .then((value) {
+                    const SecondCustomTextFormField(
+                      labelText: 'Nombre de la ruta',
+                      minLines: 1,
+                      maxLines: 1,
+                    ),
+                    SecondCustomTextFormField(
+                      controller: routeBlocState.searchController,
+                      minLines: 1,
+                      maxLines: 1,
+                      labelText: 'Buscar bien de interés cultural',
+                      prefixIcon: const Icon(Icons.search),
+                      onChanged:
+                          context.read<RouteBloc>().changeSearchTextField,
+                    ),
+                    const SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "Bienes de interés de la ruta",
+                        style: TextStyle(fontSize: 15),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    Expanded(
+                      child: routeBlocState.searchTextField.isEmpty
+                          ? FadeIn(
+                              child: changeBICsOrder
+                                  ? const Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : ReorderableListView(
+                                      buildDefaultDragHandles: false,
+                                      onReorder: (oldIndex, newIndex) async {
+                                        setState(() => changeBICsOrder = true);
                                         context
-                                            .read<MapBloc>()
-                                            .changePolylinePoints(context
-                                                .read<RouteBloc>()
-                                                .state
-                                                .bicsForRoute);
-                                        setState(() => changeBICsOrder = false);
-                                      });
-                                    },
-                                    children: [
-                                      for (final bic
-                                          in routeBlocState.bicsForRoute)
-                                        FadeIn(
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          key: ValueKey(bic.bicId),
-                                          child: _CustomRow(
-                                            index: routeBlocState.bicsForRoute
-                                                .indexOf(bic),
+                                            .read<RouteBloc>()
+                                            .changeBICsOrder(
+                                              newIndex: newIndex,
+                                              oldIndex: oldIndex,
+                                            )
+                                            .then((value) {
+                                          context
+                                              .read<MapBloc>()
+                                              .changePolylinePoints(context
+                                                  .read<RouteBloc>()
+                                                  .state
+                                                  .bicsForRoute);
+                                          setState(
+                                              () => changeBICsOrder = false);
+                                        });
+                                      },
+                                      children: [
+                                        for (final bic
+                                            in routeBlocState.bicsForRoute)
+                                          FadeIn(
+                                            duration: const Duration(
+                                                milliseconds: 200),
                                             key: ValueKey(bic.bicId),
-                                            bic: bic,
+                                            child: _CustomRow(
+                                              index: routeBlocState.bicsForRoute
+                                                  .indexOf(bic),
+                                              key: ValueKey(bic.bicId),
+                                              bic: bic,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                            )
+                          : FadeIn(
+                              duration: const Duration(milliseconds: 200),
+                              child: ListView(
+                                children: [
+                                  Column(
+                                    children: [
+                                      if (routeBlocState.bicsForSearch.isEmpty)
+                                        const ListTile(
+                                          title: Text(
+                                            "No se encontraron resultados",
+                                          ),
+                                        ),
+                                      for (final bic
+                                          in routeBlocState.bicsForSearch)
+                                        ListTile(
+                                          title: Text(bic.name),
+                                          subtitle: Text(bic.description),
+                                          trailing: IconButton(
+                                            onPressed: () {
+                                              context
+                                                  .read<RouteBloc>()
+                                                  .addBIC(bic)
+                                                  .then((createdBIC) {
+                                                context
+                                                    .read<MapBloc>()
+                                                    .addMarker(
+                                                      latitude:
+                                                          createdBIC.latitude,
+                                                      longitude:
+                                                          createdBIC.longitude,
+                                                      name: createdBIC.name,
+                                                      markerId:
+                                                          createdBIC.bicId!,
+                                                    );
+                                                context
+                                                    .read<MapBloc>()
+                                                    .changePolylinePoints(
+                                                        context
+                                                            .read<RouteBloc>()
+                                                            .state
+                                                            .bicsForRoute);
+                                              });
+                                            },
+                                            icon: const Icon(Icons.add),
                                           ),
                                         ),
                                     ],
                                   ),
-                          )
-                        : FadeIn(
-                            duration: const Duration(milliseconds: 200),
-                            child: ListView(
-                              children: [
-                                Column(
-                                  children: [
-                                    if (routeBlocState.bicsForSearch.isEmpty)
-                                      const ListTile(
-                                        title: Text(
-                                          "No se encontraron resultados",
-                                        ),
-                                      ),
-                                    for (final bic
-                                        in routeBlocState.bicsForSearch)
-                                      ListTile(
-                                        title: Text(bic.name),
-                                        subtitle: Text(bic.description),
-                                        trailing: IconButton(
-                                          onPressed: () {
-                                            context
-                                                .read<RouteBloc>()
-                                                .addBIC(bic)
-                                                .then((createdBIC) {
-                                              context.read<MapBloc>().addMarker(
-                                                    latitude:
-                                                        createdBIC.latitude,
-                                                    longitude:
-                                                        createdBIC.longitude,
-                                                    name: createdBIC.name,
-                                                    markerId: createdBIC.bicId!,
-                                                  );
-                                              context
-                                                  .read<MapBloc>()
-                                                  .changePolylinePoints(context
-                                                      .read<RouteBloc>()
-                                                      .state
-                                                      .bicsForRoute);
-                                            });
-                                          },
-                                          icon: const Icon(Icons.add),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      // context.read<MapBloc>().add(CreateRoute());
-                    },
-                    child: const Text("Crear ruta"),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        // context.read<MapBloc>().add(CreateRoute());
+                      },
+                      child: const Text("Crear ruta"),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        const Expanded(child: _GoogleMap()),
       ],
     );
   }
@@ -210,24 +220,35 @@ class _CustomRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(bic.name),
-      subtitle: Text(bic.description),
-      trailing: IconButton(
-        onPressed: () {
-          context.read<RouteBloc>().deleteBIC(index).then((value) {
-            context.read<MapBloc>().deleteMarker(bic.bicId!);
-            context.read<MapBloc>().changePolylinePoints(
-                context.read<RouteBloc>().state.bicsForRoute);
-          });
-        },
-        icon: const Icon(Icons.delete),
-      ),
-      leading: ReorderableDragStartListener(
-        index: index,
-        key: ValueKey(bic.bicId!),
-        child: const Icon(Icons.drag_handle),
-      ),
+    return Column(
+      children: [
+        ListTile(
+          title: Text(bic.name),
+          subtitle: Text(bic.description),
+          trailing: IconButton(
+            onPressed: () {
+              context.read<RouteBloc>().deleteBIC(index).then((value) {
+                context.read<MapBloc>().deleteMarker(bic.bicId!);
+                context.read<MapBloc>().changePolylinePoints(
+                    context.read<RouteBloc>().state.bicsForRoute);
+              });
+            },
+            icon: const Icon(Icons.delete),
+          ),
+          leading: ReorderableDragStartListener(
+            index: index,
+            key: ValueKey(bic.bicId!),
+            child: const InkWell(
+              mouseCursor: SystemMouseCursors.grab,
+              child: Icon(Icons.drag_handle),
+            ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text("Elegir historia"),
+        ),
+      ],
     );
   }
 }
