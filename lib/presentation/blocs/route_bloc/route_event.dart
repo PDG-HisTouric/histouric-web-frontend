@@ -32,3 +32,29 @@ class BICsOrderChanged extends RouteEvent {
 
   BICsOrderChanged({required this.oldIndex, required this.newIndex});
 }
+
+class ShowHistoriesButtonPressed extends RouteEvent {
+  final BIC bic;
+
+  ShowHistoriesButtonPressed({required this.bic});
+}
+
+class HistorySelected extends RouteEvent {
+  final String historyId;
+  final String bicId;
+
+  HistorySelected({required this.historyId, required this.bicId});
+}
+
+class DescriptionChanged extends RouteEvent {
+  final String description;
+
+  DescriptionChanged({required this.description});
+}
+
+class ScrollBarChanged extends RouteEvent {
+  final bool? isTheScrollBarUp;
+  final bool? isTheScrollBarDown;
+
+  ScrollBarChanged({this.isTheScrollBarUp, this.isTheScrollBarDown});
+}

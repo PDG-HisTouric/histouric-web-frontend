@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../config/config.dart';
 import '../../../domain/domain.dart';
+import '../route_bloc/route_bloc.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -255,7 +256,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _markerDeleteCompleter = Completer<void>();
   }
 
-  Future<void> changePolylinePoints(List<BIC> bics) async {
+  Future<void> changePolylinePoints(List<BICState> bicStates) async {
+    List<BIC> bics = bicStates.map((e) => e.bic).toList();
     add(PolylinePointsChanged(bics: bics));
   }
 }

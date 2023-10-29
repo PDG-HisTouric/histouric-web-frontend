@@ -10,18 +10,17 @@ part 'html_audio_only_with_play_button_state.dart';
 class HtmlAudioOnlyWithPlayButtonBloc extends Bloc<
     HtmlAudioOnlyWithPlayButtonEvent, HtmlAudioOnlyWithPlayButtonState> {
   final String audioUrl;
-  final String idPrefix;
-  late final String _audioId;
+  final String htmlAudioId;
   HtmlAudioOnlyWithPlayButtonBloc({
     required this.audioUrl,
-    required this.idPrefix,
+    required this.htmlAudioId,
   }) : super(HtmlAudioOnlyWithPlayButtonState()) {
     on<PlayButtonPressed>(_onPlayButtonPressed);
     on<PauseButtonPressed>(_onPauseButtonPressed);
     on<AudioDurationChanged>(_onAudioDurationChanged);
     on<AudioCurrentTimeChanged>(_onAudioCurrentTimeChanged);
-    const uuid = Uuid();
-    _audioId = "$idPrefix-${uuid.v4()}-$audioUrl";
+    // const uuid = Uuid();
+    // _audioId = "${uuid.v4()}-$audioUrl";
   }
 
   void _onPlayButtonPressed(
@@ -50,7 +49,7 @@ class HtmlAudioOnlyWithPlayButtonBloc extends Bloc<
 
   void initializeAudioDuration() {
     if (state.audioDuration != 0) return;
-    double audioDuration = AudioHelper.callGetDurationOfAudioById(_audioId);
+    double audioDuration = AudioHelper.callGetDurationOfAudioById(htmlAudioId);
     add(AudioDurationChanged(audioDuration));
   }
 
@@ -62,9 +61,5 @@ class HtmlAudioOnlyWithPlayButtonBloc extends Bloc<
   void changeAudioCurrentTime({required double currentTime}) {
     add(AudioCurrentTimeChanged(currentTime));
     if (currentTime == state.audioDuration) clickPauseButton();
-  }
-
-  String getAudioId() {
-    return _audioId;
   }
 }
