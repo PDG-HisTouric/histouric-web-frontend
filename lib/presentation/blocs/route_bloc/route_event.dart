@@ -51,10 +51,3 @@ class DescriptionChanged extends RouteEvent {
 
   DescriptionChanged({required this.description});
 }
-
-class ScrollBarChanged extends RouteEvent {
-  final bool? isTheScrollBarUp;
-  final bool? isTheScrollBarDown;
-
-  ScrollBarChanged({this.isTheScrollBarUp, this.isTheScrollBarDown});
-}

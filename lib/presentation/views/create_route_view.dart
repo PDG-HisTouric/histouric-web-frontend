@@ -15,7 +15,6 @@ class CreateRouteView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double widthOfTheMap = MediaQuery.of(context).size.width - 400;
     return MultiBlocProvider(providers: [
       BlocProvider(
         create: (context) => MapBloc(
@@ -26,7 +25,6 @@ class CreateRouteView extends StatelessWidget {
       ),
       BlocProvider(
         create: (context) => RouteBloc(
-          widthOfTheMap: widthOfTheMap,
           bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
           // token: context.read<AuthBloc>().state.token!, //TODO: PONER
           token: "", //TODO: QUITAR
@@ -45,71 +43,44 @@ class _CreateRouteView extends StatefulWidget {
 
 class _CreateRouteViewState extends State<_CreateRouteView> {
   bool changeBICsOrder = false;
-  final scrollController = ScrollController();
-
-  @override
-  void initState() {
-    scrollController.addListener(
-      () {
-        final double originalHeight =
-            context.read<RouteBloc>().getOriginalRouteFormHeight(context);
-        final double currentHeight = context
-            .read<RouteBloc>()
-            .getRouteFormHeightWithoutTopAndBottomFixedWidgets(context)
-            .toDouble();
-        if (currentHeight <= originalHeight) {
-          context.read<RouteBloc>().changeScrollBar(
-                isTheScrollBarUp: true,
-                isTheScrollBarDown: true,
-              );
-          return;
-        }
-        final routeBlocState = context.read<RouteBloc>().state;
-        final double scrollPosition = scrollController.position.pixels;
-        final double scrollMaxPosition =
-            scrollController.position.maxScrollExtent;
-        final double scrollMinPosition =
-            scrollController.position.minScrollExtent;
-        final bool isTheScrollBarUp = scrollPosition == scrollMinPosition;
-        final bool isTheScrollBarDown = scrollPosition == scrollMaxPosition;
-        if (isTheScrollBarUp != routeBlocState.isTheScrollBarUp ||
-            isTheScrollBarDown != routeBlocState.isTheScrollBarDown) {
-          context.read<RouteBloc>().changeScrollBar(
-              isTheScrollBarUp: isTheScrollBarUp,
-              isTheScrollBarDown: isTheScrollBarDown);
-        }
-      },
-    );
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final routeBlocState = context.watch<RouteBloc>().state;
-    final bool isTheScrollBarUp = context
-        .select((RouteBloc routeBloc) => routeBloc.state.isTheScrollBarUp);
-    final bool isTheScrollBarDown = context
-        .select((RouteBloc routeBloc) => routeBloc.state.isTheScrollBarDown);
+    // final routeBlocState = context.watch<RouteBloc>().state;
+    final List<BICState> bicsForRoute =
+        context.select((RouteBloc routeBloc) => routeBloc.state.bicsForRoute);
+    final List<BIC> bicsForSearch =
+        context.select((RouteBloc routeBloc) => routeBloc.state.bicsForSearch);
     final double height = context
         .read<RouteBloc>()
         .getRouteFormHeightWithoutTopAndBottomFixedWidgets(context);
-    final double widthOfTheMap = context.select((RouteBloc routeBloc) =>
-        routeBloc.state.widthOfTheMap -
-        (routeBlocState.isTheUserSelectingHistories ? 400 : 0));
+    final double widthOfTheMap =
+        context.read<RouteBloc>().getWidthOfTheMap(context);
+    final double widthOfTheSideMenu =
+        context.read<RouteBloc>().getWidthOfTheSideMenu();
+    final bool isTheUserSelectingHistories = context.select(
+        (RouteBloc routeBloc) => routeBloc.state.isTheUserSelectingHistories);
     return Stack(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            SizedBox(width: widthOfTheMap, child: const _GoogleMap()),
+            AnimatedContainer(
+                width: widthOfTheMap,
+                curve: Curves.ease,
+                duration: const Duration(milliseconds: 300),
+                child: const _GoogleMap()),
           ],
         ),
         AnimatedPositioned(
-            left: routeBlocState.isTheUserSelectingHistories ? 400 : -400,
-            top: 0,
-            bottom: 0,
-            duration: const Duration(milliseconds: 300),
-            child: PointerInterceptor(child: const _SelectHistoryView())),
+          left: isTheUserSelectingHistories
+              ? widthOfTheSideMenu
+              : -widthOfTheSideMenu,
+          top: 0,
+          bottom: 0,
+          duration: const Duration(milliseconds: 300),
+          child: PointerInterceptor(child: const _SelectHistoryView()),
+        ),
         PointerInterceptor(
           child: Container(
             decoration: const BoxDecoration(
@@ -131,13 +102,12 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                if (!isTheScrollBarUp)
-                  const SizedBox(width: 400, height: 1, child: Divider()),
+                SizedBox(
+                    width: widthOfTheSideMenu, height: 1, child: Divider()),
                 Expanded(
                   child: SingleChildScrollView(
-                    controller: scrollController,
                     child: SizedBox(
-                      width: 400,
+                      width: widthOfTheSideMenu,
                       height: height,
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -147,8 +117,8 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                   ),
                 ),
                 // const SizedBox(height: 20),
-                if (!isTheScrollBarDown)
-                  const SizedBox(width: 400, height: 1, child: Divider()),
+                SizedBox(
+                    width: widthOfTheSideMenu, height: 1, child: Divider()),
                 Padding(
                   padding: const EdgeInsets.only(top: 9, bottom: 10),
                   child: ElevatedButton(
@@ -198,7 +168,7 @@ class _SelectedBIC extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   onPressed: () =>
-                      context.read<RouteBloc>().selectHistoryButtonPressed(bic),
+                      context.read<RouteBloc>().showHistoriesOfABic(bic),
                   child: const Text("Mostrar historias"),
                 ),
               ),
@@ -234,11 +204,15 @@ class _GoogleMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mapBlocState = context.watch<MapBloc>().state;
+    // final mapBlocState = context.watch<MapBloc>().state;
+    Map<PolylineId, Polyline> polylines =
+        context.select((MapBloc mapBloc) => mapBloc.state.polylines);
+    Set<Marker> markersSet =
+        context.select((MapBloc mapBloc) => mapBloc.state.markersSet);
 
     return GoogleMap(
-      polylines: Set<Polyline>.of(mapBlocState.polylines.values),
-      markers: mapBlocState.markersSet,
+      polylines: Set<Polyline>.of(polylines.values),
+      markers: markersSet,
       mapType: MapType.normal,
       initialCameraPosition: const CameraPosition(
         target: LatLng(3.451929471542798, -76.5319398863662),
@@ -274,11 +248,14 @@ class _SelectHistoryView extends StatelessWidget {
       histories: [],
     );
     final BICState emptyBICState = BICState(bic: emptyBIC);
+
     BICState bicState = context.select((RouteBloc routeBloc) =>
         routeBloc.state.bicsForRoute.firstWhere(
             (bicState) => bicState.isTheUserSelectingHistoriesForThisBIC,
             orElse: () => emptyBICState));
     BIC bic = bicState.bic;
+    final double widthOfTheSideMenu =
+        context.read<RouteBloc>().getWidthOfTheSideMenu();
 
     if (bicState == emptyBICState) {
       return const SizedBox();
@@ -296,7 +273,7 @@ class _SelectHistoryView extends StatelessWidget {
         ],
       ),
       child: SizedBox(
-        width: 400,
+        width: widthOfTheSideMenu,
         height: double.infinity,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -342,7 +319,7 @@ class _SelectHistoryView extends StatelessWidget {
                           originOfSelectedHistories: "createRouteView",
                           bicId: bic.bicId,
                           historyId: bic.histories[index].id,
-                          maxWidth: 400,
+                          maxWidth: widthOfTheSideMenu,
                           historyTitle: bic.histories[index].title,
                           onCheckBoxChanged: (String historyId) {
                             context
@@ -520,6 +497,7 @@ class _RouteForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final routeBlocState = context.watch<RouteBloc>().state;
     final String searchTextField = routeBlocState.searchTextField;
+
     return Column(
       children: [
         const SecondCustomTextFormField(
@@ -568,8 +546,7 @@ class _ShowBICButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
-        onPressed: () =>
-            context.read<RouteBloc>().selectHistoryButtonPressed(bic),
+        onPressed: () => context.read<RouteBloc>().showHistoriesOfABic(bic),
         child: const Text("Mostrar BIC"),
       ),
     );

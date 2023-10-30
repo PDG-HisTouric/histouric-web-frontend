@@ -12,21 +12,18 @@ part 'route_state.dart';
 class RouteBloc extends Bloc<RouteEvent, RouteState> {
   final BICRepository bicRepository;
   final String token;
-  final double widthOfTheMap;
   late final double _bicSelectedHeight;
   late final double _bicSearchedHeight;
   late final double _heightOfTheWidgetFixedInTheTopOfTheScrollBar;
   late final double _heightOfTheWidgetFixedInTheBottomOfTheScrollBar;
   late final double _minHeightOfTheRouteForm;
+  late final double _sideMenuWidth;
   Completer<void> _changeBICCompleter = Completer<void>();
   Completer<BIC> _newBICCompleter = Completer<BIC>();
   Completer<void> _deleteBICCompleter = Completer<void>();
 
-  RouteBloc(
-      {required this.bicRepository,
-      required this.token,
-      required this.widthOfTheMap})
-      : super(RouteState(widthOfTheMap: widthOfTheMap)) {
+  RouteBloc({required this.bicRepository, required this.token})
+      : super(RouteState()) {
     bicRepository.configureToken(token);
     state.initSearchController();
     _bicSelectedHeight = 180;
@@ -34,6 +31,7 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     _heightOfTheWidgetFixedInTheTopOfTheScrollBar = 45;
     _heightOfTheWidgetFixedInTheBottomOfTheScrollBar = 55;
     _minHeightOfTheRouteForm = 747.2000122070312;
+    _sideMenuWidth = 400;
     on<RouteNameChanged>(_onRouteNameChanged);
     on<BICAdded>(_onBICAdded);
     on<BICDeleted>(_onBICDeleted);
@@ -42,7 +40,6 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     on<ShowHistoriesButtonPressed>(_onShowHistoriesButtonPressed);
     on<HistorySelected>(_onHistorySelected);
     on<DescriptionChanged>(_onDescriptionChanged);
-    on<ScrollBarChanged>(_onScrollBarChanged);
   }
 
   void _onRouteNameChanged(RouteNameChanged event, Emitter<RouteState> emit) {
@@ -90,8 +87,28 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       bicList =
           await bicRepository.getBICsByNameOrNickname(event.searchTextField);
     }
-    emit(state.copyWith(
-        searchTextField: event.searchTextField, bicsForSearch: bicList));
+    if (state.isTheUserSelectingHistories) {
+      List<BICState> newBicsForRoute = state.bicsForRoute
+          .map(
+            (bicState) =>
+                bicState.copyWith(isTheUserSelectingHistoriesForThisBIC: false),
+          )
+          .toList();
+      emit(
+        state.copyWith(
+            searchTextField: event.searchTextField,
+            bicsForSearch: bicList,
+            bicsForRoute: newBicsForRoute,
+            isTheUserSelectingHistories: false),
+      );
+      return;
+    }
+    emit(
+      state.copyWith(
+        searchTextField: event.searchTextField,
+        bicsForSearch: bicList,
+      ),
+    );
   }
 
   void _onBICsOrderChanged(
@@ -155,7 +172,7 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     );
   }
 
-  void selectHistoryButtonPressed(BIC bic) {
+  void showHistoriesOfABic(BIC bic) {
     add(ShowHistoriesButtonPressed(bic: bic));
   }
 
@@ -170,17 +187,23 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
         .firstWhere((bicState) => bicState.bic.bicId == event.bicId);
     final Story history = bicState.bic.histories
         .firstWhere((history) => history.id == event.historyId);
+    BICState newBICState;
+    if (bicState.selectedHistory?.id == event.historyId) {
+      newBICState = bicState.copyWith(selectedHistory: null);
+    } else {
+      newBICState = bicState.copyWith(selectedHistory: history);
+    }
+
+    List<BICState> newBicForRoute = state.bicsForRoute.map((bicState) {
+      if (bicState.bic.bicId == event.bicId) {
+        return newBICState;
+      } else {
+        return bicState;
+      }
+    }).toList();
 
     emit(
-      state.copyWith(
-        bicsForRoute: state.bicsForRoute
-            .map(
-              (bicState) => bicState.bic.bicId == event.bicId
-                  ? bicState.copyWith(selectedHistory: history)
-                  : bicState.copyWith(selectedHistory: null),
-            )
-            .toList(),
-      ),
+      state.copyWith(bicsForRoute: newBicForRoute),
     );
   }
 
@@ -243,20 +266,6 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     return _bicSelectedHeight;
   }
 
-  void _onScrollBarChanged(ScrollBarChanged event, Emitter<RouteState> emit) {
-    emit(state.copyWith(
-      isTheScrollBarUp: event.isTheScrollBarUp ?? state.isTheScrollBarUp,
-      isTheScrollBarDown: event.isTheScrollBarDown ?? state.isTheScrollBarDown,
-    ));
-  }
-
-  void changeScrollBar({bool? isTheScrollBarUp, bool? isTheScrollBarDown}) {
-    add(ScrollBarChanged(
-      isTheScrollBarUp: isTheScrollBarUp,
-      isTheScrollBarDown: isTheScrollBarDown,
-    ));
-  }
-
   double getOriginalRouteFormHeight(BuildContext context) {
     return getFormHeight(context) -
         _heightOfTheWidgetFixedInTheTopOfTheScrollBar -
@@ -270,5 +279,15 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     } else {
       return screenHeight;
     }
+  }
+
+  double getWidthOfTheMap(BuildContext context) {
+    double widthOfTheMap = MediaQuery.of(context).size.width - _sideMenuWidth;
+    return widthOfTheMap -
+        (state.isTheUserSelectingHistories ? _sideMenuWidth : 0);
+  }
+
+  double getWidthOfTheSideMenu() {
+    return _sideMenuWidth;
   }
 }

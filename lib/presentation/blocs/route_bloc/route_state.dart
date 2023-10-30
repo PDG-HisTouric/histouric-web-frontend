@@ -9,9 +9,6 @@ class RouteState {
   final Map<PolylineId, Polyline> polylines;
   final int counter;
   final bool isTheUserSelectingHistories;
-  final bool isTheScrollBarUp;
-  final bool isTheScrollBarDown;
-  final double widthOfTheMap;
 
   late final TextEditingController searchController;
 
@@ -24,9 +21,6 @@ class RouteState {
     this.polylines = const {},
     this.counter = 0,
     this.isTheUserSelectingHistories = false,
-    this.isTheScrollBarUp = true,
-    this.isTheScrollBarDown = true,
-    required this.widthOfTheMap,
   });
 
   RouteState copyWith({
@@ -38,9 +32,6 @@ class RouteState {
     Map<PolylineId, Polyline>? polylines,
     int? counter,
     bool? isTheUserSelectingHistories,
-    bool? isTheScrollBarUp,
-    bool? isTheScrollBarDown,
-    double? widthOfTheMap,
   }) {
     return RouteState(
       name: name ?? this.name,
@@ -52,9 +43,6 @@ class RouteState {
       counter: counter ?? this.counter,
       isTheUserSelectingHistories:
           isTheUserSelectingHistories ?? this.isTheUserSelectingHistories,
-      isTheScrollBarUp: isTheScrollBarUp ?? this.isTheScrollBarUp,
-      isTheScrollBarDown: isTheScrollBarDown ?? this.isTheScrollBarDown,
-      widthOfTheMap: widthOfTheMap ?? this.widthOfTheMap,
     )..searchController = searchController;
   }
 
@@ -84,7 +72,7 @@ class BICState {
       isTheUserSelectingHistoriesForThisBIC:
           isTheUserSelectingHistoriesForThisBIC ??
               this.isTheUserSelectingHistoriesForThisBIC,
-      selectedHistory: selectedHistory ?? this.selectedHistory,
+      selectedHistory: selectedHistory,
     );
   }
 }
