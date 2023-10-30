@@ -51,3 +51,7 @@ class DescriptionChanged extends RouteEvent {
 
   DescriptionChanged({required this.description});
 }
+
+class SaveHistorySelectedButtonPressed extends RouteEvent {
+  SaveHistorySelectedButtonPressed();
+}

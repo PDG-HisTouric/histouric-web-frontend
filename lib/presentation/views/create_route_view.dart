@@ -60,6 +60,9 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
         context.read<RouteBloc>().getWidthOfTheSideMenu();
     final bool isTheUserSelectingHistories = context.select(
         (RouteBloc routeBloc) => routeBloc.state.isTheUserSelectingHistories);
+    // final bool isTheUserSelectingHistories =
+    //     routeBlocState.isTheUserSelectingHistories;
+
     return Stack(
       children: [
         Row(
@@ -150,6 +153,9 @@ class _SelectedBIC extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isTheUserSelectingHistoriesForThisBIC = context.select(
+        (RouteBloc routeBloc) => routeBloc
+            .state.bicsForRoute[index].isTheUserSelectingHistoriesForThisBIC);
     return Column(
       children: [
         const Divider(),
@@ -166,11 +172,17 @@ class _SelectedBIC extends StatelessWidget {
               _ShowBICButton(bic: bic),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () =>
-                      context.read<RouteBloc>().showHistoriesOfABic(bic),
-                  child: const Text("Mostrar historias"),
-                ),
+                child: isTheUserSelectingHistoriesForThisBIC
+                    ? ElevatedButton(
+                        onPressed:
+                            context.read<RouteBloc>().closeSelectedHistoryView,
+                        child: const Text("Ocultar historias"),
+                      )
+                    : ElevatedButton(
+                        onPressed: () =>
+                            context.read<RouteBloc>().showHistoriesOfABic(bic),
+                        child: const Text("Mostrar historias"),
+                      ),
               ),
             ],
           ),
@@ -283,9 +295,21 @@ class _SelectHistoryView extends StatelessWidget {
               const SizedBox(height: 5),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  bic.name,
-                  style: const TextStyle(fontSize: 20),
+                child: Row(
+                  children: [
+                    Text(
+                      bic.name,
+                      style: const TextStyle(fontSize: 20),
+                      maxLines: 10,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed:
+                          context.read<RouteBloc>().closeSelectedHistoryView,
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(
@@ -334,27 +358,12 @@ class _SelectHistoryView extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Center(
-                child: Wrap(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: const Text("Guardar"),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                        ),
-                        child: const Text("Cancelar",
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: context.read<RouteBloc>().saveHistorySelected,
+                    child: const Text("Guardar"),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),

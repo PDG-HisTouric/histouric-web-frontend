@@ -40,6 +40,7 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     on<ShowHistoriesButtonPressed>(_onShowHistoriesButtonPressed);
     on<HistorySelected>(_onHistorySelected);
     on<DescriptionChanged>(_onDescriptionChanged);
+    on<SaveHistorySelectedButtonPressed>(_onSaveHistorySelectedButtonPressed);
   }
 
   void _onRouteNameChanged(RouteNameChanged event, Emitter<RouteState> emit) {
@@ -87,22 +88,6 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       bicList =
           await bicRepository.getBICsByNameOrNickname(event.searchTextField);
     }
-    if (state.isTheUserSelectingHistories) {
-      List<BICState> newBicsForRoute = state.bicsForRoute
-          .map(
-            (bicState) =>
-                bicState.copyWith(isTheUserSelectingHistoriesForThisBIC: false),
-          )
-          .toList();
-      emit(
-        state.copyWith(
-            searchTextField: event.searchTextField,
-            bicsForSearch: bicList,
-            bicsForRoute: newBicsForRoute,
-            isTheUserSelectingHistories: false),
-      );
-      return;
-    }
     emit(
       state.copyWith(
         searchTextField: event.searchTextField,
@@ -145,6 +130,9 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   }
 
   void changeSearchTextField(String searchTextField) {
+    if (state.isTheUserSelectingHistories) {
+      saveHistorySelected();
+    }
     add(SearchTextFieldChanged(searchTextField: searchTextField));
   }
 
@@ -163,8 +151,10 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
               .map(
                 (bicState) => bicState.bic.bicId == event.bic.bicId
                     ? bicState.copyWith(
+                        selectedHistory: bicState.selectedHistory,
                         isTheUserSelectingHistoriesForThisBIC: true)
                     : bicState.copyWith(
+                        selectedHistory: bicState.selectedHistory,
                         isTheUserSelectingHistoriesForThisBIC: false),
               )
               .toList(),
@@ -283,11 +273,36 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   double getWidthOfTheMap(BuildContext context) {
     double widthOfTheMap = MediaQuery.of(context).size.width - _sideMenuWidth;
-    return widthOfTheMap -
+    widthOfTheMap = widthOfTheMap -
         (state.isTheUserSelectingHistories ? _sideMenuWidth : 0);
+    return (widthOfTheMap < 0) ? 0 : widthOfTheMap;
   }
 
   double getWidthOfTheSideMenu() {
     return _sideMenuWidth;
+  }
+
+  void _onSaveHistorySelectedButtonPressed(
+      SaveHistorySelectedButtonPressed event, Emitter<RouteState> emit) {
+    List<BICState> newBicsForRoute = state.bicsForRoute
+        .map(
+          (bicState) => bicState.copyWith(
+            isTheUserSelectingHistoriesForThisBIC: false,
+            selectedHistory: bicState.selectedHistory,
+          ),
+        )
+        .toList();
+    emit(
+      state.copyWith(
+          bicsForRoute: newBicsForRoute, isTheUserSelectingHistories: false),
+    );
+  }
+
+  void saveHistorySelected() {
+    add(SaveHistorySelectedButtonPressed());
+  }
+
+  void closeSelectedHistoryView() {
+    saveHistorySelected();
   }
 }
