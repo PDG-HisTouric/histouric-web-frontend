@@ -9,6 +9,7 @@ import '../../domain/domain.dart';
 import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
 import '../widgets/widgets.dart';
+import 'bic_view.dart';
 
 class CreateRouteView extends StatelessWidget {
   const CreateRouteView({super.key});
@@ -44,12 +45,31 @@ class _CreateRouteView extends StatefulWidget {
 class _CreateRouteViewState extends State<_CreateRouteView> {
   bool changeBICsOrder = false;
 
+  BICForSearchState? _getOpenBICForSearchState(
+      List<BICForSearchState> bicsForSearch) {
+    try {
+      return bicsForSearch
+          .firstWhere((bicForSearch) => bicForSearch.isTheUserViewingThisBIC);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  BICForRouteState? _getOpenBICForRouteState(
+      List<BICForRouteState> bicsForRoute) {
+    try {
+      return bicsForRoute
+          .firstWhere((bicForRoute) => bicForRoute.isTheUserViewingThisBIC);
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final routeBlocState = context.watch<RouteBloc>().state;
-    final List<BICState> bicsForRoute =
+    final List<BICForRouteState> bicsForRoute =
         context.select((RouteBloc routeBloc) => routeBloc.state.bicsForRoute);
-    final List<BIC> bicsForSearch =
+    final List<BICForSearchState> bicsForSearch =
         context.select((RouteBloc routeBloc) => routeBloc.state.bicsForSearch);
     final double height = context
         .read<RouteBloc>()
@@ -60,8 +80,16 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
         context.read<RouteBloc>().getWidthOfTheSideMenu();
     final bool isTheUserSelectingHistories = context.select(
         (RouteBloc routeBloc) => routeBloc.state.isTheUserSelectingHistories);
-    // final bool isTheUserSelectingHistories =
-    //     routeBlocState.isTheUserSelectingHistories;
+    final bool isTheUserViewingABICOfTheSearch = context.select(
+        (RouteBloc routeBloc) =>
+            routeBloc.state.isTheUserViewingABICOfTheSearch);
+    final bool isTheUserViewingABICOfTheRoute = context.select(
+        (RouteBloc routeBloc) =>
+            routeBloc.state.isTheUserViewingABICOfTheRoute);
+    final BICForSearchState? openBICForSearchState =
+        _getOpenBICForSearchState(bicsForSearch);
+    final BICForRouteState? openBICForRouteState =
+        _getOpenBICForRouteState(bicsForRoute);
 
     return Stack(
       children: [
@@ -74,6 +102,36 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                 duration: const Duration(milliseconds: 300),
                 child: const _GoogleMap()),
           ],
+        ),
+        AnimatedPositioned(
+          left: isTheUserViewingABICOfTheSearch
+              ? widthOfTheSideMenu
+              : -widthOfTheSideMenu,
+          top: 0,
+          bottom: 0,
+          duration: const Duration(milliseconds: 300),
+          child: PointerInterceptor(
+              child: BicView(
+            bic: openBICForSearchState?.bic,
+            width: widthOfTheSideMenu,
+            onCloseButtonPressed:
+                context.read<RouteBloc>().closeBICWithSearchState,
+          )),
+        ),
+        AnimatedPositioned(
+          left: isTheUserViewingABICOfTheRoute
+              ? widthOfTheSideMenu
+              : -widthOfTheSideMenu,
+          top: 0,
+          bottom: 0,
+          duration: const Duration(milliseconds: 300),
+          child: PointerInterceptor(
+              child: BicView(
+            bic: openBICForRouteState?.bic,
+            width: widthOfTheSideMenu,
+            onCloseButtonPressed:
+                context.read<RouteBloc>().closeBICWithRouteState,
+          )),
         ),
         AnimatedPositioned(
           left: isTheUserSelectingHistories
@@ -106,7 +164,9 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                   ),
                 ),
                 SizedBox(
-                    width: widthOfTheSideMenu, height: 1, child: Divider()),
+                    width: widthOfTheSideMenu,
+                    height: 1,
+                    child: const Divider()),
                 Expanded(
                   child: SingleChildScrollView(
                     child: SizedBox(
@@ -121,7 +181,9 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                 ),
                 // const SizedBox(height: 20),
                 SizedBox(
-                    width: widthOfTheSideMenu, height: 1, child: Divider()),
+                    width: widthOfTheSideMenu,
+                    height: 1,
+                    child: const Divider()),
                 Padding(
                   padding: const EdgeInsets.only(top: 9, bottom: 10),
                   child: ElevatedButton(
@@ -144,18 +206,19 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
 class _SelectedBIC extends StatelessWidget {
   final int index;
   final BIC bic;
+  final bool isTheUserSelectingHistoriesForThisBIC;
+  final bool isTheUserViewingThisBIC;
 
   const _SelectedBIC({
     super.key,
     required this.index,
     required this.bic,
+    required this.isTheUserSelectingHistoriesForThisBIC,
+    required this.isTheUserViewingThisBIC,
   });
 
   @override
   Widget build(BuildContext context) {
-    bool isTheUserSelectingHistoriesForThisBIC = context.select(
-        (RouteBloc routeBloc) => routeBloc
-            .state.bicsForRoute[index].isTheUserSelectingHistoriesForThisBIC);
     return Column(
       children: [
         const Divider(),
@@ -169,7 +232,11 @@ class _SelectedBIC extends StatelessWidget {
           subtitle: Wrap(
             alignment: WrapAlignment.center,
             children: [
-              _ShowBICButton(bic: bic),
+              _ShowBICButton(
+                isTheUserViewingThisBIC: isTheUserViewingThisBIC,
+                bic: bic,
+                origin: "selectedBic",
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: isTheUserSelectingHistoriesForThisBIC
@@ -216,7 +283,6 @@ class _GoogleMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final mapBlocState = context.watch<MapBloc>().state;
     Map<PolylineId, Polyline> polylines =
         context.select((MapBloc mapBloc) => mapBloc.state.polylines);
     Set<Marker> markersSet =
@@ -245,7 +311,7 @@ class _GoogleMap extends StatelessWidget {
 }
 
 class _SelectHistoryView extends StatelessWidget {
-  const _SelectHistoryView({super.key});
+  const _SelectHistoryView();
 
   @override
   Widget build(BuildContext context) {
@@ -259,12 +325,13 @@ class _SelectHistoryView extends StatelessWidget {
       imagesUris: [],
       histories: [],
     );
-    final BICState emptyBICState = BICState(bic: emptyBIC);
+    final BICForRouteState emptyBICState = BICForRouteState(bic: emptyBIC);
 
-    BICState bicState = context.select((RouteBloc routeBloc) =>
+    BICForRouteState bicState = context.select((RouteBloc routeBloc) =>
         routeBloc.state.bicsForRoute.firstWhere(
             (bicState) => bicState.isTheUserSelectingHistoriesForThisBIC,
             orElse: () => emptyBICState));
+
     BIC bic = bicState.bic;
     final double widthOfTheSideMenu =
         context.read<RouteBloc>().getWidthOfTheSideMenu();
@@ -387,8 +454,8 @@ class _SelectedBICListState extends State<_SelectedBICList> {
 
   @override
   Widget build(BuildContext context) {
-    List<BICState> bicsForRoute =
-        context.select((RouteBloc routeBloc) => routeBloc.state.bicsForRoute);
+    List<BICForRouteState> bicsForRoute =
+        context.watch<RouteBloc>().state.bicsForRoute;
     return Column(children: [
       const SizedBox(
         width: double.infinity,
@@ -425,6 +492,13 @@ class _SelectedBICListState extends State<_SelectedBICList> {
                       duration: const Duration(milliseconds: 200),
                       key: ValueKey(bicState.bic.bicId),
                       child: _SelectedBIC(
+                        isTheUserViewingThisBIC:
+                            bicState.isTheUserViewingThisBIC,
+                        isTheUserSelectingHistoriesForThisBIC: context
+                            .read<RouteBloc>()
+                            .state
+                            .bicsForRoute[bicsForRoute.indexOf(bicState)]
+                            .isTheUserSelectingHistoriesForThisBIC,
                         index: bicsForRoute.indexOf(bicState),
                         key: ValueKey(bicState.bic.bicId),
                         bic: bicState.bic,
@@ -438,12 +512,13 @@ class _SelectedBICListState extends State<_SelectedBICList> {
 }
 
 class _SearchedBICList extends StatelessWidget {
-  const _SearchedBICList({super.key});
+  const _SearchedBICList();
 
   @override
   Widget build(BuildContext context) {
-    List<BIC> bicsForSearch =
+    List<BICForSearchState> bicsForSearch =
         context.select((RouteBloc routeBloc) => routeBloc.state.bicsForSearch);
+
     return Column(
       children: [
         if (bicsForSearch.isEmpty)
@@ -452,7 +527,8 @@ class _SearchedBICList extends StatelessWidget {
               "No se encontraron resultados",
             ),
           ),
-        for (final bic in bicsForSearch) _SearchedBIC(bic: bic),
+        for (final bicForSearch in bicsForSearch)
+          _SearchedBIC(bic: bicForSearch.bic),
       ],
     );
   }
@@ -461,10 +537,21 @@ class _SearchedBICList extends StatelessWidget {
 class _SearchedBIC extends StatelessWidget {
   final BIC bic;
 
-  const _SearchedBIC({super.key, required this.bic});
+  const _SearchedBIC({required this.bic});
 
   @override
   Widget build(BuildContext context) {
+    final bicsForSearch =
+        context.select((RouteBloc routeBloc) => routeBloc.state.bicsForSearch);
+
+    bool isTheUserViewingThisBIC = false;
+    for (var bicForSearch in bicsForSearch) {
+      if (bicForSearch.bic.bicId == bic.bicId &&
+          bicForSearch.isTheUserViewingThisBIC) {
+        isTheUserViewingThisBIC = true;
+      }
+    }
+
     return Column(
       children: [
         const Divider(),
@@ -476,7 +563,12 @@ class _SearchedBIC extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
-          subtitle: Center(child: _ShowBICButton(bic: bic)),
+          subtitle: Center(
+              child: _ShowBICButton(
+            isTheUserViewingThisBIC: isTheUserViewingThisBIC,
+            bic: bic,
+            origin: "searchedBic",
+          )),
           trailing: IconButton(
             onPressed: () {
               context.read<RouteBloc>().addBIC(bic).then((createdBIC) {
@@ -500,7 +592,7 @@ class _SearchedBIC extends StatelessWidget {
 }
 
 class _RouteForm extends StatelessWidget {
-  const _RouteForm({super.key});
+  const _RouteForm();
 
   @override
   Widget build(BuildContext context) {
@@ -521,7 +613,7 @@ class _RouteForm extends StatelessWidget {
           maxLines: 5,
           onChanged: context.read<RouteBloc>().changeDescription,
           // errorMessage:
-          // context.read<BicBloc>().state.bicDescription.errorMessage, //TODO: PONER
+          // context.read<BicBloc>().state.bicDescription.errorMessage, //TODO: ADD LATER
         ),
         SecondCustomTextFormField(
           controller: routeBlocState.searchController,
@@ -534,7 +626,7 @@ class _RouteForm extends StatelessWidget {
         Expanded(
           child: searchTextField.isEmpty
               ? FadeIn(
-                  child: _SelectedBICList(),
+                  child: const _SelectedBICList(),
                 )
               : FadeIn(
                   duration: const Duration(milliseconds: 200),
@@ -548,16 +640,42 @@ class _RouteForm extends StatelessWidget {
 
 class _ShowBICButton extends StatelessWidget {
   final BIC bic;
-  const _ShowBICButton({super.key, required this.bic});
+  final String origin;
+  final bool isTheUserViewingThisBIC;
+  const _ShowBICButton(
+      {required this.bic,
+      required this.origin,
+      required this.isTheUserViewingThisBIC});
 
   @override
   Widget build(BuildContext context) {
+    void Function() showBIC;
+    void Function() hideBIC;
+    switch (origin) {
+      case "searchedBic":
+        showBIC = () => context.read<RouteBloc>().showBICWithSearchState(bic);
+        hideBIC = () => context.read<RouteBloc>().closeBICWithSearchState();
+        break;
+      case "selectedBic":
+        showBIC = () => context.read<RouteBloc>().showBICWithRouteState(bic);
+        hideBIC = () => context.read<RouteBloc>().closeBICWithRouteState();
+        break;
+      default:
+        hideBIC = () => {};
+        showBIC = () => {};
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: ElevatedButton(
-        onPressed: () => context.read<RouteBloc>().showHistoriesOfABic(bic),
-        child: const Text("Mostrar BIC"),
-      ),
+      child: isTheUserViewingThisBIC
+          ? ElevatedButton(
+              onPressed: hideBIC,
+              child: const Text("Ocultar BIC"),
+            )
+          : ElevatedButton(
+              onPressed: showBIC,
+              child: const Text("Mostrar BIC"),
+            ),
     );
   }
 }

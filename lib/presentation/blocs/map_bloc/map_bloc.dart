@@ -256,7 +256,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _markerDeleteCompleter = Completer<void>();
   }
 
-  Future<void> changePolylinePoints(List<BICState> bicStates) async {
+  Future<void> changePolylinePoints(List<BICForRouteState> bicStates) async {
     List<BIC> bics = bicStates.map((e) => e.bic).toList();
     add(PolylinePointsChanged(bics: bics));
   }

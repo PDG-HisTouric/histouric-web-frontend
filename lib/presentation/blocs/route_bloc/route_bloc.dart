@@ -41,6 +41,14 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     on<HistorySelected>(_onHistorySelected);
     on<DescriptionChanged>(_onDescriptionChanged);
     on<SaveHistorySelectedButtonPressed>(_onSaveHistorySelectedButtonPressed);
+    on<ShowBICWithRouteStateButtonPressed>(
+        _onShowBICWithRouteStateButtonPressed);
+    on<ShowBICWithSearchStateButtonPressed>(
+        _onShowBICWithSearchStateButtonPressed);
+    on<CloseBICWithRouteStateButtonPressed>(
+        _onCloseBICWithRouteStateButtonPressed);
+    on<CloseBICWithSearchStateButtonPressed>(
+        _onCloseBICWithSearchStateButtonPressed);
   }
 
   void _onRouteNameChanged(RouteNameChanged event, Emitter<RouteState> emit) {
@@ -61,7 +69,7 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       imagesUris: bic.imagesUris,
       histories: bic.histories,
     );
-    BICState newBICState = BICState(bic: newBIC);
+    BICForRouteState newBICState = BICForRouteState(bic: newBIC);
     emit(state.copyWith(
         bicsForRoute: [...state.bicsForRoute, newBICState],
         counter: state.counter + 1));
@@ -88,10 +96,17 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       bicList =
           await bicRepository.getBICsByNameOrNickname(event.searchTextField);
     }
+    List<BICForSearchState> bicForSearchList = bicList
+        .map((bic) => BICForSearchState(
+              bic: bic,
+              isTheUserViewingThisBIC: false,
+            ))
+        .toList();
     emit(
       state.copyWith(
         searchTextField: event.searchTextField,
-        bicsForSearch: bicList,
+        bicsForSearch: bicForSearchList,
+        isTheUserViewingABICOfTheSearch: false,
       ),
     );
   }
@@ -100,8 +115,8 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       BICsOrderChanged event, Emitter<RouteState> emit) async {
     int newIndex = event.newIndex;
     if (event.oldIndex < event.newIndex) newIndex--;
-    List<BICState> bicsForRoute = state.bicsForRoute;
-    final BICState bic = bicsForRoute.removeAt(event.oldIndex);
+    List<BICForRouteState> bicsForRoute = state.bicsForRoute;
+    final BICForRouteState bic = bicsForRoute.removeAt(event.oldIndex);
     bicsForRoute.insert(newIndex, bic);
     emit(state.copyWith(bicsForRoute: bicsForRoute));
     while (state.bicsForRoute != bicsForRoute) {
@@ -133,6 +148,9 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     if (state.isTheUserSelectingHistories) {
       saveHistorySelected();
     }
+    if (state.isTheUserViewingABICOfTheRoute) {
+      closeBICWithRouteState();
+    }
     add(SearchTextFieldChanged(searchTextField: searchTextField));
   }
 
@@ -163,6 +181,9 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   }
 
   void showHistoriesOfABic(BIC bic) {
+    if (state.isTheUserViewingABICOfTheRoute) {
+      closeBICWithRouteState();
+    }
     add(ShowHistoriesButtonPressed(bic: bic));
   }
 
@@ -173,18 +194,18 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   }
 
   void _onHistorySelected(HistorySelected event, Emitter<RouteState> emit) {
-    final BICState bicState = state.bicsForRoute
+    final BICForRouteState bicState = state.bicsForRoute
         .firstWhere((bicState) => bicState.bic.bicId == event.bicId);
     final Story history = bicState.bic.histories
         .firstWhere((history) => history.id == event.historyId);
-    BICState newBICState;
+    BICForRouteState newBICState;
     if (bicState.selectedHistory?.id == event.historyId) {
       newBICState = bicState.copyWith(selectedHistory: null);
     } else {
       newBICState = bicState.copyWith(selectedHistory: history);
     }
 
-    List<BICState> newBicForRoute = state.bicsForRoute.map((bicState) {
+    List<BICForRouteState> newBicForRoute = state.bicsForRoute.map((bicState) {
       if (bicState.bic.bicId == event.bicId) {
         return newBICState;
       } else {
@@ -274,7 +295,11 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   double getWidthOfTheMap(BuildContext context) {
     double widthOfTheMap = MediaQuery.of(context).size.width - _sideMenuWidth;
     widthOfTheMap = widthOfTheMap -
-        (state.isTheUserSelectingHistories ? _sideMenuWidth : 0);
+        ((state.isTheUserSelectingHistories ||
+                state.isTheUserViewingABICOfTheSearch ||
+                state.isTheUserViewingABICOfTheRoute)
+            ? _sideMenuWidth
+            : 0);
     return (widthOfTheMap < 0) ? 0 : widthOfTheMap;
   }
 
@@ -284,7 +309,7 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   void _onSaveHistorySelectedButtonPressed(
       SaveHistorySelectedButtonPressed event, Emitter<RouteState> emit) {
-    List<BICState> newBicsForRoute = state.bicsForRoute
+    List<BICForRouteState> newBicsForRoute = state.bicsForRoute
         .map(
           (bicState) => bicState.copyWith(
             isTheUserSelectingHistoriesForThisBIC: false,
@@ -304,5 +329,86 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   void closeSelectedHistoryView() {
     saveHistorySelected();
+  }
+
+  void _onShowBICWithRouteStateButtonPressed(
+      ShowBICWithRouteStateButtonPressed event, Emitter<RouteState> emit) {
+    emit(
+      state.copyWith(
+          bicsForRoute: state.bicsForRoute
+              .map(
+                (bicState) => bicState.bic.bicId == event.bic.bicId
+                    ? bicState.copyWith(
+                        selectedHistory: bicState.selectedHistory,
+                        isTheUserViewingThisBIC: true)
+                    : bicState.copyWith(
+                        selectedHistory: bicState.selectedHistory,
+                        isTheUserViewingThisBIC: false),
+              )
+              .toList(),
+          isTheUserViewingABICOfTheRoute: true),
+    );
+  }
+
+  void showBICWithRouteState(BIC bic) {
+    if (state.isTheUserSelectingHistories) {
+      saveHistorySelected();
+    }
+    add(ShowBICWithRouteStateButtonPressed(bic: bic));
+  }
+
+  void _onShowBICWithSearchStateButtonPressed(
+      ShowBICWithSearchStateButtonPressed event, Emitter<RouteState> emit) {
+    emit(
+      state.copyWith(
+          bicsForSearch: state.bicsForSearch
+              .map(
+                (bicState) => bicState.bic.bicId == event.bic.bicId
+                    ? bicState.copyWith(isTheUserViewingThisBIC: true)
+                    : bicState.copyWith(isTheUserViewingThisBIC: false),
+              )
+              .toList(),
+          isTheUserViewingABICOfTheSearch: true),
+    );
+  }
+
+  void showBICWithSearchState(BIC bic) {
+    add(ShowBICWithSearchStateButtonPressed(bic: bic));
+  }
+
+  void _onCloseBICWithRouteStateButtonPressed(
+      CloseBICWithRouteStateButtonPressed event, Emitter<RouteState> emit) {
+    emit(
+      state.copyWith(
+          bicsForRoute: state.bicsForRoute
+              .map(
+                (bicState) => bicState.copyWith(
+                    selectedHistory: bicState.selectedHistory,
+                    isTheUserViewingThisBIC: false),
+              )
+              .toList(),
+          isTheUserViewingABICOfTheRoute: false),
+    );
+  }
+
+  void closeBICWithRouteState() {
+    add(CloseBICWithRouteStateButtonPressed());
+  }
+
+  void _onCloseBICWithSearchStateButtonPressed(
+      CloseBICWithSearchStateButtonPressed event, Emitter<RouteState> emit) {
+    emit(
+      state.copyWith(
+          bicsForSearch: state.bicsForSearch
+              .map(
+                (bicState) => bicState.copyWith(isTheUserViewingThisBIC: false),
+              )
+              .toList(),
+          isTheUserViewingABICOfTheSearch: false),
+    );
+  }
+
+  void closeBICWithSearchState() {
+    add(CloseBICWithSearchStateButtonPressed());
   }
 }

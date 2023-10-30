@@ -8,3 +8,4 @@ export 'register_view.dart';
 export 'users_table.dart';
 export 'bics_view.dart';
 export 'search_and_select_histories_view.dart';
+export 'bic_view.dart';

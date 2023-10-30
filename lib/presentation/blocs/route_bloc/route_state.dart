@@ -3,12 +3,14 @@ part of 'route_bloc.dart';
 class RouteState {
   final String name;
   final String description;
-  final List<BICState> bicsForRoute;
-  final List<BIC> bicsForSearch;
+  final List<BICForRouteState> bicsForRoute;
+  final List<BICForSearchState> bicsForSearch;
   final String searchTextField;
   final Map<PolylineId, Polyline> polylines;
   final int counter;
   final bool isTheUserSelectingHistories;
+  final bool isTheUserViewingABICOfTheRoute;
+  final bool isTheUserViewingABICOfTheSearch;
 
   late final TextEditingController searchController;
 
@@ -21,17 +23,21 @@ class RouteState {
     this.polylines = const {},
     this.counter = 0,
     this.isTheUserSelectingHistories = false,
+    this.isTheUserViewingABICOfTheRoute = false,
+    this.isTheUserViewingABICOfTheSearch = false,
   });
 
   RouteState copyWith({
     String? name,
     String? description,
-    List<BICState>? bicsForRoute,
-    List<BIC>? bicsForSearch,
+    List<BICForRouteState>? bicsForRoute,
+    List<BICForSearchState>? bicsForSearch,
     String? searchTextField,
     Map<PolylineId, Polyline>? polylines,
     int? counter,
     bool? isTheUserSelectingHistories,
+    bool? isTheUserViewingABICOfTheRoute,
+    bool? isTheUserViewingABICOfTheSearch,
   }) {
     return RouteState(
       name: name ?? this.name,
@@ -43,6 +49,10 @@ class RouteState {
       counter: counter ?? this.counter,
       isTheUserSelectingHistories:
           isTheUserSelectingHistories ?? this.isTheUserSelectingHistories,
+      isTheUserViewingABICOfTheRoute:
+          isTheUserViewingABICOfTheRoute ?? this.isTheUserViewingABICOfTheRoute,
+      isTheUserViewingABICOfTheSearch: isTheUserViewingABICOfTheSearch ??
+          this.isTheUserViewingABICOfTheSearch,
     )..searchController = searchController;
   }
 
@@ -51,28 +61,54 @@ class RouteState {
   }
 }
 
-class BICState {
+class BICForRouteState {
   final BIC bic;
   final bool isTheUserSelectingHistoriesForThisBIC;
+  final bool isTheUserViewingThisBIC;
   final Story? selectedHistory;
 
-  BICState({
+  BICForRouteState({
     required this.bic,
     this.isTheUserSelectingHistoriesForThisBIC = false,
+    this.isTheUserViewingThisBIC = false,
     this.selectedHistory,
   });
 
-  BICState copyWith({
+  BICForRouteState copyWith({
     BIC? bic,
     bool? isTheUserSelectingHistoriesForThisBIC,
+    bool? isTheUserViewingThisBIC,
     Story? selectedHistory,
   }) {
-    return BICState(
+    return BICForRouteState(
       bic: bic ?? this.bic,
+      isTheUserViewingThisBIC:
+          isTheUserViewingThisBIC ?? this.isTheUserViewingThisBIC,
       isTheUserSelectingHistoriesForThisBIC:
           isTheUserSelectingHistoriesForThisBIC ??
               this.isTheUserSelectingHistoriesForThisBIC,
       selectedHistory: selectedHistory,
+    );
+  }
+}
+
+class BICForSearchState {
+  final BIC bic;
+  final bool isTheUserViewingThisBIC;
+
+  BICForSearchState({
+    required this.bic,
+    this.isTheUserViewingThisBIC = false,
+  });
+
+  BICForSearchState copyWith({
+    BIC? bic,
+    bool? isTheUserViewingThisBIC,
+  }) {
+    return BICForSearchState(
+      bic: bic ?? this.bic,
+      isTheUserViewingThisBIC:
+          isTheUserViewingThisBIC ?? this.isTheUserViewingThisBIC,
     );
   }
 }
