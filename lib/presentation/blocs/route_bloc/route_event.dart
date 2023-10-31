@@ -75,3 +75,7 @@ class CloseBICWithRouteStateButtonPressed extends RouteEvent {
 class CloseBICWithSearchStateButtonPressed extends RouteEvent {
   CloseBICWithSearchStateButtonPressed();
 }
+
+class SaveRouteButtonPressed extends RouteEvent {
+  SaveRouteButtonPressed();
+}

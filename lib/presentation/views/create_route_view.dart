@@ -19,16 +19,17 @@ class CreateRouteView extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider(
         create: (context) => MapBloc(
-          // token: context.read<AuthBloc>().state.token!, //TODO: PONER
-          token: "", //TODO: QUITAR
+          token: context.read<AuthBloc>().state.token!,
           bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
         ),
       ),
       BlocProvider(
         create: (context) => RouteBloc(
+          ownerId: context.read<AuthBloc>().state.id!,
+          routeRepository:
+              RouteRepositoryImpl(routeDatasource: RouteDatasourceImpl()),
           bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
-          // token: context.read<AuthBloc>().state.token!, //TODO: PONER
-          token: "", //TODO: QUITAR
+          token: context.read<AuthBloc>().state.token!,
         ),
       ),
     ], child: const _CreateRouteView());
@@ -188,7 +189,7 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                   padding: const EdgeInsets.only(top: 9, bottom: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      // context.read<MapBloc>().add(CreateRoute());
+                      context.read<RouteBloc>().saveRoute();
                     },
                     child: const Text("Crear ruta"),
                   ),
@@ -601,10 +602,11 @@ class _RouteForm extends StatelessWidget {
 
     return Column(
       children: [
-        const SecondCustomTextFormField(
+        SecondCustomTextFormField(
           labelText: 'Nombre de la ruta',
           minLines: 1,
           maxLines: 1,
+          onChanged: context.read<RouteBloc>().changeName,
         ),
         SecondCustomTextFormField(
           labelText: 'Descripción',

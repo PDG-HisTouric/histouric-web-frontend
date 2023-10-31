@@ -13,3 +13,5 @@ export 'token_response.dart';
 export 'video_creation.dart';
 export 'video_response.dart';
 export 'bic_creation.dart';
+export 'route_creation.dart';
+export 'route_response.dart';

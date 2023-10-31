@@ -5,13 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../domain/domain.dart';
+import '../../../infrastructure/models/models.dart';
 
 part 'route_event.dart';
 part 'route_state.dart';
 
 class RouteBloc extends Bloc<RouteEvent, RouteState> {
   final BICRepository bicRepository;
+  final RouteRepository routeRepository;
   final String token;
+  final String ownerId;
   late final double _bicSelectedHeight;
   late final double _bicSearchedHeight;
   late final double _heightOfTheWidgetFixedInTheTopOfTheScrollBar;
@@ -21,9 +24,14 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   Completer<void> _changeBICCompleter = Completer<void>();
   Completer<BIC> _newBICCompleter = Completer<BIC>();
   Completer<void> _deleteBICCompleter = Completer<void>();
+  Completer<HistouricRoute> _saveRouteCompleter = Completer<HistouricRoute>();
 
-  RouteBloc({required this.bicRepository, required this.token})
-      : super(RouteState()) {
+  RouteBloc({
+    required this.routeRepository,
+    required this.bicRepository,
+    required this.ownerId,
+    required this.token,
+  }) : super(RouteState()) {
     bicRepository.configureToken(token);
     state.initSearchController();
     _bicSelectedHeight = 180;
@@ -49,10 +57,16 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
         _onCloseBICWithRouteStateButtonPressed);
     on<CloseBICWithSearchStateButtonPressed>(
         _onCloseBICWithSearchStateButtonPressed);
+    on<SaveRouteButtonPressed>(_onSaveRouteButtonPressed);
+    routeRepository.configureToken(token);
   }
 
   void _onRouteNameChanged(RouteNameChanged event, Emitter<RouteState> emit) {
     emit(state.copyWith(name: event.name));
+  }
+
+  void changeName(String name) {
+    add(RouteNameChanged(name: name));
   }
 
   void _onBICAdded(BICAdded event, Emitter<RouteState> emit) async {
@@ -135,6 +149,12 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   }
 
   Future<void> deleteBIC(int index) async {
+    if (state.isTheUserSelectingHistories) {
+      closeSelectedHistoryView();
+    }
+    if (state.isTheUserViewingABICOfTheRoute) {
+      closeBICWithRouteState();
+    }
     add(BICDeleted(index: index));
     await _deleteBICCompleter.future;
     _deleteBICCompleter = Completer<void>();
@@ -188,9 +208,12 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   }
 
   Story? getSelectedHistoryById(String bicId) {
-    return state.bicsForRoute
-        .firstWhere((bicState) => bicState.bic.bicId == bicId)
-        .selectedHistory;
+    for (BICForRouteState bicState in state.bicsForRoute) {
+      if (bicState.bic.bicId == bicId) {
+        return bicState.selectedHistory;
+      }
+    }
+    return null;
   }
 
   void _onHistorySelected(HistorySelected event, Emitter<RouteState> emit) {
@@ -410,5 +433,36 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   void closeBICWithSearchState() {
     add(CloseBICWithSearchStateButtonPressed());
+  }
+
+  Future<void> _onSaveRouteButtonPressed(
+      SaveRouteButtonPressed event, Emitter<RouteState> emit) async {
+    List<BicAndHistory> bics = [];
+    for (BICForRouteState bicState in state.bicsForRoute) {
+      if (bicState.selectedHistory != null) {
+        bics.add(BicAndHistory(
+          bicId:
+              bicState.bic.bicId!.substring(0, bicState.bic.bicId!.length - 1),
+          historyId: bicState.selectedHistory!.id,
+        ));
+      }
+    }
+
+    RouteCreation routeCreation = RouteCreation(
+      name: state.name,
+      description: state.description,
+      ownerId: ownerId,
+      bicList: bics,
+    );
+    HistouricRoute histouricRoute =
+        await routeRepository.createRoute(routeCreation);
+    _saveRouteCompleter.complete(histouricRoute);
+  }
+
+  Future<HistouricRoute> saveRoute() async {
+    add(SaveRouteButtonPressed());
+    HistouricRoute histouricRoute = await _saveRouteCompleter.future;
+    _saveRouteCompleter = Completer<HistouricRoute>();
+    return histouricRoute;
   }
 }
