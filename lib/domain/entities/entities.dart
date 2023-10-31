@@ -10,3 +10,4 @@ export 'histouric_user_with_password.dart';
 export 'histouric_video_info.dart';
 export 'role.dart';
 export 'token.dart';
+export 'histouric_route.dart';

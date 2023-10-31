@@ -231,16 +231,19 @@ class BicBloc extends Bloc<BicEvent, BicState> {
   }
 
   void cancelHistoriesAddition() {
+    //TODO: Pause all the audios that are playing
     add(HistoriesUnselected());
     _closeAddHistoriesToBIC();
   }
 
   void closeHistoriesAddition() {
-    add(HistoriesUnselected());
+    //TODO: Pause all the audios that are playing
+    add(AddSelectedHistoriesButtonPressed());
     _closeAddHistoriesToBIC();
   }
 
   void addSelectedHistories() {
+    //TODO: Pause all the audios that are playing
     add(AddSelectedHistoriesButtonPressed());
     _closeAddHistoriesToBIC();
   }
@@ -270,6 +273,7 @@ class BicBloc extends Bloc<BicEvent, BicState> {
   }
 
   void removeHistory(String historyId) {
+    //TODO: If the audio is playing, then pause the audio before removing
     add(RemoveSelectedHistoryButtonPressed(historyId: historyId));
   }
 }
