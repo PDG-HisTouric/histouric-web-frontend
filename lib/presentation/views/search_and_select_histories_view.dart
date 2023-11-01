@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/entities.dart';
 import '../blocs/blocs.dart';
@@ -84,18 +85,25 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
                                 contentPadding:
                                     const EdgeInsets.symmetric(horizontal: 3),
                                 title: BlocProvider(
-                                  create: (context) =>
-                                      HtmlAudioOnlyWithPlayButtonBloc(
-                                    idPrefix: "audio-after-search",
-                                    audioUrl: historiesAfterSearch[index]
-                                        .audio
-                                        .audioUri,
-                                  ),
-                                  child: _HistoryCard(
+                                  create: (context) {
+                                    const uuid = Uuid();
+                                    final htmlAudioId = uuid.v4();
+                                    return HtmlAudioOnlyWithPlayButtonBloc(
+                                      htmlAudioId: htmlAudioId,
+                                      audioUrl: historiesAfterSearch[index]
+                                          .audio
+                                          .audioUri,
+                                    );
+                                  },
+                                  child: HistoryCardWithPlayButton(
+                                    originOfSelectedHistories:
+                                        'searchAndSelectHistoriesView',
                                     historyId: historiesAfterSearch[index].id,
                                     maxWidth: maxWidth,
                                     historyTitle:
                                         historiesAfterSearch[index].title,
+                                    onCheckBoxChanged:
+                                        context.read<BicBloc>().checkHistory,
                                   ),
                                 ),
                               );
@@ -130,58 +138,6 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _HistoryCard extends StatelessWidget {
-  final double maxWidth;
-  final String historyTitle;
-  final String historyId;
-  const _HistoryCard({
-    required this.maxWidth,
-    required this.historyTitle,
-    required this.historyId,
-  });
-
-  bool _isHistorySelected(String historyId, List<Story> histories) {
-    for (Story history in histories) {
-      if (history.id == historyId) return true;
-    }
-    return false;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Story> selectedHistories =
-        context.select((BicBloc bloc) => bloc.state.selectedHistories);
-    bool selected = _isHistorySelected(historyId, selectedHistories);
-    return SizedBox(
-      width: MediaQuery.sizeOf(context).width < maxWidth
-          ? MediaQuery.sizeOf(context).width
-          : maxWidth,
-      child: Card(
-        elevation: 5.0,
-        child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Checkbox(
-                    checkColor: Colors.white,
-                    value: selected,
-                    onChanged: (value) {
-                      context.read<BicBloc>().checkHistory(historyId);
-                    }),
-                Text(historyTitle),
-                const Spacer(),
-                HtmlAudioOnlyWithPlayButton(
-                  audioId: context
-                      .read<HtmlAudioOnlyWithPlayButtonBloc>()
-                      .getAudioId(),
-                ),
-              ],
-            )),
       ),
     );
   }

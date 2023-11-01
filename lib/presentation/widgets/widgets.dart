@@ -22,3 +22,4 @@ export 'sidebar/text_separator.dart';
 export 'video/html_video_container.dart';
 export 'video/html_video_from_uint8list.dart';
 export 'video/video.dart';
+export 'history/history_widgets.dart';

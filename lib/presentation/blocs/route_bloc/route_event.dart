@@ -32,3 +32,50 @@ class BICsOrderChanged extends RouteEvent {
 
   BICsOrderChanged({required this.oldIndex, required this.newIndex});
 }
+
+class ShowHistoriesButtonPressed extends RouteEvent {
+  final BIC bic;
+
+  ShowHistoriesButtonPressed({required this.bic});
+}
+
+class HistorySelected extends RouteEvent {
+  final String historyId;
+  final String bicId;
+
+  HistorySelected({required this.historyId, required this.bicId});
+}
+
+class DescriptionChanged extends RouteEvent {
+  final String description;
+
+  DescriptionChanged({required this.description});
+}
+
+class SaveHistorySelectedButtonPressed extends RouteEvent {
+  SaveHistorySelectedButtonPressed();
+}
+
+class ShowBICWithRouteStateButtonPressed extends RouteEvent {
+  final BIC bic;
+
+  ShowBICWithRouteStateButtonPressed({required this.bic});
+}
+
+class ShowBICWithSearchStateButtonPressed extends RouteEvent {
+  final BIC bic;
+
+  ShowBICWithSearchStateButtonPressed({required this.bic});
+}
+
+class CloseBICWithRouteStateButtonPressed extends RouteEvent {
+  CloseBICWithRouteStateButtonPressed();
+}
+
+class CloseBICWithSearchStateButtonPressed extends RouteEvent {
+  CloseBICWithSearchStateButtonPressed();
+}
+
+class SaveRouteButtonPressed extends RouteEvent {
+  SaveRouteButtonPressed();
+}

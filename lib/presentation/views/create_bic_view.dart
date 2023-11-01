@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/presentation.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../config/config.dart';
 import '../../domain/domain.dart';
@@ -60,14 +61,14 @@ class _FormState extends State<_Form> {
         children: [
           SecondCustomTextFormField(
             labelText: 'Nombre',
-            hintText: 'Ingresa el nombre del Bien de Interés Cultural',
+            hintText: 'Ingrese el nombre del Bien de Interés Cultural',
             onChanged: context.read<BicBloc>().nameChanged,
             errorMessage: context.read<BicBloc>().state.bicName.errorMessage,
           ),
           const SizedBox(height: 16.0),
           SecondCustomTextFormField(
             labelText: 'Descripción',
-            hintText: 'Ingresa la descripción del Bien de Interés Cultural',
+            hintText: 'Ingrese la descripción del Bien de Interés Cultural',
             minLines: 3,
             maxLines: 5,
             onChanged: context.read<BicBloc>().descriptionChanged,
@@ -244,10 +245,14 @@ class _SelectedHistories extends StatelessWidget {
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 3),
             title: BlocProvider(
-              create: (context) => HtmlAudioOnlyWithPlayButtonBloc(
-                idPrefix: "selected-audio",
-                audioUrl: selectedHistories[index].audio.audioUri,
-              ),
+              create: (context) {
+                const uuid = Uuid();
+                final htmlAudioId = uuid.v4();
+                return HtmlAudioOnlyWithPlayButtonBloc(
+                  htmlAudioId: htmlAudioId,
+                  audioUrl: selectedHistories[index].audio.audioUri,
+                );
+              },
               child: _HistoryCard(
                 historyId: selectedHistories[index].id,
                 maxWidth: maxWidth,
@@ -261,6 +266,7 @@ class _SelectedHistories extends StatelessWidget {
   }
 }
 
+//TODO: Use the HistoryCardWithPlayButton widget instead
 class _HistoryCard extends StatelessWidget {
   final double maxWidth;
   final String historyTitle;
@@ -286,9 +292,8 @@ class _HistoryCard extends StatelessWidget {
               Text(historyTitle),
               const Spacer(),
               HtmlAudioOnlyWithPlayButton(
-                audioId: context
-                    .read<HtmlAudioOnlyWithPlayButtonBloc>()
-                    .getAudioId(),
+                audioId:
+                    context.read<HtmlAudioOnlyWithPlayButtonBloc>().htmlAudioId,
               ),
               IconButton(
                 onPressed: () {
