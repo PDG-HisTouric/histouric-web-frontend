@@ -17,7 +17,6 @@ class HistoryImageMapper {
       id: historyImageResponse.id,
       imageUri: historyImageResponse.imageUri,
       startTime: historyImageResponse.startTime,
-      needsUrlGen: historyImageResponse.needsUrlGen,
       historyId: historyImageResponse.historyId,
     );
   }
