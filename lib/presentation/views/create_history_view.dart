@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
@@ -72,7 +71,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
             width: width * 0.5,
             child: TextField(
               decoration: const InputDecoration(
-                hintText: "Nombre de la historia",
+                hintText: "Historia sin nombre",
                 alignLabelWithHint: true,
                 border: InputBorder.none,
               ),
