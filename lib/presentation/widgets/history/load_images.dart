@@ -28,7 +28,7 @@ class LoadImages extends StatelessWidget {
           FilledButton.icon(
             icon: const Icon(Icons.add),
             onPressed: () => _addImageEntry(context),
-            label: const Text("Add Image"),
+            label: const Text("Añadir imagen"),
           ),
         ],
       ),

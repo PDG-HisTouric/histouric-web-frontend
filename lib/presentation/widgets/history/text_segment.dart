@@ -32,7 +32,7 @@ class TextSegment extends StatelessWidget {
                   child: TextField(
                     controller: textSegmentState.textController,
                     decoration: const InputDecoration(
-                      labelText: "Text",
+                      labelText: "Texto",
                       border: InputBorder.none,
                     ),
                     maxLines: null,
@@ -46,7 +46,8 @@ class TextSegment extends StatelessWidget {
               Expanded(
                 child: TextFormField(
                   controller: textSegmentState.minuteController,
-                  decoration: const InputDecoration(labelText: "Minute"),
+                  decoration:
+                      const InputDecoration(labelText: "Minuto del audio"),
                   keyboardType: TextInputType.number,
                   onChanged: (value) => context
                       .read<HistoryBloc>()

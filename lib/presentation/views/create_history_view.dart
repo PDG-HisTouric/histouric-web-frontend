@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/config/config.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
 import '../../infrastructure/datasources/datasources.dart';
@@ -45,7 +46,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
       content: LoadAudio(),
     ),
     Step(
-      title: const Text("Cargar Imágenes"),
+      title: const Text("Cargar Imágenes (Opcional)"),
       content: LoadImages(),
     ),
     const Step(
@@ -111,7 +112,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
               _currentStep--;
             });
           } else {
-            Navigator.pop(context);
+            NavigationService.navigateTo(FluroRouterWrapper.dashboardRoute);
           }
         },
         physics: const BouncingScrollPhysics(),
@@ -127,26 +128,26 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
                   FilledButton.tonalIcon(
                     icon: const Icon(Icons.cancel),
                     onPressed: controlsDetails.onStepCancel,
-                    label: const Text("Cancel"),
+                    label: const Text("Cancelar"),
                   ),
                 if (_currentStep != 0)
                   FilledButton.tonalIcon(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: controlsDetails.onStepCancel,
-                    label: const Text("Back"),
+                    label: const Text("Atrás"),
                   ),
                 const SizedBox(width: 10),
                 if (_currentStep != _steps.length - 1)
                   FilledButton.tonalIcon(
                     icon: const Icon(Icons.arrow_forward),
                     onPressed: controlsDetails.onStepContinue,
-                    label: const Text("Next"),
+                    label: const Text("Siguiente"),
                   ),
                 if (_currentStep == _steps.length - 1)
                   FilledButton.icon(
                     icon: const Icon(Icons.check),
                     onPressed: context.read<HistoryBloc>().createHistory,
-                    label: const Text("Finish"),
+                    label: const Text("Finalizar"),
                   ),
               ],
             ),

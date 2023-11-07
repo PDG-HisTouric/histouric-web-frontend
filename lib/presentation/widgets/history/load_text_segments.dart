@@ -21,7 +21,7 @@ class LoadTextSegments extends StatelessWidget {
           FilledButton.icon(
             icon: const Icon(Icons.add),
             onPressed: context.read<HistoryBloc>().addTextSegment,
-            label: const Text("Add Text Segment"),
+            label: const Text("Añadir segmento de texto"),
           ),
         ],
       ),

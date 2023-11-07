@@ -55,13 +55,13 @@ class LoadVideos extends StatelessWidget {
                   }
                 });
               },
-              label: const Text("From File Explorer"),
+              label: const Text("Desde el explorador de archivos"),
             ),
             const SizedBox(width: 10),
             ElevatedButton.icon(
               icon: const Icon(Icons.add),
               onPressed: () => _loadVideoFromDrive(context),
-              label: const Text("From Google Drive"),
+              label: const Text("Desde Google Drive"),
             ),
           ],
         ),
