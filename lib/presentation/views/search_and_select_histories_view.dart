@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../domain/entities/entities.dart';
 import '../blocs/blocs.dart';
 import '../widgets/widgets.dart';
+import '../widgets/history/history_card_with_play_button.dart';
 
 class SearchAndSelectHistoriesView extends StatelessWidget {
   const SearchAndSelectHistoriesView({super.key});

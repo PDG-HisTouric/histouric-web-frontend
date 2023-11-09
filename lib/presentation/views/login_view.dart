@@ -62,8 +62,8 @@ class _Login extends StatelessWidget {
         CustomElevatedButtonRounded(
           label: "Iniciar Sesión",
           onPressed: () async {
-            if (context.read<LoginFormBloc>().isStateValid()) {
-              await context.read<AuthBloc>().login(email, password)
+            if (context.read<LoginFormBloc>().isLoginStateValid()) {
+              await context.read<AuthBloc>().signIn(email, password)
                   ? NavigationService.replaceTo(
                       FluroRouterWrapper.dashboardRoute,
                     )

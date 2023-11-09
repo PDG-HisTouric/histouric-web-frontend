@@ -43,7 +43,7 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   }
 
   void searchByNickname(String nickname) {
-    if (nickname.isEmpty) stopSearching();
+    if (nickname.isEmpty) _stopSearching();
     add(NicknameSearched(nickname: nickname));
   }
 
@@ -55,7 +55,7 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
     emit(state.copyWith(users: users, isSearching: false));
   }
 
-  void stopSearching() {
+  void _stopSearching() {
     add(NicknameSearchStopped());
   }
 

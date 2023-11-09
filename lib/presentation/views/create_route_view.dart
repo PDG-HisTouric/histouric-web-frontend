@@ -10,6 +10,7 @@ import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
 import '../widgets/widgets.dart';
 import 'bic_view.dart';
+import '../widgets/history/history_card_with_play_button.dart';
 
 class CreateRouteView extends StatelessWidget {
   const CreateRouteView({super.key});

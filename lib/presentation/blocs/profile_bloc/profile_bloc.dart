@@ -42,7 +42,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<CreateButtonPressed>(_onCreateButtonPressed);
     _configureControllers();
     userRepository.configureToken(authBloc.state.token!);
-    mapRolesFromAuthBloc();
+    _mapRolesFromAuthBloc();
   }
 
   void createUserFromAdmin() {
@@ -56,7 +56,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       emit(state.copyWith(isSaving: true));
 
-      HistouricUser histouricUser = await createUser();
+      HistouricUser histouricUser = await _createUser();
 
       add(UserSaved(histouricUser: histouricUser));
     } catch (e) {
@@ -69,12 +69,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  Future<HistouricUser> createUser() async {
+  Future<HistouricUser> _createUser() async {
     final user = HistouricUserWithPassword(
       email: state.email.value,
       password: state.password.value,
       nickname: state.nickname.value,
-      roles: mapRolesFromState(),
+      roles: _mapRolesFromState(),
     );
 
     return await userRepository.registerUser(user);
@@ -121,7 +121,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       email: Email.dirty(updatedUser.email.trim()),
       password: const Password.dirty(""),
       nickname: Nickname.dirty(updatedUser.nickname.trim()),
-      selectedRoles: mapSelectedRolesFromList(
+      selectedRoles: _mapSelectedRolesFromList(
         updatedUser.roles.map((role) => role.name).toList(),
       ).toSet(),
       isSaving: false,
@@ -138,7 +138,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void saveChanges() async {
     try {
-      HistouricUser histouricUser = await updateUserById();
+      HistouricUser histouricUser = await _updateUserById();
       add(UserSaved(histouricUser: histouricUser));
     } catch (e) {
       add(SaveProcessStopped());
@@ -157,13 +157,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(state.copyWith(isSaving: false));
   }
 
-  Future<HistouricUser> updateUserById() async {
+  Future<HistouricUser> _updateUserById() async {
     final user = HistouricUserWithPassword(
       id: authBloc.state.id!,
       email: (state.email.value.isEmpty) ? null : state.email.value,
       password: (state.password.value.isEmpty) ? null : state.password.value,
       nickname: (state.nickname.value.isEmpty) ? null : state.nickname.value,
-      roles: mapRolesFromState(),
+      roles: _mapRolesFromState(),
     );
 
     return await userRepository.updateUserById(user.id!, user);
@@ -186,19 +186,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     add(EditButtonPressed());
   }
 
-  void mapRolesFromAuthBloc() {
+  void _mapRolesFromAuthBloc() {
     final initialRoles = authBloc.state.roles!;
 
-    List<String> rolesForIcons = mapSelectedRolesFromList(initialRoles);
+    List<String> rolesForIcons = _mapSelectedRolesFromList(initialRoles);
 
     for (var role in rolesForIcons) {
       addRole(role);
     }
 
-    changeSelectedRoles(rolesForIcons);
+    _changeSelectedRoles(rolesForIcons);
   }
 
-  List<String> mapSelectedRolesFromList(List<String> selectedRoles) {
+  List<String> _mapSelectedRolesFromList(List<String> selectedRoles) {
     List<String> roles = [];
 
     if (selectedRoles.contains("ADMIN")) roles.add("Administrador");
@@ -210,7 +210,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     return roles;
   }
 
-  List<String>? mapRolesFromState() {
+  List<String>? _mapRolesFromState() {
     List<String> roles = [];
 
     if (!authBloc.state.roles!.contains("ADMIN") &&
@@ -256,7 +256,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     CancelButtonPressed event,
     Emitter<ProfileState> emit,
   ) {
-    mapRolesFromAuthBloc();
+    _mapRolesFromAuthBloc();
 
     emit(state.copyWith(
       nickname: Nickname.dirty(authBloc.state.nickname!),
@@ -270,7 +270,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     add(CancelButtonPressed());
   }
 
-  void changeSelectedRoles(List<String> selectedRoles) {
+  void _changeSelectedRoles(List<String> selectedRoles) {
     add(SelectedRolesChanged(selectedRoles));
   }
 

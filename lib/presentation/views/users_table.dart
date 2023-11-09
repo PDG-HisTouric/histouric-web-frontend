@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../config/config.dart';
 import '../../infrastructure/infrastructure.dart';
 import '../blocs/blocs.dart';
-import '../datatables/datatables.dart';
 import '../widgets/widgets.dart';
+import '../datatables/users_data.dart';
 
 class UsersTable extends StatelessWidget {
   const UsersTable({super.key});
@@ -16,7 +16,7 @@ class UsersTable extends StatelessWidget {
       create: (context) => UsersTableBloc(
         token: context.read<AuthBloc>().state.token!,
         userRepository: UserRepositoryImpl(
-          userDatasource: SpringBootUserDatasource(),
+          userDatasource: UserDatasourceImpl(),
         ),
       ),
       child: const _UsersTable(),
@@ -52,10 +52,11 @@ class UsersTableState extends State<_UsersTable> {
 
     if (usersTableBloc.state.nicknameController.text.isNotEmpty) {
       usersTableBloc.searchByNickname(
+        //TODO: USE CONTEXT READ
         usersTableBloc.state.nicknameController.text,
       );
     } else {
-      usersTableBloc.fetchUsers();
+      usersTableBloc.fetchUsers(); //TODO: USE CONTEXT READ
     }
 
     return ListView(

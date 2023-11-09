@@ -5,7 +5,7 @@ import '../../domain/domain.dart';
 import '../mappers/mappers.dart';
 import '../models/models.dart';
 
-class SpringBootLoginDatasource implements AuthDatasource {
+class AuthDatasourceImpl implements AuthDatasource {
   final Dio dio = Dio(
     BaseOptions(
       baseUrl: '${Environment.baseUrl}/api/v1',
@@ -26,7 +26,7 @@ class SpringBootLoginDatasource implements AuthDatasource {
   }
 
   @override
-  Future<HistouricUser> register(
+  Future<HistouricUser> signUp(
     String email,
     String password,
     String nickname,

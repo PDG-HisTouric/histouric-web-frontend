@@ -1,9 +1,9 @@
 import '../entities/entities.dart';
 
 abstract class AuthRepository {
-  Future<Token> login(String email, String password);
+  Future<Token> signIn(String email, String password);
 
-  Future<HistouricUser> register(
+  Future<HistouricUser> signUp(
     String email,
     String password,
     String nickname,

@@ -16,7 +16,7 @@ class ProfileView extends StatelessWidget {
         context: context,
         authBloc: context.read<AuthBloc>(),
         userRepository: UserRepositoryImpl(
-          userDatasource: SpringBootUserDatasource(),
+          userDatasource: UserDatasourceImpl(),
         ),
       ),
       child: const _ProfileView(),

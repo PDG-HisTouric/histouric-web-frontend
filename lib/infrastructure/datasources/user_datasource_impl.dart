@@ -5,10 +5,10 @@ import '../../domain/domain.dart';
 import '../mappers/mappers.dart';
 import '../models/models.dart';
 
-class SpringBootUserDatasource extends UserDatasource {
+class UserDatasourceImpl extends UserDatasource {
   late final Dio dio;
 
-  SpringBootUserDatasource() {
+  UserDatasourceImpl() {
     dio = Dio(BaseOptions(
       baseUrl: '${Environment.baseUrl}/api/v1/users',
       contentType: 'application/json',

@@ -198,9 +198,9 @@ Widget _buildRoleCard(String role, BuildContext context) {
     onTap: () {
       if (profilePurpose == ProfilePurpose.viewMyProfile) return;
       if (isSelected) {
-        profileBloc.removeRole(role);
+        profileBloc.removeRole(role); //TODO: USE CONTEXT.READ
       } else {
-        profileBloc.addRole(role);
+        profileBloc.addRole(role); //TODO: USE CONTEXT.READ
       }
     },
     child: Column(

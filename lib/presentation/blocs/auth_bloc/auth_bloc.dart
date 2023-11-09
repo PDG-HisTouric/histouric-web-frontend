@@ -29,7 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (token != null) {
       userRepository.configureToken(token!);
-      changeToken(token: token!);
+      _changeToken(token: token!);
     }
   }
 
@@ -61,15 +61,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     add(CheckToken());
   }
 
-  Future<bool> login(String email, String password) async {
-    if (!await saveTokenAndNickname(email, password)) return false;
+  Future<bool> signIn(String email, String password) async {
+    if (!await _saveTokenAndNickname(email, password)) return false;
     add(CheckToken());
     return true;
   }
 
-  Future<bool> saveTokenAndNickname(String email, String password) async {
+  Future<bool> _saveTokenAndNickname(String email, String password) async {
     try {
-      Token token = await authRepository.login(email, password);
+      Token token = await authRepository.signIn(email, password);
       await keyValueStorageService.setKeyValue("token", token.token);
       await keyValueStorageService.setKeyValue("nickname", token.nickname);
       return true;
@@ -163,7 +163,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(token: event.token));
   }
 
-  void changeToken({required String token}) {
+  void _changeToken({required String token}) {
     add(TokenChanged(token: token));
   }
 }

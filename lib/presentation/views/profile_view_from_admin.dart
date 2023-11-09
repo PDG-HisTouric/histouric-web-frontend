@@ -23,11 +23,11 @@ class ProfileViewFromAdmin extends StatelessWidget {
       create: (context) => AuthBloc(
         token: token,
         userRepository: UserRepositoryImpl(
-          userDatasource: SpringBootUserDatasource(),
+          userDatasource: UserDatasourceImpl(),
         ),
         keyValueStorageService: KeyValueStorageServiceImpl(),
         authRepository: AuthRepositoryImpl(
-          authDatasource: SpringBootLoginDatasource(),
+          authDatasource: AuthDatasourceImpl(),
         ),
         context: context,
       ),
@@ -82,7 +82,7 @@ class _ProfileViewFromAdminState extends State<_ProfileViewFromAdmin> {
                 create: (context) => ProfileBloc(
                   authBloc: context.read<AuthBloc>(),
                   userRepository: UserRepositoryImpl(
-                    userDatasource: SpringBootUserDatasource(),
+                    userDatasource: UserDatasourceImpl(),
                   ),
                   context: context,
                   profilePurpose: widget.profilePurpose,

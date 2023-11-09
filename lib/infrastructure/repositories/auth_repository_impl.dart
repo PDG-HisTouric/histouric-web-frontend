@@ -6,16 +6,16 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({required this.authDatasource});
 
   @override
-  Future<Token> login(String email, String password) {
+  Future<Token> signIn(String email, String password) {
     return authDatasource.login(email, password);
   }
 
   @override
-  Future<HistouricUser> register(
+  Future<HistouricUser> signUp(
     String nickname,
     String email,
     String password,
   ) {
-    return authDatasource.register(nickname, email, password);
+    return authDatasource.signUp(nickname, email, password);
   }
 }

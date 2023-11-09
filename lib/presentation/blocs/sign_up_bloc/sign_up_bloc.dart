@@ -28,7 +28,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   bool signUp() {
     add(SignUpTouchedEveryField());
 
-    if (!isStateValid()) return false;
+    if (!isSignUpFormStateValid()) return false;
 
     if (state.password.value != state.confirmPassword.value) {
       Dialogs.showErrorDialog(
@@ -43,19 +43,19 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     return true;
   }
 
-  void emailChanged(String email) {
+  void changeEmail(String email) {
     add(SignUpEmailChanged(email: email));
   }
 
-  void passwordChanged(String password) {
+  void changePassword(String password) {
     add(SignUpPasswordChanged(password: password));
   }
 
-  void confirmPasswordChanged(String confirmPassword) {
+  void changeConfirmPassword(String confirmPassword) {
     add(SignUpConfirmPasswordChanged(confirmPassword: confirmPassword));
   }
 
-  void nicknameChanged(String nickname) {
+  void changeNickname(String nickname) {
     add(SignUpNicknameChanged(nickname: nickname));
   }
 
@@ -63,7 +63,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     SignUpSubmitted event,
     Emitter<SignUpState> emit,
   ) async {
-    await authRepository.register(
+    await authRepository.signUp(
       state.email.value,
       state.password.value,
       state.nickname.value,
@@ -83,7 +83,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     ));
   }
 
-  bool isStateValid() {
+  bool isSignUpFormStateValid() {
     if (!state.isValid) {
       Dialogs.showErrorDialog(
         context: context,

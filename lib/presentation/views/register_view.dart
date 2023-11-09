@@ -15,7 +15,7 @@ class RegisterView extends StatelessWidget {
       create: (context) => SignUpBloc(
         context: context,
         authRepository: AuthRepositoryImpl(
-          authDatasource: SpringBootLoginDatasource(),
+          authDatasource: AuthDatasourceImpl(),
         ),
       ),
       child: _Register(),
@@ -51,7 +51,7 @@ class _Register extends StatelessWidget {
           child: FirstCustomTextFormField(
             hint: "Correo Electrónico",
             label: "Correo Electrónico",
-            onChanged: context.read<SignUpBloc>().emailChanged,
+            onChanged: context.read<SignUpBloc>().changeEmail,
             errorMessage: emailErrorMessage,
           ),
         ),
@@ -62,7 +62,7 @@ class _Register extends StatelessWidget {
             hint: "Contraseña",
             label: "Contraseña",
             obscureText: true,
-            onChanged: context.read<SignUpBloc>().passwordChanged,
+            onChanged: context.read<SignUpBloc>().changePassword,
             errorMessage: passwordErrorMessage,
           ),
         ),
@@ -73,7 +73,7 @@ class _Register extends StatelessWidget {
             hint: "Confirmar contraseña",
             label: "Confirmar contraseña",
             obscureText: true,
-            onChanged: context.read<SignUpBloc>().confirmPasswordChanged,
+            onChanged: context.read<SignUpBloc>().changeConfirmPassword,
             errorMessage: passwordErrorMessage,
           ),
         ),
@@ -83,7 +83,7 @@ class _Register extends StatelessWidget {
           child: FirstCustomTextFormField(
             hint: "Nombre de usuario",
             label: "Nombre de usuario",
-            onChanged: context.read<SignUpBloc>().nicknameChanged,
+            onChanged: context.read<SignUpBloc>().changeNickname,
             errorMessage: nicknameErrorMessage,
           ),
         ),
@@ -91,7 +91,7 @@ class _Register extends StatelessWidget {
         CustomElevatedButtonRounded(
           label: "Crear cuenta",
           onPressed: () async {
-            if (context.read<SignUpBloc>().isStateValid()) {
+            if (context.read<SignUpBloc>().isSignUpFormStateValid()) {
               context.read<SignUpBloc>().signUp()
                   ? NavigationService.navigateTo(
                       FluroRouterWrapper.loginRoute,
