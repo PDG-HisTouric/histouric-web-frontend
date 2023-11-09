@@ -1,10 +1,10 @@
 export 'bic/create_bic_view.dart';
 export 'history/create_history_view.dart';
 export 'route/create_route_view.dart';
-export 'sign_in_sign_up/login_view.dart';
+export 'auth/login_view.dart';
 export 'user/profile_view.dart';
 export 'user/profile_view_from_admin.dart';
-export 'sign_in_sign_up/register_view.dart';
+export 'auth/register_view.dart';
 export 'user/users_table.dart';
 export 'bic/bics_view.dart';
 export 'bic/search_and_select_bic_histories_view.dart';
