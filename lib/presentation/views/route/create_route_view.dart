@@ -5,12 +5,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../domain/domain.dart';
-import '../../infrastructure/infrastructure.dart';
-import '../blocs/blocs.dart';
-import '../widgets/widgets.dart';
-import 'bic_view.dart';
-import '../widgets/history/history_card_with_play_button.dart';
+import '../../../domain/domain.dart';
+import '../../../infrastructure/infrastructure.dart';
+import '../../blocs/blocs.dart';
+import '../../widgets/widgets.dart';
+import '../bic/bic_view.dart';
+import '../../widgets/history/history_card_with_play_button.dart';
 
 class CreateRouteView extends StatelessWidget {
   const CreateRouteView({super.key});

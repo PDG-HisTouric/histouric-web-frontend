@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../config/config.dart';
-import '../../infrastructure/infrastructure.dart';
-import '../blocs/blocs.dart';
-import '../widgets/widgets.dart';
-import '../datatables/users_data.dart';
+import '../../../config/config.dart';
+import '../../../infrastructure/infrastructure.dart';
+import '../../blocs/blocs.dart';
+import '../../widgets/widgets.dart';
+import '../../datatables/users_data.dart';
 
 class UsersTable extends StatelessWidget {
   const UsersTable({super.key});

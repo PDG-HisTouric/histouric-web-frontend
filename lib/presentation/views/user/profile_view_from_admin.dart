@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../infrastructure/infrastructure.dart';
-import '../blocs/blocs.dart';
-import '../widgets/widgets.dart';
+import '../../../infrastructure/infrastructure.dart';
+import '../../blocs/blocs.dart';
+import '../../widgets/widgets.dart';
 
 class ProfileViewFromAdmin extends StatelessWidget {
   final ProfilePurpose profilePurpose;

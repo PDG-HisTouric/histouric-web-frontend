@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/config/config.dart';
 import 'package:histouric_web/presentation/blocs/blocs.dart';
 
-import '../../infrastructure/datasources/datasources.dart';
-import '../../infrastructure/repositories/repositories.dart';
-import '../widgets/history/load_audio.dart';
-import '../widgets/history/load_images.dart';
-import '../widgets/history/load_text_segments.dart';
-import '../widgets/history/load_videos.dart';
+import '../../../infrastructure/datasources/datasources.dart';
+import '../../../infrastructure/repositories/repositories.dart';
+import '../../widgets/history/load_audio.dart';
+import '../../widgets/history/load_images.dart';
+import '../../widgets/history/load_text_segments.dart';
+import '../../widgets/history/load_videos.dart';
 
 class CreateHistoryView extends StatelessWidget {
   const CreateHistoryView({super.key});

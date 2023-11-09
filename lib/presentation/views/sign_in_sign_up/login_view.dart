@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../config/config.dart';
-import '../blocs/blocs.dart';
-import '../widgets/widgets.dart';
+import '../../../config/config.dart';
+import '../../blocs/blocs.dart';
+import '../../widgets/widgets.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
