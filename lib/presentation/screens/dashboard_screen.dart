@@ -23,8 +23,11 @@ class DashboardScreen extends StatelessWidget {
       return const AuthScreen(child: LoginView());
     }
 
-    return BlocProvider(
-      create: (context) => SidemenuBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => SidemenuBloc()),
+        BlocProvider(create: (context) => AlertBloc()),
+      ],
       child: _Dashboard(child: child),
     );
   }
@@ -39,11 +42,16 @@ class _Dashboard extends StatefulWidget {
   State<_Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<_Dashboard>
-    with SingleTickerProviderStateMixin {
+class _DashboardState extends State<_Dashboard> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    context.read<AlertBloc>().updateAnimationController(
+          AnimationController(
+            vsync: this,
+            duration: const Duration(milliseconds: 300),
+          ),
+        );
     context.read<SidemenuBloc>().updateMenuController(
           AnimationController(
             vsync: this,
@@ -56,8 +64,10 @@ class _DashboardState extends State<_Dashboard>
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final sideMenuBloc = context.watch<SidemenuBloc>();
+    final alertBloc = context.watch<AlertBloc>();
 
-    if (sideMenuBloc.state.menuInitiated == false) {
+    if (sideMenuBloc.state.menuInitiated == false ||
+        alertBloc.state.animationControllerInitiated == false) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -95,6 +105,33 @@ class _DashboardState extends State<_Dashboard>
                   offset: Offset(sideMenuBloc.state.movement().value, 0),
                   child: const Sidebar(),
                 ),
+              ],
+            ),
+          ),
+          AnimatedBuilder(
+            animation: alertBloc.state.animationController,
+            builder: (context, _) => Stack(
+              children: [
+                if (alertBloc.state.isAlertOpen)
+                  Opacity(
+                    opacity: alertBloc.state.opacity().value,
+                    child: GestureDetector(
+                      onTap: () => context.read<AlertBloc>().closeAlert(),
+                      child: Container(
+                        width: size.width,
+                        height: size.height,
+                        color: Colors.black26,
+                      ),
+                    ),
+                  ),
+                if (alertBloc.state.child != null)
+                  Transform.translate(
+                    offset: Offset(
+                        size.width / 2 -
+                            CardWithAcceptAndCancelButtons.maxWidth / 2,
+                        alertBloc.state.movement(size.height).value),
+                    child: alertBloc.state.child!,
+                  ),
               ],
             ),
           ),

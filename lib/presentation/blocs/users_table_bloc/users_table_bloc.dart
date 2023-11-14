@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:histouric_web/presentation/presentation.dart';
 
 import '../../../domain/domain.dart';
+import '../blocs.dart';
 
 part 'users_table_event.dart';
 part 'users_table_state.dart';
@@ -9,10 +11,12 @@ part 'users_table_state.dart';
 class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   final UserRepository userRepository;
   final String token;
+  final AlertBloc alertBloc;
 
   UsersTableBloc({
     required this.userRepository,
     required this.token,
+    required this.alertBloc,
   }) : super(UsersTableState()) {
     on<DataFetched>(_onDataFetched);
     on<NicknameSearched>(_onNicknameSearched);
@@ -65,7 +69,17 @@ class UsersTableBloc extends Bloc<UsersTableEvent, UsersTableState> {
   }
 
   void deleteUser(String id) {
-    add(UserDeleted(id: id));
+    alertBloc.changeChild(CardWithAcceptAndCancelButtons(
+      title: "¿Está seguro que desea borrar este usuario?",
+      subtitle: "Todas sus historias o rutas asociadas se borrarán también.",
+      icon: Icons.warning,
+      onAcceptPressed: () {
+        add(UserDeleted(id: id));
+        alertBloc.closeAlert();
+      },
+      onCancelPressed: () => alertBloc.closeAlert(),
+    ));
+    alertBloc.openAlert();
   }
 
   void _onControllersInitialized(

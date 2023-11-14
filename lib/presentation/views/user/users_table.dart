@@ -14,6 +14,7 @@ class UsersTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => UsersTableBloc(
+        alertBloc: context.read<AlertBloc>(),
         token: context.read<AuthBloc>().state.token!,
         userRepository: UserRepositoryImpl(
           userDatasource: UserDatasourceImpl(),
