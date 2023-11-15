@@ -160,10 +160,6 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     _deleteBICCompleter = Completer<void>();
   }
 
-  void changeRouteName(String name) {
-    add(RouteNameChanged(name: name));
-  }
-
   void changeSearchTextField(String searchTextField) {
     if (state.isTheUserSelectingHistories) {
       saveHistorySelected();
@@ -254,18 +250,18 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     add(DescriptionChanged(description: description));
   }
 
-  double getRouteFormHeightForSelectedBICView(BuildContext context) {
+  double _getRouteFormHeightForSelectedBICView(BuildContext context) {
     final int bicsForRouteLength = state.bicsForRoute.length;
     const int overFlowInTheSecondBIC = 25;
     if (bicsForRouteLength <= 1) {
-      return getOriginalRouteFormHeight(context);
+      return _getOriginalRouteFormHeight(context);
     } else if (bicsForRouteLength == 2) {
-      return getFormHeight(context) +
+      return _getFormHeight(context) +
           overFlowInTheSecondBIC -
           _heightOfTheWidgetFixedInTheTopOfTheScrollBar -
           _heightOfTheWidgetFixedInTheBottomOfTheScrollBar;
     } else {
-      return getFormHeight(context) +
+      return _getFormHeight(context) +
           _bicSelectedHeight * (bicsForRouteLength - 2) +
           overFlowInTheSecondBIC -
           12 -
@@ -274,12 +270,12 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     }
   }
 
-  double getRouteFormHeightForSearchedBICView(BuildContext context) {
+  double _getRouteFormHeightForSearchedBICView(BuildContext context) {
     final int bicsForSearchLength = state.bicsForSearch.length;
     if (bicsForSearchLength <= 3) {
-      return getOriginalRouteFormHeight(context);
+      return _getOriginalRouteFormHeight(context);
     } else {
-      return getFormHeight(context) +
+      return _getFormHeight(context) +
           _bicSearchedHeight * (bicsForSearchLength - 3) -
           23 -
           _heightOfTheWidgetFixedInTheTopOfTheScrollBar -
@@ -290,23 +286,19 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   double getRouteFormHeightWithoutTopAndBottomFixedWidgets(
       BuildContext context) {
     if (state.searchTextField.isEmpty) {
-      return getRouteFormHeightForSelectedBICView(context);
+      return _getRouteFormHeightForSelectedBICView(context);
     } else {
-      return getRouteFormHeightForSearchedBICView(context);
+      return _getRouteFormHeightForSearchedBICView(context);
     }
   }
 
-  double getBicSelectedHeight() {
-    return _bicSelectedHeight;
-  }
-
-  double getOriginalRouteFormHeight(BuildContext context) {
-    return getFormHeight(context) -
+  double _getOriginalRouteFormHeight(BuildContext context) {
+    return _getFormHeight(context) -
         _heightOfTheWidgetFixedInTheTopOfTheScrollBar -
         _heightOfTheWidgetFixedInTheBottomOfTheScrollBar;
   }
 
-  double getFormHeight(BuildContext context) {
+  double _getFormHeight(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     if (screenHeight < _minHeightOfTheRouteForm) {
       return _minHeightOfTheRouteForm;

@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
-import '../../config/config.dart';
-import '../../infrastructure/infrastructure.dart';
-import '../blocs/blocs.dart';
+import '../../../config/config.dart';
+import '../../../infrastructure/infrastructure.dart';
+import '../../blocs/blocs.dart';
 import 'create_bic_view.dart';
-import 'search_and_select_histories_view.dart';
+import 'search_and_select_bic_histories_view.dart';
 
 class BicsView extends StatelessWidget {
   const BicsView({super.key});

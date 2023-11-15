@@ -51,7 +51,7 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
     ));
   }
 
-  bool isStateValid() {
+  bool isLoginStateValid() {
     if (!state.isValid) {
       add(LoginSubmitted());
       Dialogs.showErrorDialog(

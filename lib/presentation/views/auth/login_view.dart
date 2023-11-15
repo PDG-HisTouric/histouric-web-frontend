@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../config/config.dart';
-import '../blocs/blocs.dart';
-import '../widgets/widgets.dart';
+import '../../../config/config.dart';
+import '../../blocs/blocs.dart';
+import '../../widgets/widgets.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -62,8 +62,8 @@ class _Login extends StatelessWidget {
         CustomElevatedButtonRounded(
           label: "Iniciar Sesión",
           onPressed: () async {
-            if (context.read<LoginFormBloc>().isStateValid()) {
-              await context.read<AuthBloc>().login(email, password)
+            if (context.read<LoginFormBloc>().isLoginStateValid()) {
+              await context.read<AuthBloc>().signIn(email, password)
                   ? NavigationService.replaceTo(
                       FluroRouterWrapper.dashboardRoute,
                     )

@@ -63,7 +63,6 @@ class HistoryCardWithPlayButton extends StatelessWidget {
                     value: selected,
                     onChanged: (value) {
                       onCheckBoxChanged(historyId);
-                      // context.read<BicBloc>().checkHistory(historyId);
                     }),
                 Text(historyTitle),
                 const Spacer(),

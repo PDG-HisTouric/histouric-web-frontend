@@ -19,8 +19,6 @@ class HtmlAudioOnlyWithPlayButtonBloc extends Bloc<
     on<PauseButtonPressed>(_onPauseButtonPressed);
     on<AudioDurationChanged>(_onAudioDurationChanged);
     on<AudioCurrentTimeChanged>(_onAudioCurrentTimeChanged);
-    // const uuid = Uuid();
-    // _audioId = "${uuid.v4()}-$audioUrl";
   }
 
   void _onPlayButtonPressed(

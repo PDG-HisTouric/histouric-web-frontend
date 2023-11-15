@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../../../domain/entities/entities.dart';
 import '../../../domain/repositories/repositories.dart';
 import '../../../infrastructure/models/models.dart';
-import '../../widgets/history/history_widgets.dart';
+import '../../widgets/widgets.dart';
 
 part 'history_event.dart';
 part 'history_state.dart';
@@ -180,10 +180,6 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
         .firstWhere((element) => element.id == id)
         .copyWith(text: text);
     add(TextSegmentStateChanged(textSegmentState: newTextSegmentState));
-  }
-
-  TextSegmentState getTextSegmentStateById(String id) {
-    return state.textSegmentStates.firstWhere((element) => element.id == id);
   }
 
   void _onRemoveTextEntryButtonPressed(

@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:histouric_web/presentation/presentation.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../config/config.dart';
-import '../../domain/domain.dart';
-import '../blocs/blocs.dart';
+import '../../../config/config.dart';
+import '../../../domain/domain.dart';
+import '../../blocs/blocs.dart';
 
 class CreateBICView extends StatelessWidget {
   const CreateBICView({super.key});

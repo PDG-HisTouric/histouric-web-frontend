@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../infrastructure/infrastructure.dart';
-import '../blocs/blocs.dart';
-import '../widgets/widgets.dart';
+import '../../../infrastructure/infrastructure.dart';
+import '../../blocs/blocs.dart';
+import '../../widgets/widgets.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -16,7 +16,7 @@ class ProfileView extends StatelessWidget {
         context: context,
         authBloc: context.read<AuthBloc>(),
         userRepository: UserRepositoryImpl(
-          userDatasource: SpringBootUserDatasource(),
+          userDatasource: UserDatasourceImpl(),
         ),
       ),
       child: const _ProfileView(),

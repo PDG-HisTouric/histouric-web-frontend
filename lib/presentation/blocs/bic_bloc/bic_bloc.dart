@@ -171,11 +171,6 @@ class BicBloc extends Bloc<BicEvent, BicState> {
     ));
   }
 
-  void historiesAfterSearchChanged(List<Story> historiesAfterSearch) {
-    add(HistoriesAfterSearchChanged(
-        historiesAfterSearch: historiesAfterSearch));
-  }
-
   void _onTitleForSearchQueryChanged(
       TitleForSearchQueryChanged event, Emitter<BicState> emit) async {
     if (event.titleForSearchQuery.isNotEmpty) {

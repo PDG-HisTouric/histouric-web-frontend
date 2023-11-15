@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +16,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final BuildContext context;
   final String? token;
 
+  Completer<bool> _theUserLoggedInWihtNoProblems = Completer<bool>();
+
   AuthBloc({
     required this.userRepository,
     required this.authRepository,
@@ -26,10 +30,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UserChanged>(_onUserChanged);
     on<UserLoadedFromAdmin>(_onUserLoadedFromAdmin);
     on<TokenChanged>(_onTokenChanged);
+    on<UserLoggedIn>(_onUserLoggedIn);
 
     if (token != null) {
       userRepository.configureToken(token!);
-      changeToken(token: token!);
+      _changeToken(token: token!);
     }
   }
 
@@ -52,24 +57,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: histouricUser.email,
         roles: histouricUser.roles.map((role) => role.name).toList(),
       ));
+      if (event.isForLogin) _theUserLoggedInWihtNoProblems.complete(true);
     } catch (e) {
       emit(state.copyWith(authStatus: AuthStatus.notAuthenticated));
+      if (event.isForLogin) _theUserLoggedInWihtNoProblems.complete(false);
     }
   }
 
   void checkToken() {
     add(CheckToken());
+    _theUserLoggedInWihtNoProblems = Completer<bool>();
   }
 
-  Future<bool> login(String email, String password) async {
-    if (!await saveTokenAndNickname(email, password)) return false;
-    add(CheckToken());
-    return true;
+  void _onUserLoggedIn(UserLoggedIn event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(authStatus: AuthStatus.checking));
+    if (!await _saveTokenAndNickname(event.email, event.password)) {
+      _theUserLoggedInWihtNoProblems.complete(false);
+      return;
+    }
+    add(CheckToken(isForLogin: true));
   }
 
-  Future<bool> saveTokenAndNickname(String email, String password) async {
+  Future<bool> signIn(String email, String password) async {
+    add(UserLoggedIn(email: email, password: password));
+    bool result = await _theUserLoggedInWihtNoProblems.future;
+    _theUserLoggedInWihtNoProblems = Completer<bool>();
+    return result;
+  }
+
+  Future<bool> _saveTokenAndNickname(String email, String password) async {
     try {
-      Token token = await authRepository.login(email, password);
+      Token token = await authRepository.signIn(email, password);
       await keyValueStorageService.setKeyValue("token", token.token);
       await keyValueStorageService.setKeyValue("nickname", token.nickname);
       return true;
@@ -163,7 +181,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(token: event.token));
   }
 
-  void changeToken({required String token}) {
+  void _changeToken({required String token}) {
     add(TokenChanged(token: token));
   }
 }

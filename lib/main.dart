@@ -4,16 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'config/config.dart';
-import 'firebase_options.dart';
 import 'infrastructure/infrastructure.dart';
 import 'presentation/blocs/blocs.dart';
 import 'presentation/presentation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   setPathUrlStrategy();
   FluroRouterWrapper.configureRoutes();
   runApp(const MainApp());
@@ -32,11 +28,11 @@ class MainApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => AuthBloc(
         userRepository: UserRepositoryImpl(
-          userDatasource: SpringBootUserDatasource(),
+          userDatasource: UserDatasourceImpl(),
         ),
         keyValueStorageService: KeyValueStorageServiceImpl(),
         authRepository: AuthRepositoryImpl(
-          authDatasource: SpringBootLoginDatasource(),
+          authDatasource: AuthDatasourceImpl(),
         ),
         context: context,
       ),
