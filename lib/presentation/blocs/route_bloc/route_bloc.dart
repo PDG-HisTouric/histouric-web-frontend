@@ -440,6 +440,12 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       SaveRouteButtonPressed event, Emitter<RouteState> emit) async {
     changeSearchTextField("");
     _openLoadingAlert();
+
+    if (state.bicsForRoute.length < 2) {
+      _openErrorAlert("La ruta debe tener al menos 2 BICs");
+      return;
+    }
+
     List<BicAndHistory> bics = [];
     for (BICForRouteState bicState in state.bicsForRoute) {
       if (bicState.selectedHistory != null) {
@@ -463,8 +469,13 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       ownerId: ownerId,
       bicList: bics,
     );
-    HistouricRoute histouricRoute =
-        await routeRepository.createRoute(routeCreation);
+    HistouricRoute histouricRoute;
+    try {
+      histouricRoute = await routeRepository.createRoute(routeCreation);
+    } catch (e) {
+      _openErrorAlert("Ocurrió un error al crear la ruta");
+      return;
+    }
     emit(state.clearState());
     _saveRouteCompleter.complete(histouricRoute);
   }
