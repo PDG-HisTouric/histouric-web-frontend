@@ -11,7 +11,7 @@ env:
 on:
   push:
     branches:
-      - fix-login
+      - main
 
 jobs:
   build_and_deploy_job:
