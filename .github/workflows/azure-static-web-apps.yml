@@ -1,7 +1,7 @@
 name: Azure Static Web Apps CD
 
 env:
-  API_KEY: ${{ secrets.API_KEY }}
+  PICKER_AND_DRIVE_API_KEY: ${{ secrets.PICKER_AND_DRIVE_API_KEY }}
   APP_ID: ${{ secrets.APP_ID }}
   BASE_URL: ${{ secrets.BASE_URL }}
   CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -31,7 +31,7 @@ jobs:
           channel: 'stable'
           cache: true
       - name: Build flutter web app
-        run: flutter build web --dart-define=SCOPES=${{ env.SCOPES }} --dart-define=CLIENT_ID=${{ env.CLIENT_ID }} --dart-define=API_KEY=${{ env.API_KEY }} --dart-define=APP_ID=${{ env.APP_ID }} --dart-define=BASE_URL=${{ env.BASE_URL }} --dart-define=DIRECTIONS_API_KEY=${{ env.DIRECTIONS_API_KEY }}
+        run: flutter build web --dart-define=SCOPES=${{ env.SCOPES }} --dart-define=CLIENT_ID=${{ env.CLIENT_ID }} --dart-define=PICKER_AND_DRIVE_API_KEY=${{ env.PICKER_AND_DRIVE_API_KEY }} --dart-define=APP_ID=${{ env.APP_ID }} --dart-define=BASE_URL=${{ env.BASE_URL }} --dart-define=DIRECTIONS_API_KEY=${{ env.DIRECTIONS_API_KEY }}
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
