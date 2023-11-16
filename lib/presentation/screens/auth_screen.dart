@@ -115,7 +115,7 @@ class _AuthScreenState extends State<_AuthScreen>
                       child: Container(
                         width: size.width,
                         height: size.height,
-                        color: Colors.black26,
+                        color: colors.primary.withOpacity(0.2),
                       ),
                     ),
                   ),

@@ -26,6 +26,7 @@ class CreateRouteView extends StatelessWidget {
       ),
       BlocProvider(
         create: (context) => RouteBloc(
+          alertBloc: context.read<AlertBloc>(),
           ownerId: context.read<AuthBloc>().state.id!,
           routeRepository:
               RouteRepositoryImpl(routeDatasource: RouteDatasourceImpl()),
@@ -92,6 +93,7 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
         _getOpenBICForSearchState(bicsForSearch);
     final BICForRouteState? openBICForRouteState =
         _getOpenBICForRouteState(bicsForRoute);
+    final colors = Theme.of(context).colorScheme;
 
     return Stack(
       children: [
@@ -146,23 +148,23 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
         ),
         PointerInterceptor(
           child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: colors.background,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black12,
+                  color: colors.primary.withOpacity(0.2),
                   blurRadius: 20,
-                  offset: Offset(0, 5),
+                  offset: const Offset(0, 5),
                 ),
               ],
             ),
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 8, bottom: 7),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 7),
                   child: Text(
                     "Crear ruta",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 20, color: colors.onBackground),
                   ),
                 ),
                 SizedBox(
@@ -190,9 +192,17 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                   padding: const EdgeInsets.only(top: 9, bottom: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      context.read<RouteBloc>().saveRoute();
+                      context.read<RouteBloc>().saveRoute().then((_) {
+                        context.read<MapBloc>().clearState();
+                      });
                     },
-                    child: const Text("Crear ruta"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colors.primary,
+                    ),
+                    child: Text(
+                      "Crear ruta",
+                      style: TextStyle(color: colors.onPrimary),
+                    ),
                   ),
                 ),
                 // const SizedBox(height: 20),
@@ -342,14 +352,16 @@ class _SelectHistoryView extends StatelessWidget {
       return const SizedBox();
     }
 
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: colors.background,
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            color: colors.primary.withOpacity(0.2),
             blurRadius: 20,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
@@ -604,12 +616,14 @@ class _RouteForm extends StatelessWidget {
     return Column(
       children: [
         SecondCustomTextFormField(
+          controller: routeBlocState.nameController,
           labelText: 'Nombre de la ruta',
           minLines: 1,
           maxLines: 1,
           onChanged: context.read<RouteBloc>().changeName,
         ),
         SecondCustomTextFormField(
+          controller: routeBlocState.descriptionController,
           labelText: 'Descripción',
           hintText: 'Ingrese la descripción de la ruta',
           minLines: 3,

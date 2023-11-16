@@ -1,32 +1,39 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:histouric_web/presentation/blocs/alert_bloc/alert_bloc.dart';
 
 import '../../../domain/domain.dart';
 import '../../../infrastructure/models/models.dart';
+import '../../widgets/widgets.dart';
 
 part 'route_event.dart';
 part 'route_state.dart';
 
 class RouteBloc extends Bloc<RouteEvent, RouteState> {
+  final AlertBloc alertBloc;
   final BICRepository bicRepository;
   final RouteRepository routeRepository;
   final String token;
   final String ownerId;
+
   late final double _bicSelectedHeight;
   late final double _bicSearchedHeight;
   late final double _heightOfTheWidgetFixedInTheTopOfTheScrollBar;
   late final double _heightOfTheWidgetFixedInTheBottomOfTheScrollBar;
   late final double _minHeightOfTheRouteForm;
   late final double _sideMenuWidth;
+
   Completer<void> _changeBICCompleter = Completer<void>();
   Completer<BIC> _newBICCompleter = Completer<BIC>();
   Completer<void> _deleteBICCompleter = Completer<void>();
   Completer<HistouricRoute> _saveRouteCompleter = Completer<HistouricRoute>();
 
   RouteBloc({
+    required this.alertBloc,
     required this.routeRepository,
     required this.bicRepository,
     required this.ownerId,
@@ -34,6 +41,8 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   }) : super(RouteState()) {
     bicRepository.configureToken(token);
     state.initSearchController();
+    state.initNameController();
+    state.initDescriptionController();
     _bicSelectedHeight = 180;
     _bicSearchedHeight = 120;
     _heightOfTheWidgetFixedInTheTopOfTheScrollBar = 45;
@@ -429,6 +438,14 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   Future<void> _onSaveRouteButtonPressed(
       SaveRouteButtonPressed event, Emitter<RouteState> emit) async {
+    changeSearchTextField("");
+    _openLoadingAlert();
+
+    if (state.bicsForRoute.length < 2) {
+      _openErrorAlert("La ruta debe tener al menos 2 BICs");
+      return;
+    }
+
     List<BicAndHistory> bics = [];
     for (BICForRouteState bicState in state.bicsForRoute) {
       if (bicState.selectedHistory != null) {
@@ -440,21 +457,68 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       }
     }
 
+    if (_allTheBicsHaveAHistory() != null) {
+      _openErrorAlert(
+          "El BIC ${_allTheBicsHaveAHistory()!.name} no tiene una historia seleccionada");
+      return;
+    }
+
     RouteCreation routeCreation = RouteCreation(
       name: state.name,
       description: state.description,
       ownerId: ownerId,
       bicList: bics,
     );
-    HistouricRoute histouricRoute =
-        await routeRepository.createRoute(routeCreation);
+    HistouricRoute histouricRoute;
+    try {
+      histouricRoute = await routeRepository.createRoute(routeCreation);
+    } catch (e) {
+      _openErrorAlert("Ocurrió un error al crear la ruta");
+      return;
+    }
+    emit(state.clearState());
     _saveRouteCompleter.complete(histouricRoute);
   }
 
   Future<HistouricRoute> saveRoute() async {
     add(SaveRouteButtonPressed());
     HistouricRoute histouricRoute = await _saveRouteCompleter.future;
+    _openRouteSuccessfullyCreatedAlert();
     _saveRouteCompleter = Completer<HistouricRoute>();
     return histouricRoute;
+  }
+
+  void _openRouteSuccessfullyCreatedAlert() {
+    alertBloc.changeChild(CardWithMessageAndIcon(
+      onPressed: () => alertBloc.closeAlert(),
+      message: "La ruta fue creada exitosamente",
+      icon: Icons.check,
+    ));
+    alertBloc.openAlert();
+  }
+
+  void _openLoadingAlert() {
+    alertBloc.changeChild(const LoadingCard(
+      loadingText: 'La historia se esta guardando',
+    ));
+    alertBloc.openAlert();
+  }
+
+  void _openErrorAlert(String message) {
+    alertBloc.changeChild(CardWithMessageAndIcon(
+      onPressed: () => alertBloc.closeAlert(),
+      message: message,
+      icon: Icons.error,
+    ));
+    alertBloc.openAlert();
+  }
+
+  BIC? _allTheBicsHaveAHistory() {
+    for (BICForRouteState bicState in state.bicsForRoute) {
+      if (bicState.selectedHistory == null) {
+        return bicState.bic;
+      }
+    }
+    return null;
   }
 }

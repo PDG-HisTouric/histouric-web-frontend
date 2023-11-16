@@ -28,8 +28,9 @@ class SelectedRolesChanged extends ProfileEvent {
 
 class UserSaved extends ProfileEvent {
   final HistouricUser histouricUser;
+  final bool isForCreate;
 
-  UserSaved({required this.histouricUser});
+  UserSaved({required this.histouricUser, this.isForCreate = false});
 }
 
 class EditButtonPressed extends ProfileEvent {}

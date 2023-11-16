@@ -74,3 +74,5 @@ class PolylinePointsChanged extends MapEvent {
 
   PolylinePointsChanged({required this.bics});
 }
+
+class ClearState extends MapEvent {}

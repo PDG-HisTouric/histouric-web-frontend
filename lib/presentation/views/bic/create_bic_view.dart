@@ -55,6 +55,7 @@ class _FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final formState = context.watch<BicBloc>().state;
+    final colors = Theme.of(context).colorScheme;
 
     return Form(
       child: Column(
@@ -78,7 +79,6 @@ class _FormState extends State<_Form> {
           Row(
             children: [
               Checkbox(
-                  checkColor: Colors.white,
                   value: formState.exists,
                   onChanged: (value) {
                     context.read<BicBloc>().existsChanged();
@@ -90,7 +90,6 @@ class _FormState extends State<_Form> {
           if (formState.driveImagesInfo.isEmpty)
             const Text(
               'No hay imágenes seleccionadas',
-              style: TextStyle(color: Colors.black),
             ),
           if (formState.driveImagesInfo.isNotEmpty)
             ImageCarousel(imagesInfo: formState.driveImagesInfo),
@@ -118,11 +117,11 @@ class _FormState extends State<_Form> {
                 ElevatedButton(
                   onPressed: context.read<BicBloc>().onClosePressed,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: colors.secondary,
                   ),
-                  child: const Text(
+                  child: Text(
                     'Cancelar',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: colors.onSecondary),
                   ),
                 )
               ],
@@ -208,7 +207,6 @@ class _AddHistories extends StatelessWidget {
         (selectedHistories.isEmpty)
             ? const Text(
                 'No hay historias añadidas',
-                style: TextStyle(color: Colors.black),
               )
             : const _SelectedHistories(),
         const SizedBox(height: 16.0),

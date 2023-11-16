@@ -25,7 +25,7 @@ class LoadImages extends StatelessWidget {
           for (int index = 0; index < imageEntries.length; index++)
             ImageEntry(id: imageEntries[index].id),
           const SizedBox(height: 10),
-          FilledButton.icon(
+          ElevatedButton.icon(
             icon: const Icon(Icons.add),
             onPressed: () => _addImageEntry(context),
             label: const Text("Añadir imagen"),

@@ -32,9 +32,17 @@ class CardWithAcceptAndCancelButtons extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(title, style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 10),
-              Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+              Text(
+                subtitle,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 10),
               Wrap(
                 children: [
@@ -49,7 +57,10 @@ class CardWithAcceptAndCancelButtons extends StatelessWidget {
                         backgroundColor:
                             MaterialStateProperty.all(colors.secondary),
                       ),
-                      child: const Text('Cancelar')),
+                      child: Text(
+                        'Cancelar',
+                        style: TextStyle(color: colors.onSecondary),
+                      )),
                 ],
               )
             ],

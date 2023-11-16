@@ -41,6 +41,7 @@ class _BIcsViewState extends State<_BIcsView> {
   @override
   Widget build(BuildContext context) {
     final mapBlocState = context.watch<MapBloc>().state;
+    final colors = Theme.of(context).colorScheme;
 
     return Stack(
       children: [
@@ -108,12 +109,24 @@ class _BIcsViewState extends State<_BIcsView> {
             child: Container(
               child: isCreatingBIC
                   ? ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colors.primary,
+                      ),
                       onPressed: toggleBICCreation,
-                      child: const Text('Cancelar'),
+                      child: Text(
+                        'Cancelar',
+                        style: TextStyle(color: colors.onPrimary),
+                      ),
                     )
                   : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colors.primary,
+                      ),
                       onPressed: toggleBICCreation,
-                      child: const Text('Crear Bien de Interés Cultural'),
+                      child: Text(
+                        'Crear Bien de Interés Cultural',
+                        style: TextStyle(color: colors.onPrimary),
+                      ),
                     ),
             ),
           ),

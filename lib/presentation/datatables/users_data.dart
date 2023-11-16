@@ -14,6 +14,7 @@ class UsersDTS extends DataTableSource {
   @override
   DataRow getRow(int index) {
     final user = users[index];
+    final colors = Theme.of(context).colorScheme;
 
     return DataRow.byIndex(
       index: index,
@@ -35,7 +36,7 @@ class UsersDTS extends DataTableSource {
               IconButton(
                 icon: Icon(
                   Icons.delete_outline,
-                  color: Colors.red.withOpacity(0.8),
+                  color: colors.error,
                 ),
                 onPressed: () {
                   context.read<UsersTableBloc>().deleteUser(user.id);

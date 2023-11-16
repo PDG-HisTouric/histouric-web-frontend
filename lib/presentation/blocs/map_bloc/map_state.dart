@@ -29,4 +29,8 @@ class MapState {
           markerFroBICCreationId ?? this.markerFroBICCreationId,
     );
   }
+
+  MapState clearState() {
+    return MapState(markerFroBICCreationId: markerFroBICCreationId);
+  }
 }

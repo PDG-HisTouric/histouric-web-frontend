@@ -29,6 +29,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MarkerIdForBICCreationChanged>(_onMarkerIdForBICCreationChanged);
     on<MarkerDeleted>(_onMarkerDeleted);
     on<PolylinePointsChanged>(_onPolylinePointsChanged);
+    on<ClearState>(_onClearState);
   }
 
   void _onMarkerAdded(
@@ -259,5 +260,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Future<void> changePolylinePoints(List<BICForRouteState> bicStates) async {
     List<BIC> bics = bicStates.map((e) => e.bic).toList();
     add(PolylinePointsChanged(bics: bics));
+  }
+
+  void _onClearState(
+    ClearState event,
+    Emitter<MapState> emit,
+  ) {
+    emit(state.clearState());
+  }
+
+  Future<void> clearState() async {
+    add(ClearState());
   }
 }

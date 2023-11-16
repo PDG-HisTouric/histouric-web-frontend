@@ -79,9 +79,8 @@ class ImageEntry extends StatelessWidget {
               Expanded(
                 flex: 4,
                 child: Container(
-                  color: imageEntryState.imageChosen
-                      ? Colors.transparent
-                      : Colors.white,
+                  color:
+                      imageEntryState.imageChosen ? Colors.transparent : null,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: !imageEntryState.imageChosen

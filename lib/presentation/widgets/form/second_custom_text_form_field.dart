@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 class SecondCustomTextFormField extends StatelessWidget {
   final String labelText;
-  final Color primaryColor;
+  final Color? primaryColor;
   final String? hintText;
-  final Color hintColor;
   final Icon? prefixIcon;
   final int? maxLines;
   final int? minLines;
@@ -16,9 +15,8 @@ class SecondCustomTextFormField extends StatelessWidget {
   const SecondCustomTextFormField({
     super.key,
     required this.labelText,
-    this.primaryColor = Colors.black,
+    this.primaryColor,
     this.hintText,
-    this.hintColor = Colors.grey,
     this.prefixIcon,
     this.maxLines,
     this.minLines,
@@ -30,9 +28,11 @@ class SecondCustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryBorder = OutlineInputBorder(
+    final colors = Theme.of(context).colorScheme;
+
+    final InputBorder primaryBorder = OutlineInputBorder(
       borderSide: BorderSide(
-        color: primaryColor,
+        color: primaryColor ?? colors.primary,
       ),
     );
 
@@ -52,17 +52,14 @@ class SecondCustomTextFormField extends StatelessWidget {
             color: primaryColor,
           ),
           errorBorder: primaryBorder.copyWith(
-            borderSide: const BorderSide(color: Colors.red),
+            borderSide: BorderSide(color: colors.error),
           ),
           focusedErrorBorder: primaryBorder.copyWith(
-            borderSide: const BorderSide(color: Colors.red),
+            borderSide: BorderSide(color: colors.error),
           ),
           enabledBorder: primaryBorder,
           focusedBorder: primaryBorder,
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: hintColor,
-          ),
           prefixIcon: prefixIcon,
         ),
         onChanged: onChanged,

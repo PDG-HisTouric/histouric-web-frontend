@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import '../blocs/blocs.dart';
 import '../views/views.dart';
@@ -65,6 +66,7 @@ class _DashboardState extends State<_Dashboard> with TickerProviderStateMixin {
     final size = MediaQuery.sizeOf(context);
     final sideMenuBloc = context.watch<SidemenuBloc>();
     final alertBloc = context.watch<AlertBloc>();
+    final colors = Theme.of(context).colorScheme;
 
     if (sideMenuBloc.state.menuInitiated == false ||
         alertBloc.state.animationControllerInitiated == false) {
@@ -97,7 +99,7 @@ class _DashboardState extends State<_Dashboard> with TickerProviderStateMixin {
                       child: Container(
                         width: size.width,
                         height: size.height,
-                        color: Colors.black26,
+                        color: colors.primary.withOpacity(0.2),
                       ),
                     ),
                   ),
@@ -113,14 +115,16 @@ class _DashboardState extends State<_Dashboard> with TickerProviderStateMixin {
             builder: (context, _) => Stack(
               children: [
                 if (alertBloc.state.isAlertOpen)
-                  Opacity(
-                    opacity: alertBloc.state.opacity().value,
-                    child: GestureDetector(
-                      onTap: () => context.read<AlertBloc>().closeAlert(),
-                      child: Container(
-                        width: size.width,
-                        height: size.height,
-                        color: Colors.black26,
+                  PointerInterceptor(
+                    child: Opacity(
+                      opacity: alertBloc.state.opacity().value,
+                      child: GestureDetector(
+                        onTap: () => context.read<AlertBloc>().closeAlert(),
+                        child: Container(
+                          width: size.width,
+                          height: size.height,
+                          color: colors.primary.withOpacity(0.2),
+                        ),
                       ),
                     ),
                   ),

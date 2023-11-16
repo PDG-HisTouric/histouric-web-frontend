@@ -80,7 +80,7 @@ class CustomCard extends StatelessWidget {
                     }
 
                     if (profilePurpose == ProfilePurpose.editUserFromAdmin) {
-                      context.read<ProfileBloc>().saveChanges();
+                      await context.read<ProfileBloc>().saveChanges();
                       while (profileBloc.state.isSaving) {
                         await Future.delayed(const Duration(milliseconds: 100));
                       }
@@ -88,7 +88,7 @@ class CustomCard extends StatelessWidget {
                       return;
                     }
                     if (profilePurpose == ProfilePurpose.createUserFromAdmin) {
-                      context.read<ProfileBloc>().createUserFromAdmin();
+                      await context.read<ProfileBloc>().createUserFromAdmin();
                       while (profileBloc.state.isSaving) {
                         await Future.delayed(const Duration(milliseconds: 100));
                       }

@@ -25,7 +25,7 @@ class FirstCustomTextFormField extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     final border = OutlineInputBorder(
-      borderSide: BorderSide(color: colors.onPrimary),
+      borderSide: BorderSide(color: colors.primary),
       borderRadius: BorderRadius.circular(borderRadius),
     );
 
@@ -53,7 +53,7 @@ class FirstCustomTextFormField extends StatelessWidget {
               )
             : null,
         hintText: hint,
-        hintStyle: TextStyle(fontSize: 16, color: colors.onPrimaryContainer),
+        hintStyle: TextStyle(fontSize: 16, color: colors.onPrimary),
         errorText: errorMessage,
         errorMaxLines: 2,
         focusColor: colors.primary,

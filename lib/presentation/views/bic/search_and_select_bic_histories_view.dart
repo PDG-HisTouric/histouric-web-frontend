@@ -21,6 +21,7 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
         context.select((BicBloc bloc) => bloc.state.historyTitleController);
     bool isSearchingHistories =
         context.select((BicBloc bloc) => bloc.state.isSearchingHistories);
+    final colors = Theme.of(context).colorScheme;
 
     return Center(
       child: SizedBox(
@@ -125,11 +126,11 @@ class SearchAndSelectHistoriesView extends StatelessWidget {
                         onPressed:
                             context.read<BicBloc>().cancelHistoriesAddition,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: colors.secondary,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Cancelar',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: colors.onSecondary),
                         ),
                       )
                     ],

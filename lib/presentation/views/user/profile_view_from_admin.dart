@@ -79,6 +79,7 @@ class _ProfileViewFromAdminState extends State<_ProfileViewFromAdmin> {
               width: 400,
               child: BlocProvider(
                 create: (context) => ProfileBloc(
+                  alertBloc: context.read<AlertBloc>(),
                   authBloc: context.read<AuthBloc>(),
                   userRepository: UserRepositoryImpl(
                     userDatasource: UserDatasourceImpl(),

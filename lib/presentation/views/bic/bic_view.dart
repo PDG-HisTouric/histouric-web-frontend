@@ -18,14 +18,16 @@ class BicView extends StatelessWidget {
       return const SizedBox();
     }
 
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: colors.background,
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            color: colors.primary.withOpacity(0.2),
             blurRadius: 20,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
