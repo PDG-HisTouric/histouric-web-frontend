@@ -86,8 +86,8 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
               },
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 25, // Tamaño de fuente personalizado
-                fontWeight: FontWeight.bold, // Texto en negritas (bold)
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

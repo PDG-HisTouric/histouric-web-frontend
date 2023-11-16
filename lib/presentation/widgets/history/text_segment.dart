@@ -31,9 +31,11 @@ class TextSegment extends StatelessWidget {
                   ),
                   child: TextField(
                     controller: textSegmentState.textController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "Texto",
-                      border: InputBorder.none,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: colors.primary),
+                      ),
                     ),
                     maxLines: null,
                     onChanged: (value) => context
