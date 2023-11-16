@@ -34,7 +34,6 @@ class MainApp extends StatelessWidget {
         authRepository: AuthRepositoryImpl(
           authDatasource: AuthDatasourceImpl(),
         ),
-        context: context,
       ),
       child: _MaterialAppWithFluro(),
     );

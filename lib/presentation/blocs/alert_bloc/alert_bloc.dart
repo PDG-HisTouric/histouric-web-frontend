@@ -37,6 +37,9 @@ class AlertBloc extends Bloc<AlertEvent, AlertState> {
     AnimationControllerForAlertUpdated event,
     Emitter<AlertState> emit,
   ) {
+    if (state.animationControllerInitiated) {
+      state.animationController.dispose();
+    }
     emit(state.copyWith(
         animationController: event.animationController,
         animationControllerInitiated: true));

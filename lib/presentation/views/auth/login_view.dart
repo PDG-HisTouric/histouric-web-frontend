@@ -11,7 +11,11 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginFormBloc(context: context),
+      create: (context) => LoginFormBloc(
+        alertBloc: context.read<AlertBloc>(),
+        authBloc: context.read<AuthBloc>(),
+        context: context,
+      ),
       child: _Login(),
     );
   }
@@ -61,16 +65,17 @@ class _Login extends StatelessWidget {
         const SizedBox(height: 20),
         CustomElevatedButtonRounded(
           label: "Iniciar Sesión",
-          onPressed: () async {
+          onPressed: () {
             if (context.read<LoginFormBloc>().isLoginStateValid()) {
-              await context.read<AuthBloc>().signIn(email, password)
-                  ? NavigationService.replaceTo(
-                      FluroRouterWrapper.dashboardRoute,
-                    )
-                  : Dialogs.showErrorDialog(
-                      context: context,
-                      content: "Credenciales inválidas",
-                    );
+              context
+                  .read<LoginFormBloc>()
+                  .signIn(email, password)
+                  .then((isTheUserLoggedIn) {
+                if (isTheUserLoggedIn) {
+                  NavigationService.replaceTo(
+                      FluroRouterWrapper.dashboardRoute);
+                }
+              });
             }
           },
         ),

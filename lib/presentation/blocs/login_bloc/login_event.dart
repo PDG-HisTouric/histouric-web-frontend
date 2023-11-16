@@ -15,3 +15,10 @@ class LoginPasswordChanged extends LoginFormEvent {
 }
 
 class LoginSubmitted extends LoginFormEvent {}
+
+class UserLoggedIn extends LoginFormEvent {
+  final String email;
+  final String password;
+
+  UserLoggedIn({required this.email, required this.password});
+}

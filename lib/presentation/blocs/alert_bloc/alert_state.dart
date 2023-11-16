@@ -31,7 +31,7 @@ class AlertState {
     this.animationController = animationController;
   }
 
-  Animation<double> movement(double height) {
+  Animation<double> movement(double height, double maxHeightOfTheChild) {
     double centerHeight =
         height / 2 - CardWithAcceptAndCancelButtons.maxHeight / 2;
     return Tween<double>(begin: -centerHeight, end: centerHeight).animate(
