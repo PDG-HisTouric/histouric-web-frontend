@@ -68,7 +68,7 @@ class _AuthScreenState extends State<_AuthScreen>
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(height: size.height * 0.1),
@@ -89,8 +89,8 @@ class _AuthScreenState extends State<_AuthScreen>
                       height: (authStatus == AuthStatus.loggingIn)
                           ? size.height * 0.1 - 36
                           : size.height * 0.1),
-                  // if (authStatus == AuthStatus.loggingIn)
-                  //   const Center(child: CircularProgressIndicator()),
+                  if (authStatus == AuthStatus.loggingIn)
+                    const CircularProgressIndicator(),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Container(
