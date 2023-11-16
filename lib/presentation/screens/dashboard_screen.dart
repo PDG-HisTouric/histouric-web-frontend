@@ -25,8 +25,8 @@ class DashboardScreen extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => SidemenuBloc()),
         BlocProvider(create: (context) => AlertBloc()),
+        BlocProvider(create: (context) => SidemenuBloc()),
       ],
       child: _Dashboard(child: child),
     );
@@ -129,7 +129,10 @@ class _DashboardState extends State<_Dashboard> with TickerProviderStateMixin {
                     offset: Offset(
                         size.width / 2 -
                             CardWithAcceptAndCancelButtons.maxWidth / 2,
-                        alertBloc.state.movement(size.height).value),
+                        alertBloc.state
+                            .movement(size.height,
+                                CardWithAcceptAndCancelButtons.maxWidth)
+                            .value),
                     child: alertBloc.state.child!,
                   ),
               ],

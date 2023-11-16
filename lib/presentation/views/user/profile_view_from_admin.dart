@@ -29,7 +29,6 @@ class ProfileViewFromAdmin extends StatelessWidget {
         authRepository: AuthRepositoryImpl(
           authDatasource: AuthDatasourceImpl(),
         ),
-        context: context,
       ),
       child: _ProfileViewFromAdmin(
         token: token,
