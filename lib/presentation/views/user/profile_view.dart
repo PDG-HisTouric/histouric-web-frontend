@@ -12,6 +12,7 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProfileBloc(
+        alertBloc: context.read<AlertBloc>(),
         profilePurpose: ProfilePurpose.viewMyProfile,
         context: context,
         authBloc: context.read<AuthBloc>(),

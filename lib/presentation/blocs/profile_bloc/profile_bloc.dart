@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../config/helpers/dialogs.dart';
 import '../../../domain/domain.dart';
 import '../../../infrastructure/infrastructure.dart';
+import '../../widgets/widgets.dart';
 import '../blocs.dart';
 
 part 'profile_event.dart';
@@ -11,13 +13,17 @@ part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final AuthBloc authBloc;
+  final AlertBloc alertBloc;
   final UserRepository userRepository;
   final BuildContext context;
   final ProfilePurpose profilePurpose;
   final UsersTableBloc? usersTableBloc;
 
+  Completer<bool> _theUserWasSaved = Completer<bool>();
+
   ProfileBloc({
     required this.authBloc,
+    required this.alertBloc,
     required this.userRepository,
     required this.context,
     required this.profilePurpose,
@@ -45,8 +51,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     _mapRolesFromAuthBloc();
   }
 
-  void createUserFromAdmin() {
+  Future<void> createUserFromAdmin() async {
     add(CreateButtonPressed());
+    if (await _theUserWasSaved.future) openSuccessAlert();
+    while (!alertBloc.state.isAlertOpen) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    while (alertBloc.state.isAlertOpen) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    _theUserWasSaved = Completer<bool>();
   }
 
   void _onCreateButtonPressed(
@@ -55,17 +69,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     try {
       emit(state.copyWith(isSaving: true));
-
       HistouricUser histouricUser = await _createUser();
-
-      add(UserSaved(histouricUser: histouricUser));
+      add(UserSaved(histouricUser: histouricUser, isForCreate: true));
     } catch (e) {
+      _theUserWasSaved.complete(false);
       add(SaveProcessStopped());
-
-      Dialogs.showErrorDialog(
-        context: context,
-        content: e.toString().substring(11),
-      );
+      openErrorAlert("Ocurrió un error al crear el usuario");
     }
   }
 
@@ -126,6 +135,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       ).toSet(),
       isSaving: false,
     ));
+
+    if (event.isForCreate) _theUserWasSaved.complete(true);
   }
 
   void removeRole(String role) {
@@ -142,12 +153,26 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       add(UserSaved(histouricUser: histouricUser));
     } catch (e) {
       add(SaveProcessStopped());
-
-      Dialogs.showErrorDialog(
-        context: context,
-        content: e.toString().substring(11),
-      );
+      openErrorAlert(e.toString());
     }
+  }
+
+  void openErrorAlert(String message) {
+    alertBloc.changeChild(CardWithMessageAndIcon(
+      onPressed: () => alertBloc.closeAlert(),
+      message: message,
+      icon: Icons.error,
+    ));
+    alertBloc.openAlert();
+  }
+
+  void openSuccessAlert() {
+    alertBloc.changeChild(CardWithMessageAndIcon(
+      onPressed: () => alertBloc.closeAlert(),
+      message: "Usuario creado exitosamente",
+      icon: Icons.check,
+    ));
+    alertBloc.openAlert();
   }
 
   void _onSaveProcessStopped(

@@ -22,6 +22,7 @@ class CustomCard extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final profileBloc = context.watch<ProfileBloc>();
     final ProfilePurpose profilePurpose = profileBloc.state.profilePurpose;
+    final alertBloc = context.watch<AlertBloc>();
 
     if (profileBloc.state.initializingControllers) {
       return const Center(child: CircularProgressIndicator());
@@ -88,7 +89,7 @@ class CustomCard extends StatelessWidget {
                       return;
                     }
                     if (profilePurpose == ProfilePurpose.createUserFromAdmin) {
-                      context.read<ProfileBloc>().createUserFromAdmin();
+                      await context.read<ProfileBloc>().createUserFromAdmin();
                       while (profileBloc.state.isSaving) {
                         await Future.delayed(const Duration(milliseconds: 100));
                       }

@@ -60,6 +60,12 @@ class _DashboardState extends State<_Dashboard> with TickerProviderStateMixin {
         );
   }
 
+  // @override
+  // void dispose() {
+  //   context.read<AlertBloc>().disposeAnimationController();
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
