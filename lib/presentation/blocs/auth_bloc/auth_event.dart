@@ -14,7 +14,11 @@ class ChangeToken extends AuthEvent {
   ChangeToken({required this.token});
 }
 
-class CheckToken extends AuthEvent {}
+class CheckToken extends AuthEvent {
+  final bool isLoggingIn;
+
+  CheckToken({this.isLoggingIn = false});
+}
 
 class UserLoggedOut extends AuthEvent {}
 

@@ -83,7 +83,7 @@ class LoginFormBloc extends Bloc<LoginFormEvent, LoginFormState> {
   }
 
   void _onUserLoggedIn(UserLoggedIn event, Emitter<LoginFormState> emit) async {
-    authBloc.changeAuthStatus(authStatus: AuthStatus.checking);
+    authBloc.changeAuthStatus(authStatus: AuthStatus.loggingIn);
     if (!await authBloc.saveTokenAndNickname(event.email, event.password)) {
       authBloc.changeAuthStatus(authStatus: AuthStatus.notAuthenticated);
       _theUserLoggedInWithNoProblems.complete(false);

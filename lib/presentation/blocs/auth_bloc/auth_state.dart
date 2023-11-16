@@ -1,6 +1,6 @@
 part of 'auth_bloc.dart';
 
-enum AuthStatus { checking, authenticated, notAuthenticated }
+enum AuthStatus { checking, authenticated, notAuthenticated, loggingIn }
 
 class AuthState {
   final String? token;

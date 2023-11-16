@@ -85,7 +85,12 @@ class _AuthScreenState extends State<_AuthScreen>
                       ),
                     ),
                   ),
-                  SizedBox(height: size.height * 0.1),
+                  SizedBox(
+                      height: (authStatus == AuthStatus.loggingIn)
+                          ? size.height * 0.1 - 36
+                          : size.height * 0.1),
+                  if (authStatus == AuthStatus.loggingIn)
+                    const Center(child: CircularProgressIndicator()),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Container(

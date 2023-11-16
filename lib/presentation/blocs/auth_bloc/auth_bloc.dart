@@ -14,7 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
   final String? token;
 
-  Completer<bool> _theUserLoggedInWithNoProblems = Completer<bool>();
+  Completer<bool> _theTokenIsValid = Completer<bool>();
 
   AuthBloc({
     required this.userRepository,
@@ -36,7 +36,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onCheckToken(CheckToken event, Emitter<AuthState> emit) async {
-    emit(state.copyWith(authStatus: AuthStatus.checking));
+    emit(state.copyWith(
+      authStatus:
+          (event.isLoggingIn) ? AuthStatus.loggingIn : AuthStatus.checking,
+    ));
 
     try {
       String tokenString =
@@ -54,17 +57,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: histouricUser.email,
         roles: histouricUser.roles.map((role) => role.name).toList(),
       ));
-      _theUserLoggedInWithNoProblems.complete(true);
+      _theTokenIsValid.complete(true);
     } catch (e) {
       emit(state.copyWith(authStatus: AuthStatus.notAuthenticated));
-      _theUserLoggedInWithNoProblems.complete(false);
+      _theTokenIsValid.complete(false);
     }
   }
 
   Future<bool> checkToken() async {
     add(CheckToken());
-    bool result = await _theUserLoggedInWithNoProblems.future;
-    _theUserLoggedInWithNoProblems = Completer<bool>();
+    bool result = await _theTokenIsValid.future;
+    _theTokenIsValid = Completer<bool>();
     return result;
   }
 
