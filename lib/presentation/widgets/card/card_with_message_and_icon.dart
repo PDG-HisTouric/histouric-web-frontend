@@ -27,7 +27,11 @@ class CardWithMessageAndIcon extends StatelessWidget {
             children: [
               Icon(icon),
               const SizedBox(height: 10),
-              Text(message),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               const SizedBox(height: 10),
               FilledButton(
                 onPressed: onPressed,

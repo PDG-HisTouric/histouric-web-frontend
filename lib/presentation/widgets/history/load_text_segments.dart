@@ -18,7 +18,7 @@ class LoadTextSegments extends StatelessWidget {
           for (int index = 0; index < textSegments.length; index++)
             TextSegment(id: textSegments[index].id),
           const SizedBox(height: 10),
-          FilledButton.icon(
+          ElevatedButton.icon(
             icon: const Icon(Icons.add),
             onPressed: context.read<HistoryBloc>().addTextSegment,
             label: const Text("Añadir segmento de texto"),

@@ -14,6 +14,7 @@ class TextSegment extends StatelessWidget {
         (HistoryBloc historyBloc) => historyBloc.state.textSegmentStates);
     final textSegmentState =
         textSegments.firstWhere((element) => element.id == id);
+    final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Card(
@@ -26,7 +27,6 @@ class TextSegment extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, width: 1.0),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: TextField(

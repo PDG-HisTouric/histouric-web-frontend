@@ -66,6 +66,8 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -120,7 +122,7 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
         },
         physics: const BouncingScrollPhysics(),
         type: StepperType.horizontal,
-        connectorColor: MaterialStateProperty.all(Colors.blue),
+        connectorColor: MaterialStateProperty.all(colors.primary),
         controlsBuilder: (context, controlsDetails) {
           return SizedBox(
             height: 200,
@@ -131,26 +133,58 @@ class _CreateHistoryViewState extends State<_CreateHistoryView> {
                   FilledButton.tonalIcon(
                     icon: const Icon(Icons.cancel),
                     onPressed: controlsDetails.onStepCancel,
-                    label: const Text("Cancelar"),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(colors.primary),
+                      iconColor: MaterialStateProperty.all(colors.onPrimary),
+                    ),
+                    label: Text(
+                      "Cancelar",
+                      style: TextStyle(color: colors.onPrimary),
+                    ),
                   ),
                 if (_currentStep != 0)
                   FilledButton.tonalIcon(
                     icon: const Icon(Icons.arrow_back),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(colors.secondary),
+                      iconColor: MaterialStateProperty.all(colors.onSecondary),
+                    ),
                     onPressed: controlsDetails.onStepCancel,
-                    label: const Text("Atrás"),
+                    label: Text(
+                      "Atrás",
+                      style: TextStyle(color: colors.onSecondary),
+                    ),
                   ),
                 const SizedBox(width: 10),
                 if (_currentStep != _steps.length - 1)
                   FilledButton.tonalIcon(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(colors.secondary),
+                      iconColor: MaterialStateProperty.all(colors.onSecondary),
+                    ),
                     icon: const Icon(Icons.arrow_forward),
                     onPressed: controlsDetails.onStepContinue,
-                    label: const Text("Siguiente"),
+                    label: Text(
+                      "Siguiente",
+                      style: TextStyle(color: colors.onSecondary),
+                    ),
                   ),
                 if (_currentStep == _steps.length - 1)
                   FilledButton.icon(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(colors.primary),
+                      iconColor: MaterialStateProperty.all(colors.onPrimary),
+                    ),
                     icon: const Icon(Icons.check),
                     onPressed: context.read<HistoryBloc>().createHistory,
-                    label: const Text("Finalizar"),
+                    label: Text(
+                      "Finalizar",
+                      style: TextStyle(color: colors.onPrimary),
+                    ),
                   ),
               ],
             ),

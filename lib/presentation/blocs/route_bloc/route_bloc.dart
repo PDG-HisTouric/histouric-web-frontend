@@ -438,6 +438,8 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   Future<void> _onSaveRouteButtonPressed(
       SaveRouteButtonPressed event, Emitter<RouteState> emit) async {
+    changeSearchTextField("");
+    _openLoadingAlert();
     List<BicAndHistory> bics = [];
     for (BICForRouteState bicState in state.bicsForRoute) {
       if (bicState.selectedHistory != null) {
@@ -447,6 +449,12 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
           historyId: bicState.selectedHistory!.id,
         ));
       }
+    }
+
+    if (_allTheBicsHaveAHistory() != null) {
+      _openErrorAlert(
+          "El BIC ${_allTheBicsHaveAHistory()!.name} no tiene una historia seleccionada");
+      return;
     }
 
     RouteCreation routeCreation = RouteCreation(
@@ -464,16 +472,32 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   Future<HistouricRoute> saveRoute() async {
     add(SaveRouteButtonPressed());
     HistouricRoute histouricRoute = await _saveRouteCompleter.future;
-    _openSuccessAlert("La ruta fue creada exitosamente");
+    _openRouteSuccessfullyCreatedAlert();
     _saveRouteCompleter = Completer<HistouricRoute>();
     return histouricRoute;
   }
 
-  void _openSuccessAlert(String message) {
+  void _openRouteSuccessfullyCreatedAlert() {
+    alertBloc.changeChild(CardWithMessageAndIcon(
+      onPressed: () => alertBloc.closeAlert(),
+      message: "La ruta fue creada exitosamente",
+      icon: Icons.check,
+    ));
+    alertBloc.openAlert();
+  }
+
+  void _openLoadingAlert() {
+    alertBloc.changeChild(const LoadingCard(
+      loadingText: 'La historia se esta guardando',
+    ));
+    alertBloc.openAlert();
+  }
+
+  void _openErrorAlert(String message) {
     alertBloc.changeChild(CardWithMessageAndIcon(
       onPressed: () => alertBloc.closeAlert(),
       message: message,
-      icon: Icons.check,
+      icon: Icons.error,
     ));
     alertBloc.openAlert();
   }

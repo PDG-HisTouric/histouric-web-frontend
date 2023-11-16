@@ -43,7 +43,7 @@ class MainApp extends StatelessWidget {
 class _MaterialAppWithFluro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    AppTheme appTheme = AppTheme(colorScheme: const Color(0xff0266C8));
+    AppTheme appTheme = AppTheme(colorScheme: const Color(0xFFE7C18B));
 
     BlocProvider.of<AuthBloc>(context, listen: false).checkToken();
 

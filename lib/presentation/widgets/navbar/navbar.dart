@@ -15,8 +15,8 @@ class Navbar extends StatelessWidget {
       width: double.infinity,
       height: 50,
       decoration: BoxDecoration(
-        color: colors.onPrimary,
-        boxShadow: [BoxShadow(color: colors.onPrimary, blurRadius: 5)],
+        color: colors.background,
+        boxShadow: [BoxShadow(color: colors.background, blurRadius: 5)],
       ),
       child: Row(
         children: [

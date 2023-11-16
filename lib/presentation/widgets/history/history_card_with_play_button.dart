@@ -59,7 +59,6 @@ class HistoryCardWithPlayButton extends StatelessWidget {
             child: Row(
               children: [
                 Checkbox(
-                    checkColor: Colors.white,
                     value: selected,
                     onChanged: (value) {
                       onCheckBoxChanged(historyId);
