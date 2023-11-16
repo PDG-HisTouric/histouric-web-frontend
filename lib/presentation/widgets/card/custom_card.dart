@@ -81,7 +81,7 @@ class CustomCard extends StatelessWidget {
                     }
 
                     if (profilePurpose == ProfilePurpose.editUserFromAdmin) {
-                      context.read<ProfileBloc>().saveChanges();
+                      await context.read<ProfileBloc>().saveChanges();
                       while (profileBloc.state.isSaving) {
                         await Future.delayed(const Duration(milliseconds: 100));
                       }

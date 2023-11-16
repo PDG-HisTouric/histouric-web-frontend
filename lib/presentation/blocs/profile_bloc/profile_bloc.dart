@@ -19,6 +19,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfilePurpose profilePurpose;
   final UsersTableBloc? usersTableBloc;
 
+  Completer<bool> _theUserWasCreated = Completer<bool>();
   Completer<bool> _theUserWasSaved = Completer<bool>();
 
   ProfileBloc({
@@ -53,14 +54,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Future<void> createUserFromAdmin() async {
     add(CreateButtonPressed());
-    if (await _theUserWasSaved.future) openSuccessAlert();
+    if (await _theUserWasCreated.future) {
+      openSuccessAlert("Usuario creado exitosamente");
+    }
     while (!alertBloc.state.isAlertOpen) {
       await Future.delayed(const Duration(milliseconds: 100));
     }
     while (alertBloc.state.isAlertOpen) {
       await Future.delayed(const Duration(milliseconds: 100));
     }
-    _theUserWasSaved = Completer<bool>();
+    _theUserWasCreated = Completer<bool>();
   }
 
   void _onCreateButtonPressed(
@@ -72,7 +75,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       HistouricUser histouricUser = await _createUser();
       add(UserSaved(histouricUser: histouricUser, isForCreate: true));
     } catch (e) {
-      _theUserWasSaved.complete(false);
+      _theUserWasCreated.complete(false);
       add(SaveProcessStopped());
       openErrorAlert("Ocurrió un error al crear el usuario");
     }
@@ -136,7 +139,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       isSaving: false,
     ));
 
-    if (event.isForCreate) _theUserWasSaved.complete(true);
+    if (event.isForCreate) {
+      _theUserWasCreated.complete(true);
+    } else {
+      _theUserWasSaved.complete(true);
+    }
   }
 
   void removeRole(String role) {
@@ -147,14 +154,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     add(RoleSelected(role));
   }
 
-  void saveChanges() async {
+  Future<void> saveChanges() async {
     try {
       HistouricUser histouricUser = await _updateUserById();
       add(UserSaved(histouricUser: histouricUser));
     } catch (e) {
+      _theUserWasSaved.complete(false);
       add(SaveProcessStopped());
-      openErrorAlert(e.toString());
+      openErrorAlert("Ocurrió un error al guardar los cambios");
     }
+    if (await _theUserWasSaved.future) {
+      openSuccessAlert("El usuario fue actualizado exitosamente");
+    }
+    while (!alertBloc.state.isAlertOpen) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    while (alertBloc.state.isAlertOpen) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    _theUserWasSaved = Completer<bool>();
   }
 
   void openErrorAlert(String message) {
@@ -166,10 +184,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     alertBloc.openAlert();
   }
 
-  void openSuccessAlert() {
+  void openSuccessAlert(String message) {
     alertBloc.changeChild(CardWithMessageAndIcon(
       onPressed: () => alertBloc.closeAlert(),
-      message: "Usuario creado exitosamente",
+      message: message,
       icon: Icons.check,
     ));
     alertBloc.openAlert();
