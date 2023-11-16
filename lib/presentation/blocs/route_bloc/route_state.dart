@@ -12,6 +12,8 @@ class RouteState {
   final bool isTheUserViewingABICOfTheRoute;
   final bool isTheUserViewingABICOfTheSearch;
 
+  late final TextEditingController nameController;
+  late final TextEditingController descriptionController;
   late final TextEditingController searchController;
 
   RouteState({
@@ -53,11 +55,39 @@ class RouteState {
           isTheUserViewingABICOfTheRoute ?? this.isTheUserViewingABICOfTheRoute,
       isTheUserViewingABICOfTheSearch: isTheUserViewingABICOfTheSearch ??
           this.isTheUserViewingABICOfTheSearch,
-    )..searchController = searchController;
+    )
+      ..searchController = searchController
+      ..nameController = nameController
+      ..descriptionController = descriptionController;
   }
 
   void initSearchController() {
-    searchController = TextEditingController(text: searchTextField);
+    searchController = TextEditingController();
+  }
+
+  void initDescriptionController() {
+    descriptionController = TextEditingController();
+  }
+
+  void initNameController() {
+    nameController = TextEditingController(text: searchTextField);
+  }
+
+  RouteState clearState() {
+    return RouteState(
+        name: "",
+        description: "",
+        bicsForRoute: [],
+        bicsForSearch: [],
+        searchTextField: "",
+        polylines: {},
+        counter: 0,
+        isTheUserSelectingHistories: false,
+        isTheUserViewingABICOfTheRoute: false,
+        isTheUserViewingABICOfTheSearch: false)
+      ..searchController = TextEditingController()
+      ..nameController = TextEditingController()
+      ..descriptionController = TextEditingController();
   }
 }
 

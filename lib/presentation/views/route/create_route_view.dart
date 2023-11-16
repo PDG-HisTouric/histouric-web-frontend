@@ -26,6 +26,7 @@ class CreateRouteView extends StatelessWidget {
       ),
       BlocProvider(
         create: (context) => RouteBloc(
+          alertBloc: context.read<AlertBloc>(),
           ownerId: context.read<AuthBloc>().state.id!,
           routeRepository:
               RouteRepositoryImpl(routeDatasource: RouteDatasourceImpl()),
@@ -190,7 +191,9 @@ class _CreateRouteViewState extends State<_CreateRouteView> {
                   padding: const EdgeInsets.only(top: 9, bottom: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      context.read<RouteBloc>().saveRoute();
+                      context.read<RouteBloc>().saveRoute().then((_) {
+                        context.read<MapBloc>().clearState();
+                      });
                     },
                     child: const Text("Crear ruta"),
                   ),
@@ -604,12 +607,14 @@ class _RouteForm extends StatelessWidget {
     return Column(
       children: [
         SecondCustomTextFormField(
+          controller: routeBlocState.nameController,
           labelText: 'Nombre de la ruta',
           minLines: 1,
           maxLines: 1,
           onChanged: context.read<RouteBloc>().changeName,
         ),
         SecondCustomTextFormField(
+          controller: routeBlocState.descriptionController,
           labelText: 'Descripción',
           hintText: 'Ingrese la descripción de la ruta',
           minLines: 3,

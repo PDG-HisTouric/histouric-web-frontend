@@ -22,7 +22,6 @@ class CustomCard extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final profileBloc = context.watch<ProfileBloc>();
     final ProfilePurpose profilePurpose = profileBloc.state.profilePurpose;
-    final alertBloc = context.watch<AlertBloc>();
 
     if (profileBloc.state.initializingControllers) {
       return const Center(child: CircularProgressIndicator());
