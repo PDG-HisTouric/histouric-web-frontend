@@ -15,3 +15,4 @@ export 'video_response.dart';
 export 'bic_creation.dart';
 export 'route_creation.dart';
 export 'route_response.dart';
+export 'directions_response.dart';
