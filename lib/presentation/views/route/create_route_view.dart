@@ -22,6 +22,9 @@ class CreateRouteView extends StatelessWidget {
         create: (context) => MapBloc(
           token: context.read<AuthBloc>().state.token!,
           bicRepository: BICRepositoryImpl(bicDatasource: BICDatasourceImpl()),
+          routeRepository: RouteRepositoryImpl(
+            routeDatasource: RouteDatasourceImpl(),
+          ),
         ),
       ),
       BlocProvider(

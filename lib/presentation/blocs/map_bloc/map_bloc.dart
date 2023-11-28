@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../config/config.dart';
 import '../../../domain/domain.dart';
 import '../route_bloc/route_bloc.dart';
 
@@ -14,13 +13,17 @@ part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   final BICRepository bicRepository;
+  final RouteRepository? routeRepository;
   final String token;
   late final int initialLengthOfMarkerId;
   Completer<void> _newMarkerIdCompleter = Completer<void>();
   Completer<void> _markerDeleteCompleter = Completer<void>();
 
-  MapBloc({required this.bicRepository, required this.token})
-      : super(MapState(markerFroBICCreationId: 'new-bic-0')) {
+  MapBloc({
+    required this.bicRepository,
+    required this.token,
+    this.routeRepository,
+  }) : super(MapState(markerFroBICCreationId: 'new-bic-0')) {
     initialLengthOfMarkerId = state.markerFroBICCreationId.length - 1;
     bicRepository.configureToken(token);
     on<MarkerAdded>(_onMarkerAdded);
@@ -143,22 +146,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     required List<BIC> bics,
     required List<LatLng> polylineCoordinates,
   }) async {
-    List<BIC> points = bics.sublist(1, bics.length - 1);
+    List<BIC> intermediateBics = bics.sublist(1, bics.length - 1);
+    String encodedPath = await routeRepository!.getEncodedPolyline(
+      LatLng(bics.first.latitude, bics.first.longitude),
+      LatLng(bics.last.latitude, bics.last.longitude),
+      intermediateBics
+          .map((e) => LatLng(e.latitude, e.longitude))
+          .toList(growable: false),
+    );
 
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        Environment.directionsApiKey,
-        PointLatLng(
-          bics.first.latitude,
-          bics.first.longitude,
-        ),
-        PointLatLng(bics.last.latitude, bics.last.longitude),
-        travelMode: TravelMode.walking,
-        wayPoints: points
-            .map((e) => PolylineWayPoint(
-                location: "${e.latitude},${e.longitude}", stopOver: true))
-            .toList());
-    if (result.points.isNotEmpty) {
-      for (var point in result.points) {
+    List<PointLatLng> points = polylinePoints.decodePolyline(encodedPath);
+    if (points.isNotEmpty) {
+      for (var point in points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       }
     }
@@ -170,7 +169,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }) {
     PolylineId id = const PolylineId("poly");
     Polyline polyline = Polyline(
-        polylineId: id, color: Colors.red, points: polylineCoordinates);
+        polylineId: id, color: Colors.blue, points: polylineCoordinates);
     Map<PolylineId, Polyline> polylines = {};
     polylines[id] = polyline;
     return polylines;
