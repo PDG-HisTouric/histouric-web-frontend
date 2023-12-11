@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BottomMessageWithButton extends StatelessWidget {
+class BottomMessageWithButton extends StatefulWidget {
   final String message;
   final String buttonText;
   final void Function()? onPressed;
@@ -13,44 +13,65 @@ class BottomMessageWithButton extends StatelessWidget {
   });
 
   @override
+  State<BottomMessageWithButton> createState() =>
+      _BottomMessageWithButtonState();
+}
+
+class _BottomMessageWithButtonState extends State<BottomMessageWithButton> {
+  bool isHovered = false;
+
+  void setIsHovered(bool value) {
+    setState(() {
+      isHovered = value;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    return Wrap(
-      alignment: WrapAlignment.center,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        FittedBox(
-          fit: BoxFit.contain,
-          child: Text(
-            message,
-            style: TextStyle(
-              color: colors.onPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        FittedBox(
-          fit: BoxFit.contain,
-          child: TextButton(
-            onPressed: onPressed,
-            style: ButtonStyle(
-              overlayColor: MaterialStateProperty.resolveWith<Color>(
-                (states) => Colors.transparent,
-              ),
-            ),
+    return MouseRegion(
+      onEnter: (_) => setIsHovered(true),
+      onExit: (_) => setIsHovered(false),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          FittedBox(
+            fit: BoxFit.contain,
             child: Text(
-              buttonText,
+              widget.message,
               style: TextStyle(
-                color: colors.onBackground,
+                color: colors.onPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
-        ),
-      ],
+          FittedBox(
+            fit: BoxFit.contain,
+            child: TextButton(
+              onPressed: widget.onPressed,
+              style: ButtonStyle(
+                overlayColor: MaterialStateProperty.resolveWith<Color>(
+                  (states) => Colors.transparent,
+                ),
+              ),
+              child: Text(
+                widget.buttonText,
+                style: TextStyle(
+                  color: colors.onBackground,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  decoration: isHovered
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
