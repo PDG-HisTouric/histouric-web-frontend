@@ -499,7 +499,7 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   void _openLoadingAlert() {
     alertBloc.changeChild(const LoadingCard(
-      loadingText: 'La historia se esta guardando',
+      loadingText: 'La ruta se está creando...',
     ));
     alertBloc.openAlert();
   }
